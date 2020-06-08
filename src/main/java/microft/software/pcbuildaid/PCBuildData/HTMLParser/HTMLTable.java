@@ -17,6 +17,10 @@ public class HTMLTable {
     private final ArrayList<HTMLTableRow> rows = new ArrayList<>();
     private final ArrayList<String> divs = new ArrayList<>();
     private String name;
+
+    public ArrayList<HTMLTableRow> getRows() {
+        return rows;
+    }
     
     public HTMLTable(String source) {
         this.source = source;

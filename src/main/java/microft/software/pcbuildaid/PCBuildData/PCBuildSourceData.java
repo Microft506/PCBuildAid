@@ -9,6 +9,7 @@ import microft.software.pcbuildaid.PCBuildData.HTMLParser.HTMLTable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import static java.util.Objects.isNull;
 import java.util.regex.*;
 
 /**
@@ -17,9 +18,10 @@ import java.util.regex.*;
  */
 public class PCBuildSourceData {
     private final ArrayList<HTMLTable> tables = new ArrayList<>();
+    private final ArrayList<CPU> cpus = new ArrayList<>();
     
-    public PCBuildSourceData() {
-        
+    public PCBuildSourceData(String fileName) throws IOException {
+        buildFromFile(fileName);
     }
     
     public void buildFromFile(String fileName) throws IOException{
@@ -41,13 +43,31 @@ public class PCBuildSourceData {
         
         // List the tables:
         for(int i=0; i<tables.size(); ++i) System.out.println("Table " + i + " [" + tables.get(i).getName() + "]");
-                
+        
+        // Populate components
+        this.populateCPUs();
+    }
+    
+    private void populateCPUs(){
+        System.out.println("Populating CPUs...");
+        HTMLTable cpuTable = this.getTable("CPU");
+        System.out.println("Found " + cpuTable.getNumRows() + " CPUs");
+        cpuTable.getRows().stream().parallel().forEach(x->{
+            CPU y = new CPU(x);
+            if(!isNull(y)) this.cpus.add(y);
+        });
     }
     
     public HTMLTable getTable(String name){
         for(HTMLTable table:tables) if(table.getName().equals(name)) return table;
         return null;
     }
+
+    public ArrayList<CPU> getCpus() {
+        return cpus;
+    }
+    
+    
     
     
 }
