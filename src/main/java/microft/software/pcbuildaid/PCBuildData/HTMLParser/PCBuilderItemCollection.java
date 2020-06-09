@@ -12,17 +12,17 @@ import microft.software.pcbuildaid.PCBuildData.Tools;
  *
  * @author marcc
  */
-public class HTMLTable {
+public class PCBuilderItemCollection {
     private final String source;
-    private final ArrayList<HTMLTableRow> rows = new ArrayList<>();
+    private final ArrayList<PCBuilderItem> rows = new ArrayList<>();
     private final ArrayList<String> divs = new ArrayList<>();
     private String name;
 
-    public ArrayList<HTMLTableRow> getRows() {
+    public ArrayList<PCBuilderItem> getRows() {
         return rows;
     }
     
-    public HTMLTable(String source) {
+    public PCBuilderItemCollection(String source) {
         this.source = source;
         buildFromSource();
     }
@@ -30,7 +30,7 @@ public class HTMLTable {
     private void buildFromSource(){
         String [] ss = this.source.split("<table");
         ArrayList<String> trStrings = Tools.search(this.source, "<tr(.+?)<\\/tr>");
-        trStrings.stream().forEach(x -> this.rows.add(new HTMLTableRow(x)));
+        trStrings.stream().forEach(x -> this.rows.add(new PCBuilderItem(x)));
         this.rows.stream().forEach(x->{
             x.getDivs().stream().forEach(y->{
                if(!this.divs.contains(y)) this.divs.add(y);

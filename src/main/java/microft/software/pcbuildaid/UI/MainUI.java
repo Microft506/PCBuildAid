@@ -142,7 +142,7 @@ public class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnLaunchBenchmarkCalculatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaunchBenchmarkCalculatorActionPerformed
-        (new BenchmarkCalculatorUI(this.sourceData)).setVisible(true);
+        (new PCBuilder()).setVisible(true);
     }//GEN-LAST:event_btnLaunchBenchmarkCalculatorActionPerformed
 
     /**

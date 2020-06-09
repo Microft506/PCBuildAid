@@ -1,0 +1,7 @@
+The software will mostly revolve around the PCBuild object. 
+
+The PCBuild object will allow multiple pieces of hardware to be installed.
+An even queue will be raised whenever the hardware in the PC has been changed.
+
+Compatibility is checked by calling the isCompatibleWith routine on the PCBuild object.
+This function will check to see if the existing hardware is compatible with the new piece.

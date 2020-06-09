@@ -6,45 +6,125 @@
 package microft.software.pcbuildaid.UI;
 
 import java.awt.event.WindowEvent;
-import java.util.List;
-import static java.util.Objects.isNull;
+import java.util.ArrayList;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import microft.software.pcbuildaid.PCBuildData.Hardware.HardWareChange;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Hardware;
+import microft.software.pcbuildaid.PCBuildData.GameData;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Base.EnumKeyStrings;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
+import microft.software.pcbuildaid.PCBuildData.Hardware.*;
+import microft.software.pcvuildaid.calculators.PCBuild;
 
 /**
  *
  * @author marcc
  */
 public class HardwarePicker extends javax.swing.JFrame {
-
-    HardWareChange onSelected;
-    List<Hardware> hardware;
+    private PCBuild pc;
+    private EnumHardwareType hwType;
     
     /**
      * Creates new form CPUPicker
-     * @param hardware
-     * @param headers
+     * @param pc
+     * @param hwType
      */
-    public HardwarePicker(List<Hardware> hardware, String[] headers) {
+    public HardwarePicker(PCBuild pc, EnumHardwareType hwType) {
         initComponents();
+        this.pc = pc;
+        this.hwType = hwType;
         
-        this.hardware = hardware;
-        
-        DefaultTableModel dtm = new DefaultTableModel(0,headers.length);
-        dtm.setColumnIdentifiers(headers);
-        for(Hardware h:hardware){
-            String[] vals = new String[headers.length];
-            for(int i=0; i<vals.length; ++i)
-                vals[i] = h.readVal(headers[i], "");
-            dtm.addRow(vals);
-        }
-        tblMain.setModel(dtm);
-        tblMain.setAutoCreateRowSorter(true);
+        populateTable();
     }
     
-    public void setOnSelect(HardWareChange hwc){
-        this.onSelected = hwc;
+    public void populateTable(){
+        final Class[] columnClasses;
+        final String[] headers;
+        final Object[][] data; // [row][col]
+        
+        ArrayList<Hardware> hw = new ArrayList<>();
+                
+        switch(hwType){
+            case CPU:
+                // Set the headers (First four columns are standard and set later)
+                headers = new String[]{"","","","",
+                    EnumKeyStrings.CORES.getKeyText(),
+                    EnumKeyStrings.CAN_OVERCLOCK.getKeyText(),
+                    EnumKeyStrings.WATTAGE.getKeyText(),
+                    EnumKeyStrings.MAX_MEM_CHAN.getKeyText(),
+                    EnumKeyStrings.CPU_SOCKET.getKeyText()
+                };                
+                // Set the column classes
+                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
+                    Integer.class, Boolean.class, Integer.class, Integer.class, String.class
+                };
+                
+                // Populate the data.
+                data = new Object[GameData.cpus.size()][columnClasses.length];
+                int count = 0;
+                for(CPU x:GameData.cpus){
+                    hw.add(x);
+                    data[count][4] = x.getNumberOfCores();
+                    data[count][5] = x.isOverclockable();
+                    data[count][6] = x.getWattage();
+                    data[count][7] = x.getMaxMemChannels();
+                    data[count++][8] = x.getSocketType();
+                }
+                
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                break;
+            default:
+                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class};
+                data = new Object[][]{};
+                headers = new String[4];
+        }
+        headers[0] = EnumKeyStrings.MANUFACTURER.getKeyText();
+        headers[1] = EnumKeyStrings.PART_NAME.getKeyText();
+        headers[2] = EnumKeyStrings.LEVEL.getKeyText();
+        headers[3] = EnumKeyStrings.PRICE.getKeyText();
+        for(int i=0; i<GameData.cpus.size(); ++i){
+            data[i][0]=hw.get(i).getManufacturer();
+            data[i][1]=hw.get(i).getPartName();
+            data[i][2]=hw.get(i).getLevel();
+            data[i][3]=hw.get(i).getPrice();
+        }
+        
+        DefaultTableModel dtm = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnClasses[columnIndex];
+            }
+
+            @Override
+            public Object getValueAt(int row, int column) {
+                return data[row][column];
+            }
+
+            @Override
+            public int getColumnCount() {
+                return data[0].length;
+            }
+
+            @Override
+            public int getRowCount() {
+                return data.length;
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                //return super.getColumnName(column); //To change body of generated methods, choose Tools | Templates.
+                return headers[column];
+            }
+            
+            
+        };
+        
+        tblMain.setModel(dtm);
+        tblMain.setAutoCreateRowSorter(true);      
     }
 
     /**
@@ -113,8 +193,8 @@ public class HardwarePicker extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOK)
@@ -126,9 +206,9 @@ public class HardwarePicker extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        System.out.println("Chose: " + this.tblMain.getSelectedRow());
-        if(isNull(this.onSelected)) return;
-        this.onSelected.onHardwareChange(hardware.get(this.tblMain.getSelectedRow()));
+        int selRow = this.tblMain.getSelectedRow();
+        if(selRow < 0) return;
+        this.pc.setCpu(GameData.cpus.get(selRow));
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnOKActionPerformed
 

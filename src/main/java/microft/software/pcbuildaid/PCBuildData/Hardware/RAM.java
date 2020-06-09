@@ -5,7 +5,8 @@
  */
 package microft.software.pcbuildaid.PCBuildData.Hardware;
 
-import microft.software.pcbuildaid.PCBuildData.HTMLParser.HTMLTableRow;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
+import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItem;
 import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
 
 /**
@@ -14,9 +15,20 @@ import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
  */
 public class RAM extends Hardware{
 
-    public RAM(HTMLTableRow sourceData) {
+    public RAM(PCBuilderItem sourceData) {
         super(sourceData);
     }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public String getConcatName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     
 
     

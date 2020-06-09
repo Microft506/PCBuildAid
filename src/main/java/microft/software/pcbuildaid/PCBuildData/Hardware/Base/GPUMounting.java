@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package microft.software.pcbuildaid.PCBuildData.Hardware;
+package microft.software.pcbuildaid.PCBuildData.Hardware.Base;
 
 /**
  *
- * @author marcc
+ * @author Marc
  */
-public interface HardWareChange {
-    public void onHardwareChange(Hardware hardware);
+public interface GPUMounting {
+    
 }

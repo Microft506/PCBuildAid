@@ -12,12 +12,12 @@ import microft.software.pcbuildaid.PCBuildData.Tools;
  *
  * @author marcc
  */
-public class HTMLTableRowCell {
+public class PCBuilderItemData {
     private final String source;
     private String div;
     private String val;
 
-    public HTMLTableRowCell(String source) {
+    public PCBuilderItemData(String source) {
         this.source = source;
         buildFromSource();
     }
