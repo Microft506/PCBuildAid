@@ -5,17 +5,29 @@
  */
 package microft.software.pcbuildaid.UI;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import microft.software.pcbuildaid.PCBuildData.Hardware.CPU;
+import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
+import microft.software.pcvuildaid.calculators.BenchmarkCalc;
+
 /**
  *
  * @author Marc
  */
 public class BenchmarkCalculatorUI extends javax.swing.JFrame {
 
+    private final BenchmarkCalc calc = new BenchmarkCalc();
     /**
      * Creates new form BenchmarkCalculatorUI
+     * @param sourceData
      */
-    public BenchmarkCalculatorUI() {
+    public BenchmarkCalculatorUI(PCBuildSourceData sourceData) {
+        this.sourceData = sourceData;
         initComponents();
+        
+        // Choose what happens when the CPU is changed.
+        calc.setOnCPUChange(()->this.txtCPU.setText(calc.getCpu().getConcatName()));
     }
 
     /**
@@ -29,7 +41,8 @@ public class BenchmarkCalculatorUI extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        btnChooseCPU = new javax.swing.JButton();
+        txtCPU = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -39,7 +52,14 @@ public class BenchmarkCalculatorUI extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("Step 1: Choose the CPU");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        btnChooseCPU.setText("...");
+        btnChooseCPU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChooseCPUActionPerformed(evt);
+            }
+        });
+
+        txtCPU.setText("jTextField1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -49,8 +69,10 @@ public class BenchmarkCalculatorUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addComponent(txtCPU, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnChooseCPU)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -58,8 +80,9 @@ public class BenchmarkCalculatorUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                    .addComponent(btnChooseCPU)
+                    .addComponent(txtCPU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -76,50 +99,30 @@ public class BenchmarkCalculatorUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(195, Short.MAX_VALUE))
+                .addContainerGap(189, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BenchmarkCalculatorUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BenchmarkCalculatorUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BenchmarkCalculatorUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BenchmarkCalculatorUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new BenchmarkCalculatorUI().setVisible(true);
-            }
-        });
-    }
-
+    private void btnChooseCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseCPUActionPerformed
+        HardwarePicker hp = new HardwarePicker(
+          sourceData.getCpus().stream().filter(x->x.isValid()).collect(Collectors.toList()),
+          new String[]{"Manufacturer", "Part Name", "Level", "Price", "Basic CPU Score"}
+        );
+        hp.setOnSelect(x -> calc.setCpu((CPU)x));
+        hp.setVisible(true);
+        
+        
+    }//GEN-LAST:event_btnChooseCPUActionPerformed
+    
+    private PCBuildSourceData sourceData;
+    private final ArrayList<CPU> cpus = new ArrayList<>();
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnChooseCPU;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField txtCPU;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,7 @@
 package microft.software.pcbuildaid.UI;
 
 import java.io.IOException;
+import static java.util.Objects.isNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -24,6 +25,8 @@ public class MainUI extends javax.swing.JFrame {
      * Creates new form Main
      */
     public MainUI() {
+        final Preferences userRoot = Preferences.userRoot();
+        usr = Preferences.userNodeForPackage(userRoot.getClass());
         initComponents();
     }
 
@@ -43,7 +46,7 @@ public class MainUI extends javax.swing.JFrame {
         txtGameFile = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnLaunchBenchmarkCalculator = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
@@ -95,9 +98,14 @@ public class MainUI extends javax.swing.JFrame {
         jPanel2.setEnabled(false);
         jPanel2.setLayout(new java.awt.GridLayout(1, 3, 5, 20));
 
-        jButton2.setText("Benchmark Calculator");
-        jButton2.setEnabled(false);
-        jPanel2.add(jButton2);
+        btnLaunchBenchmarkCalculator.setText("Benchmark Calculator");
+        btnLaunchBenchmarkCalculator.setEnabled(false);
+        btnLaunchBenchmarkCalculator.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLaunchBenchmarkCalculatorActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnLaunchBenchmarkCalculator);
 
         jButton4.setText("jButton4");
         jPanel2.add(jButton4);
@@ -132,6 +140,10 @@ public class MainUI extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.chooseNewGameDataFile();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnLaunchBenchmarkCalculatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaunchBenchmarkCalculatorActionPerformed
+        (new BenchmarkCalculatorUI(this.sourceData)).setVisible(true);
+    }//GEN-LAST:event_btnLaunchBenchmarkCalculatorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,30 +196,28 @@ public class MainUI extends javax.swing.JFrame {
 
     private void loadGameData() {
         // Pull the game directory location from the registry or apply default.
-        final Preferences userRoot = Preferences.userRoot();
-        usr = Preferences.userNodeForPackage(userRoot.getClass());
-        this.txtGameFile.setText(
-                usr.get("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator") + "\\PCBS_Data\\sharedassets1.assets"
-        );
-
+        String filename = usr.get("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
+        this.txtGameFile.setText(filename);
+                
         try {
             // Load in the data
-            sourceData = new PCBuildSourceData(this.txtGameFile.getText());
+            sourceData = new PCBuildSourceData(filename+ "\\PCBS_Data\\sharedassets1.assets");
         } catch (IOException ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             UIToolBox.popUp(this, "There was a problem reading the game file.  Choose your game location and try again.");
         }
-
+        setButtonsEnabled();
     }
 
     private void chooseNewGameDataFile() {
         if(this.dirChooser.showDialog(this, "Choose PC Builder Game Directory") != 0) return;
-        this.txtGameFile.setText(this.dirChooser.getSelectedFile().getAbsolutePath());
+        String newLoc = this.dirChooser.getSelectedFile().getAbsolutePath();
+        this.txtGameFile.setText(newLoc);
         
         // Try to load in the new game data. - Note to self: Repetative code...
         try {
             // Load in the data
-            sourceData = new PCBuildSourceData(this.txtGameFile.getText());
+            sourceData = new PCBuildSourceData(newLoc + "\\PCBS_Data\\sharedassets1.assets");
         } catch (IOException ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             UIToolBox.popUp(this, "There was a problem reading the game file.  Choose your game location and try again.");
@@ -216,15 +226,21 @@ public class MainUI extends javax.swing.JFrame {
         
         // If you've made it this far, it must be ok.  Save the new file location.
         usr.put("DefaultDir", this.txtGameFile.getText());
+        setButtonsEnabled();
+    }
+    
+    private void setButtonsEnabled(){
+        boolean en = !isNull(this.sourceData);
+        this.btnLaunchBenchmarkCalculator.setEnabled(en);
     }
 
     private PCBuildSourceData sourceData;
     private Preferences usr;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLaunchBenchmarkCalculator;
     private javax.swing.JFileChooser dirChooser;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;

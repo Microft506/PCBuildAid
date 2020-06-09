@@ -41,7 +41,9 @@ public class HTMLTableRowCell {
         return val;
     }
     
+    public boolean hasDiv(){
+        return !(this.div.length() == 0);
+    }
     
-    
-    
+        
 }

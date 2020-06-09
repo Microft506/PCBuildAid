@@ -5,6 +5,7 @@
  */
 package microft.software.pcbuildaid.PCBuildData;
 
+import microft.software.pcbuildaid.PCBuildData.Hardware.CPU;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.HTMLTable;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class PCBuildSourceData {
     private final ArrayList<CPU> cpus = new ArrayList<>();
     
     public PCBuildSourceData(String fileName) throws IOException {
+        System.out.println("Reading from file: " + fileName);
         buildFromFile(fileName);
     }
     
@@ -49,13 +51,14 @@ public class PCBuildSourceData {
     }
     
     private void populateCPUs(){
-        System.out.println("Populating CPUs...");
+        System.out.print("Populating CPUs...");
         HTMLTable cpuTable = this.getTable("CPU");
-        System.out.println("Found " + cpuTable.getNumRows() + " CPUs");
-        cpuTable.getRows().stream().parallel().forEach(x->{
+        System.out.print("Found " + cpuTable.getNumRows() + " CPUs...");
+        cpuTable.getRows().stream().forEach(x->{
             CPU y = new CPU(x);
             if(!isNull(y)) this.cpus.add(y);
         });
+        System.out.println("Done.");
     }
     
     public HTMLTable getTable(String name){

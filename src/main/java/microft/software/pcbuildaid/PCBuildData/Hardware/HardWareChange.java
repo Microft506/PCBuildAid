@@ -5,19 +5,10 @@
  */
 package microft.software.pcbuildaid.PCBuildData.Hardware;
 
-import microft.software.pcbuildaid.PCBuildData.HTMLParser.HTMLTableRow;
-import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
-
 /**
  *
  * @author marcc
  */
-public class RAM extends Hardware{
-
-    public RAM(HTMLTableRow sourceData) {
-        super(sourceData);
-    }
-    
-
-    
+public interface HardWareChange {
+    public void onHardwareChange(Hardware hardware);
 }

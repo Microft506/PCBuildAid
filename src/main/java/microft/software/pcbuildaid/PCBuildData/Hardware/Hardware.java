@@ -5,17 +5,30 @@
  */
 package microft.software.pcbuildaid.PCBuildData.Hardware;
 
-import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
+import microft.software.pcbuildaid.PCBuildData.HTMLParser.HTMLTableRow;
 
 /**
  *
  * @author marcc
  */
-public class Hardware {
-    protected PCBuildSourceData sourceData;
+public abstract class Hardware {
+    protected HTMLTableRow sourceData;
 
-    public Hardware(PCBuildSourceData sourceData) {
+    public Hardware(HTMLTableRow sourceData) {
         this.sourceData = sourceData;
+    }
+    
+    public int readIntVal(String key){
+        String v = sourceData.getCellData(key);
+        try{
+            return Integer.parseInt(v);
+        } catch(NumberFormatException e){
+            return 0;
+        }
+    }
+    
+    public String readVal(String key, String def){
+        return sourceData.getCellData(key, def);
     }
     
 }
