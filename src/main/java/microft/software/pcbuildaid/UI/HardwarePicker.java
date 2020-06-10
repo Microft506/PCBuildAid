@@ -7,6 +7,7 @@ package microft.software.pcbuildaid.UI;
 
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
@@ -22,16 +23,21 @@ import microft.software.pcvuildaid.calculators.PCBuild;
 public class HardwarePicker extends javax.swing.JFrame {
     private PCBuild pc;
     private EnumHardwareType hwType;
+    private JFrame parent;
     
     /**
      * Creates new form CPUPicker
      * @param pc
      * @param hwType
      */
-    public HardwarePicker(PCBuild pc, EnumHardwareType hwType) {
+    public HardwarePicker(JFrame parent, PCBuild pc, EnumHardwareType hwType) {
+        this.parent = parent;
+        parent.setEnabled(false);
         initComponents();
         this.pc = pc;
         this.hwType = hwType;
+        
+        this.setExtendedState( this.getExtendedState()|JFrame.MAXIMIZED_BOTH );
         
         populateTable();
     }
@@ -42,8 +48,40 @@ public class HardwarePicker extends javax.swing.JFrame {
         final Object[][] data; // [row][col]
         
         ArrayList<Hardware> hw = new ArrayList<>();
-                
+        
+        int count;
+        
         switch(hwType){
+            case MOTHERBOARD:
+                // Set the headers (First four columns are standard and set later)
+                headers = new String[]{"","","","",
+                    EnumKeyStrings.CHIPSET.getKeyText(),
+                    EnumKeyStrings.CPU_SOCKET.getKeyText(),
+                    EnumKeyStrings.MOTHERBOARD_SIZES.getKeyText(),
+                    EnumKeyStrings.RAM_TYPE.getKeyText(),
+                    EnumKeyStrings.CAN_OVERCLOCK.getKeyText()
+                };   
+                
+                // Set the column classes
+                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
+                    String.class, String.class, String.class, String.class, Boolean.class
+                };
+                
+                // Populate the data.
+                data = new Object[GameData.motherboards.size()][columnClasses.length];
+                count = 0;
+                for(Motherboard x:GameData.motherboards){
+                    hw.add(x);
+                    data[count][4] = x.getChipset();
+                    data[count][5] = x.getSocketType();
+                    data[count][6] = x.getMotherboardSize();
+                    data[count][7] = x.getRamType();
+                    data[count++][8] = x.canOverclock();
+                }
+                
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                
+                break;
             case CPU:
                 // Set the headers (First four columns are standard and set later)
                 headers = new String[]{"","","","",
@@ -60,7 +98,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                 
                 // Populate the data.
                 data = new Object[GameData.cpus.size()][columnClasses.length];
-                int count = 0;
+                count = 0;
                 for(CPU x:GameData.cpus){
                     hw.add(x);
                     data[count][4] = x.getNumberOfCores();
@@ -81,7 +119,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         headers[1] = EnumKeyStrings.PART_NAME.getKeyText();
         headers[2] = EnumKeyStrings.LEVEL.getKeyText();
         headers[3] = EnumKeyStrings.PRICE.getKeyText();
-        for(int i=0; i<GameData.cpus.size(); ++i){
+        for(int i=0; i<hw.size(); ++i){
             data[i][0]=hw.get(i).getManufacturer();
             data[i][1]=hw.get(i).getPartName();
             data[i][2]=hw.get(i).getLevel();
@@ -142,6 +180,11 @@ public class HardwarePicker extends javax.swing.JFrame {
         tblMain = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         btnOK.setText("OK");
         btnOK.setEnabled(false);
@@ -206,9 +249,16 @@ public class HardwarePicker extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        int selRow = this.tblMain.getSelectedRow();
+        int selRow = this.tblMain.getRowSorter().convertRowIndexToModel(this.tblMain.getSelectedRow());
         if(selRow < 0) return;
-        this.pc.setCpu(GameData.cpus.get(selRow));
+        switch(hwType){
+            case CPU:
+                this.pc.setCpu(GameData.cpus.get(selRow));
+                break;
+            case MOTHERBOARD:
+                this.pc.setMotherboard(GameData.motherboards.get(selRow));
+                break;
+        }
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnOKActionPerformed
 
@@ -219,6 +269,12 @@ public class HardwarePicker extends javax.swing.JFrame {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        parent.setEnabled(true);
+        parent.toFront();
+        parent.requestFocus();
+    }//GEN-LAST:event_formWindowClosed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

@@ -34,6 +34,10 @@ public class CPU extends Hardware{
         return this.readBoolVal(EnumKeyStrings.CAN_OVERCLOCK);
     }
     
+    public int getMaxFreqKhz(){
+        return this.readIntVal(EnumKeyStrings.MAX_FREQ);
+    }
+    
     public int getWattage(){
         return this.readIntVal(EnumKeyStrings.WATTAGE);
     }
@@ -41,4 +45,13 @@ public class CPU extends Hardware{
     public int getMaxMemChannels(){
         return this.readIntVal(EnumKeyStrings.MAX_MEM_CHAN);
     }
+    
+    public String getChipset(){
+        return this.readVal(EnumKeyStrings.CHIPSET);
+    }
+    
+    public int getFrequencyKhz(){
+        return this.readIntVal(EnumKeyStrings.FREQUENCY);
+    }
+    
 }

@@ -64,7 +64,7 @@ public class PCBuildSourceData {
     
     private void populateMotherboards(){
         System.out.print("Populating Motherboards...");
-        PCBuilderItemCollection moboTable = this.getTable(EnumHardwareType.MOTHERBOARDS);
+        PCBuilderItemCollection moboTable = this.getTable(EnumHardwareType.MOTHERBOARD);
         System.out.print("Found " + moboTable.getNumRows() + " motherboards...");
         moboTable.getRows().stream().forEach(x->{
             Motherboard m = new Motherboard(x);

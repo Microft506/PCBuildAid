@@ -57,9 +57,19 @@ public class PCBuild {
         this.cpu = cpu;
         activateHardwareChange();
     }
+    
+    public void clearCPU(){
+        this.cpu = null;
+        activateHardwareChange();
+    }
 
     public void setMotherboard(Motherboard motherboard) {
         this.motherboard = motherboard;
+        activateHardwareChange();
+    }
+    
+    public void clearMotherboard(){
+        this.motherboard = null;
         activateHardwareChange();
     }
 

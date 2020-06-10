@@ -28,6 +28,23 @@ public class Motherboard extends Hardware{
         return this.readValList(EnumKeyStrings.MOTHERBOARD_SIZES);
     }
 
+    public String getMotherboardSize(){
+        return this.readVal(EnumKeyStrings.MOTHERBOARD_SIZES);
+    }
+    
+    public String getChipset(){
+        return this.readVal(EnumKeyStrings.CHIPSET);
+    }
+    
+    public String getRamType(){
+        return this.readVal(EnumKeyStrings.RAM_TYPE);
+    }
+    
+    public boolean canOverclock(){
+        return this.readBoolVal(EnumKeyStrings.CAN_OVERCLOCK);
+    }
+    
+    
     
     
 }
