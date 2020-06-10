@@ -41,16 +41,10 @@ public class PCBuild {
         return CompatibilityChecker.isCompatible(cpuToCheck, motherboard);
     }
 
+    // ********* CPU
+    
     public CPU getCpu() {
         return cpu;
-    }
-
-    public Motherboard getMotherboard() {
-        return motherboard;
-    }
-
-    public Case getTheCase() {
-        return theCase;
     }
 
     public void setCpu(CPU cpu) {
@@ -63,6 +57,12 @@ public class PCBuild {
         activateHardwareChange();
     }
 
+    // ********** MOTHERBOARD
+    
+    public Motherboard getMotherboard() {
+        return motherboard;
+    }
+
     public void setMotherboard(Motherboard motherboard) {
         this.motherboard = motherboard;
         activateHardwareChange();
@@ -73,12 +73,19 @@ public class PCBuild {
         activateHardwareChange();
     }
 
+    // **************** CASE
+    
     public void setTheCase(Case theCase) {
         this.theCase = theCase;
+        activateHardwareChange();
+    }
+    
+    public Case getTheCase() {
+        return theCase;
     }
 
-    
-    
-   
-    
+    public void clearThecase(){
+        this.theCase = null;
+        activateHardwareChange();
+    }
 }

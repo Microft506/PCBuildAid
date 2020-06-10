@@ -52,6 +52,38 @@ public class HardwarePicker extends javax.swing.JFrame {
         int count;
         
         switch(hwType){
+            case CASES:
+                // Set the headers (First four columns are standard and set later)
+                headers = new String[]{"","","","",
+                    EnumKeyStrings.MOTHERBOARD_SIZES.getKeyText(),
+                    EnumKeyStrings.CASE_SIZE.getKeyText(),
+                    EnumKeyStrings.PSU_SIZE.getKeyText(),
+                    EnumKeyStrings.MAX_GPU_LEN.getKeyText(),
+                    EnumKeyStrings.MAX_CPU_FAN_HEIGHT.getKeyText(),
+                    EnumKeyStrings.MAX_PSU_LEN.getKeyText()
+                }; 
+                
+                // Set the column classes
+                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
+                    String.class, String.class, String.class, Integer.class, Integer.class, Integer.class
+                };
+                
+                // Populate the data.
+                data = new Object[GameData.cases.size()][columnClasses.length];
+                count = 0;
+                for(Case x:GameData.cases){
+                    hw.add(x);
+                    data[count][4] = x.getMotherboardSize();
+                    data[count][5] = x.getCaseSize();
+                    data[count][6] = x.getPSUSize();
+                    data[count][7] = x.getMaxGPULen();
+                    data[count][8] = x.getMaxCPUFanHeight();
+                    data[count++][9] = x.getMaxPSULen();
+                }
+                
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                
+                break;
             case MOTHERBOARD:
                 // Set the headers (First four columns are standard and set later)
                 headers = new String[]{"","","","",
@@ -257,6 +289,9 @@ public class HardwarePicker extends javax.swing.JFrame {
                 break;
             case MOTHERBOARD:
                 this.pc.setMotherboard(GameData.motherboards.get(selRow));
+                break;
+            case CASES:
+                this.pc.setTheCase(GameData.cases.get(selRow));
                 break;
         }
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

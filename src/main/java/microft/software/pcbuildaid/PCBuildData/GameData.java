@@ -7,8 +7,7 @@ package microft.software.pcbuildaid.PCBuildData;
 
 import java.util.ArrayList;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItemCollection;
-import microft.software.pcbuildaid.PCBuildData.Hardware.CPU;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Motherboard;
+import microft.software.pcbuildaid.PCBuildData.Hardware.*;
 
 /**
  *
@@ -18,4 +17,5 @@ public class GameData {
     public static final ArrayList<PCBuilderItemCollection> tables = new ArrayList<>();
     public static final ArrayList<Motherboard> motherboards = new ArrayList<>();
     public static final ArrayList<CPU> cpus = new ArrayList<>();
+    public static final ArrayList<Case> cases = new ArrayList<>();
 }

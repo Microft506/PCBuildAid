@@ -12,6 +12,7 @@ package microft.software.pcbuildaid.PCBuildData.Hardware.Base;
 public enum EnumKeyStrings {
     BASIC_CPU_SCORE("Basic CPU Score", "0"),
     CAN_OVERCLOCK("Can Overclock", "No"),
+    CASE_SIZE("Case Size", "Unknown"),
     CHIPSET("Chipset", "Unknown"),
     CONCAT_NAME("Concat name", "Unknown"),
     CORES("Cores", "1"),

@@ -44,7 +44,10 @@ public class PCBuilderItem {
     }
     
     public String getCellData(String cellKey, String defaultValue){
-        if(cells.containsKey(cellKey)) return cells.get(cellKey).getVal();
+        String rValue;
+        if(cells.containsKey(cellKey)) rValue = cells.get(cellKey).getVal();
+        else return defaultValue;
+        if(!isNull(rValue) && rValue.length() > 0) return rValue;
         else return defaultValue;
     }
     

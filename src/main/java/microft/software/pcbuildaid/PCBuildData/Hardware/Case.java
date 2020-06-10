@@ -31,4 +31,19 @@ public class Case extends Hardware{
         return this.readValList(EnumKeyStrings.MOTHERBOARD_SIZES);
     }
     
+    public String getMotherboardSize(){
+        return this.readVal(EnumKeyStrings.MOTHERBOARD_SIZES);
+    }
+    
+    public String getCaseSize(){
+        return this.readVal(EnumKeyStrings.CASE_SIZE);
+    }
+    
+    public int getMaxGPULen(){
+        return this.readIntVal(EnumKeyStrings.MAX_GPU_LEN);
+    }
+    
+    public int getMaxCPUFanHeight(){
+        return this.readIntVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT);
+    }
 }

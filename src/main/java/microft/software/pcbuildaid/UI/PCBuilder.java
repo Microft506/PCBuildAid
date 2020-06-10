@@ -19,6 +19,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private final PCBuild pc = new PCBuild();
     private final ArrayList<JLabel> cpuLabels = new ArrayList<>();
     private final ArrayList<JLabel> motherboardLabels = new ArrayList<>();
+    private final ArrayList<JLabel> caseLabels = new ArrayList<>();
     
     /**
      * Creates new form BenchmarkCalculatorUI
@@ -43,6 +44,13 @@ public class PCBuilder extends javax.swing.JFrame {
         motherboardLabels.add(this.lblMotherboardRamType);
         motherboardLabels.add(this.lblMotherboardOverclockable);
         
+        caseLabels.add(this.lblCaseMoboSize);
+        caseLabels.add(this.lblCasePSULen);
+        caseLabels.add(this.lblCasePSUSize);
+        caseLabels.add(this.lblCaseSize);
+        caseLabels.add(this.lblCaseCPUFanClearance);
+        caseLabels.add(this.lblCaseGPULen);
+        
         pc.addONHardwareChange(()->reactToHardwareChange());
         pc.activateHardwareChange();
     }
@@ -52,6 +60,7 @@ public class PCBuilder extends javax.swing.JFrame {
         // Display the currently selected case.
         displayCurrentCPU();
         displayCurrentMotherboard();
+        displayCurrentCase();
     }
     
     private void displayCurrentMotherboard(){
@@ -86,6 +95,15 @@ public class PCBuilder extends javax.swing.JFrame {
             (cpu.getMaxMemChannels() > 1 ? " channels":" channel")
         );
         this.lblCPUSocket.setText(cpu.getSocketType());
+    }
+    
+    private void displayCurrentCase(){
+        Case theCase = pc.getTheCase();
+        caseLabels.stream().forEach(x->x.setText("-"));
+        this.txtCase.setText("No Case Selected.");
+        if(isNull(theCase)) return;
+        this.txtCase.setText(theCase.getConcatName());
+        
     }
     
     
@@ -140,6 +158,24 @@ public class PCBuilder extends javax.swing.JFrame {
         lblMotherboardSize = new javax.swing.JLabel();
         lblMotherboardRamType = new javax.swing.JLabel();
         lblMotherboardOverclockable = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        btnRemoveCase = new javax.swing.JButton();
+        btnChooseCase = new javax.swing.JButton();
+        txtCase = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblCaseMoboSize = new javax.swing.JLabel();
+        lblCaseSize = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        lblCasePSUSize = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        lblCaseGPULen = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        lblCaseCPUFanClearance = new javax.swing.JLabel();
+        lblCasePSULen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -168,7 +204,7 @@ public class PCBuilder extends javax.swing.JFrame {
         });
 
         java.awt.GridBagLayout jPanel4Layout = new java.awt.GridBagLayout();
-        jPanel4Layout.columnWidths = new int[] {50, 100, 50, 100};
+        jPanel4Layout.columnWidths = new int[] {50, 100, 50, 100, 50, 100};
         jPanel4.setLayout(jPanel4Layout);
 
         lblCPUPriceLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -205,15 +241,15 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCPUWattageLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCPUWattageLabel.setText("Wattage:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel4.add(lblCPUWattageLabel, gridBagConstraints);
 
         lblCPUWattage.setText("-");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel4.add(lblCPUWattage, gridBagConstraints);
@@ -273,15 +309,15 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCPUOverclockableLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCPUOverclockableLabel.setText("Overclockable:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel4.add(lblCPUOverclockableLabel, gridBagConstraints);
 
         lblCPUOverclockable.setText("-");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
@@ -312,7 +348,7 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -360,7 +396,7 @@ public class PCBuilder extends javax.swing.JFrame {
         txtMotherboard.setText("None");
 
         java.awt.GridBagLayout jPanel3Layout = new java.awt.GridBagLayout();
-        jPanel3Layout.columnWidths = new int[] {50, 100, 50, 100};
+        jPanel3Layout.columnWidths = new int[] {50, 100, 50, 100, 50, 100};
         jPanel3.setLayout(jPanel3Layout);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -385,8 +421,8 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Socket:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         jPanel3.add(jLabel5, gridBagConstraints);
 
@@ -408,8 +444,8 @@ public class PCBuilder extends javax.swing.JFrame {
 
         lblMotherboardSocket.setText("jLabel8");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel3.add(lblMotherboardSocket, gridBagConstraints);
@@ -436,8 +472,8 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Overclockable:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel3.add(jLabel11, gridBagConstraints);
 
@@ -459,8 +495,8 @@ public class PCBuilder extends javax.swing.JFrame {
 
         lblMotherboardOverclockable.setText("jLabel14");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         jPanel3.add(lblMotherboardOverclockable, gridBagConstraints);
@@ -472,7 +508,7 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -497,6 +533,149 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel5.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setText("Case:");
+
+        btnRemoveCase.setText("Remove");
+
+        btnChooseCase.setText("...");
+        btnChooseCase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChooseCaseActionPerformed(evt);
+            }
+        });
+
+        txtCase.setEditable(false);
+        txtCase.setText("jTextField1");
+
+        java.awt.GridBagLayout jPanel6Layout = new java.awt.GridBagLayout();
+        jPanel6Layout.columnWidths = new int[] {50, 100, 50, 100, 50, 100};
+        jPanel6.setLayout(jPanel6Layout);
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setText("Motherboard Size:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel7, gridBagConstraints);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel8.setText("Case Size:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel8, gridBagConstraints);
+
+        lblCaseMoboSize.setText("jLabel12");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCaseMoboSize, gridBagConstraints);
+
+        lblCaseSize.setText("jLabel13");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCaseSize, gridBagConstraints);
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel14.setText("PSU Size:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel14, gridBagConstraints);
+
+        lblCasePSUSize.setText("jLabel15");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCasePSUSize, gridBagConstraints);
+
+        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel16.setText("GPU Length:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel16, gridBagConstraints);
+
+        lblCaseGPULen.setText("jLabel17");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCaseGPULen, gridBagConstraints);
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel18.setText("CPU Fan Clearance:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel18, gridBagConstraints);
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel19.setText("PSU Length:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel6.add(jLabel19, gridBagConstraints);
+
+        lblCaseCPUFanClearance.setText("jLabel20");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCaseCPUFanClearance, gridBagConstraints);
+
+        lblCasePSULen.setText("jLabel21");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel6.add(lblCasePSULen, gridBagConstraints);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCase)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnChooseCase)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoveCase)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(btnRemoveCase)
+                    .addComponent(btnChooseCase)
+                    .addComponent(txtCase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -504,9 +683,10 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(243, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -515,7 +695,9 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         pack();
@@ -536,26 +718,41 @@ public class PCBuilder extends javax.swing.JFrame {
     private void btnRemoveCPU1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveCPU1ActionPerformed
         this.pc.clearMotherboard();
     }//GEN-LAST:event_btnRemoveCPU1ActionPerformed
+
+    private void btnChooseCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseCaseActionPerformed
+        (new HardwarePicker(this,pc, EnumHardwareType.CASES)).setVisible(true);
+    }//GEN-LAST:event_btnChooseCaseActionPerformed
     
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseCPU;
     private javax.swing.JButton btnChooseCPU1;
+    private javax.swing.JButton btnChooseCase;
     private javax.swing.JButton btnRemoveCPU;
     private javax.swing.JButton btnRemoveCPU1;
+    private javax.swing.JButton btnRemoveCase;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JLabel lblCPUBasicScore;
     private javax.swing.JLabel lblCPUBasicScoreTitle;
     private javax.swing.JLabel lblCPUCores;
@@ -572,6 +769,12 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblCPUSocketLabel;
     private javax.swing.JLabel lblCPUWattage;
     private javax.swing.JLabel lblCPUWattageLabel;
+    private javax.swing.JLabel lblCaseCPUFanClearance;
+    private javax.swing.JLabel lblCaseGPULen;
+    private javax.swing.JLabel lblCaseMoboSize;
+    private javax.swing.JLabel lblCasePSULen;
+    private javax.swing.JLabel lblCasePSUSize;
+    private javax.swing.JLabel lblCaseSize;
     private javax.swing.JLabel lblMotherboardChipset;
     private javax.swing.JLabel lblMotherboardOverclockable;
     private javax.swing.JLabel lblMotherboardPrice;
@@ -579,6 +782,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblMotherboardSize;
     private javax.swing.JLabel lblMotherboardSocket;
     private javax.swing.JTextField txtCPU;
+    private javax.swing.JTextField txtCase;
     private javax.swing.JTextField txtMotherboard;
     // End of variables declaration//GEN-END:variables
 }

@@ -15,7 +15,8 @@ public enum EnumHardwareType {
     WATER_COOLING("er Cooling"),
     PSU("PUS"),
     CPU("CPU"),
-    MOTHERBOARD("otherboard");
+    MOTHERBOARD("otherboard"),
+    CASES("Cases");
     
     private final String key;
     

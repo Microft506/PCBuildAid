@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import static java.util.Objects.isNull;
-import java.util.regex.*;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Case;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Motherboard;
 import microft.software.pcbuildaid.PCBuildData.Hardware.EnumHardwareType;
 
@@ -49,6 +49,7 @@ public class PCBuildSourceData {
         // Populate components
         this.populateCPUs();
         this.populateMotherboards();
+        this.populateCases();
     }
     
     private void populateCPUs(){
@@ -72,6 +73,17 @@ public class PCBuildSourceData {
         });
         System.out.println(GameData.motherboards.size() + " are valid.");
         
+    }
+    
+    private void populateCases(){
+        System.out.print("Populating Cases...");
+        PCBuilderItemCollection cases = this.getTable(EnumHardwareType.CASES);
+        System.out.print("Found " + cases.getNumRows() + " cases...");
+        cases.getRows().stream().forEach(x->{
+            Case c = new Case(x);
+            if(!isNull(c) && c.isValid()) GameData.cases.add(c);
+        });
+        System.out.println(GameData.cases.size() + " are valid.");
     }
     
     public PCBuilderItemCollection getTable(EnumHardwareType name){
