@@ -10,20 +10,22 @@ package microft.software.pcbuildaid.resources;
  * @author Marc
  */
 public enum EnumHardwareType {
-    RAM("RAM", "RAM"),
-    WATER_COLLANTS("r Collants", "Water Coolant"),
-    WATER_COOLING("er Cooling", "Water Cooler"),
-    PSU("PSU", "Power Supply"),
-    CPU("CPU", "CPU"),
-    MOTHERBOARD("otherboard", "Motherboard"),
-    CASES("Cases", "Case");
+    RAM("RAM", "RAM", 4),
+    WATER_COLLANTS("r Collants", "Water Coolant", 1),
+    WATER_COOLING("er Cooling", "Water Cooler", 1),
+    PSU("PSU", "Power Supply", 1),
+    CPU("CPU", "CPU", 1),
+    MOTHERBOARD("otherboard", "Motherboard", 1),
+    CASES("Cases", "Case", 1);
     
     private final String key;
     private final String description;
+    private final int maxNumberInBuild;
     
-    EnumHardwareType(String key, String description){
+    EnumHardwareType(String key, String description, int maxNumberInBuild){
         this.key = key;
         this.description = description;
+        this.maxNumberInBuild = maxNumberInBuild;
     }
 
     public String getKey() {
@@ -33,5 +35,11 @@ public enum EnumHardwareType {
     public String getDescription() {
         return description;
     }
+
+    public int getMaxNumberInBuild() {
+        return maxNumberInBuild;
+    }
+    
+    
     
 }

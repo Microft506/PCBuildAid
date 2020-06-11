@@ -8,6 +8,7 @@ package microft.software.pcvuildaid.calculators;
 import java.util.ArrayList;
 import java.util.HashMap;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
+import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 
 /**
@@ -20,11 +21,19 @@ public class PCBuild {
     // Maybe some day CPUS will also be multiple hardware.
     // The entry for multi hardware components will always be null.
     private final HashMap<EnumHardwareType, Hardware> hardwareMap = new HashMap<>();
+    private final HashMap<EnumHardwareType, HardwareSet> hardwareSetMap = new HashMap<>();
     
-        private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
+    // Multi hardware objects.
+    
+    
+    private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
     
     public PCBuild() {
-        for(EnumHardwareType hwType:EnumHardwareType.values()) hardwareMap.put(hwType, null);
+        for(EnumHardwareType hwType:EnumHardwareType.values()) {
+            hardwareMap.put(hwType, null);
+            hardwareSetMap.put(hwType, new HardwareSet(hwType));
+        }
+        
     }
     
     public void clearOnHardwareChange(){
@@ -44,13 +53,34 @@ public class PCBuild {
         return hardwareMap.get(hwType);
     }
     
-    public void setHardware(Hardware hw){
-        hardwareMap.put(hw.getHardwareType(), hw);
+    public HardwareSet getHardwareSet(EnumHardwareType hwType){
+        return hardwareSetMap.get(hwType);
+    }
+    
+    public void addHardware(Hardware hw){
+        addHardware(hw,1);
+    }
+    
+    public void addHardware(Hardware hw, int num){
+        if(isSetType(hw.getHardwareType())) 
+            for(int i=0; i<num; ++i) 
+                hardwareSetMap.get(hw.getHardwareType()).addHardware(hw);
+        else hardwareMap.put(hw.getHardwareType(), hw);
         activateHardwareChange();
     }
     
     public void clearHardwareType(EnumHardwareType hwType){
-        hardwareMap.put(hwType, null);
+        if(isSetType(hwType)) hardwareSetMap.get(hwType).clear();
+        else hardwareMap.put(hwType, null);
         activateHardwareChange();
+    }
+    
+    private boolean isSetType(EnumHardwareType hwType){
+        switch(hwType){
+            case RAM:
+                return true;
+            default:
+                return false;
+        }
     }
 }

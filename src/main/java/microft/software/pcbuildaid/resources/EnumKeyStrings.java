@@ -36,6 +36,7 @@ public enum EnumKeyStrings {
     PRICE("Price", "0", Integer.class),
     PSU_SIZE("PSU size", "Unknown", String.class),
     RAM_TYPE("Ram Type", "Unknown", String.class),
+    SELL_PRICE("SellPrice", "0", Integer.class),
     SIZE("Size", "Unknown", String.class),
     SIZE_EACH_GB("Size each (GB)", "0", Integer.class),
     WATTAGE("Wattage", "0", Integer.class),

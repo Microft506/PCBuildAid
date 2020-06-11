@@ -40,6 +40,13 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         this.setExtendedState( this.getExtendedState()|JFrame.MAXIMIZED_BOTH );
         
+        this.btnOKx2.setVisible(hwType.getMaxNumberInBuild() >= 2);
+        
+        this.tblMain.getSelectionModel().addListSelectionListener((e)->{
+            this.btnOK.setEnabled(this.tblMain.getSelectedRowCount() > 0);
+            this.btnOKx2.setEnabled(this.tblMain.getSelectedRowCount() == 1 && hwType.getMaxNumberInBuild() >= 2);
+        });
+        
         populateTable();
     }
     
@@ -77,39 +84,8 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         ArrayList<Hardware> hw = GameData.getHardwareArray(hwType);
 
-        
+        this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         switch(hwType){
-            /*
-            
-                
-                
-                break;
-            case CASES:
-                // Set the headers (First four columns are standard and set later)
-                headers = new String[]{"","","","",
-                    EnumKeyStrings.MOTHERBOARD_SIZES.getKeyText(),
-                    EnumKeyStrings.CASE_SIZE.getKeyText(),
-                    EnumKeyStrings.PSU_SIZE.getKeyText(),
-                    EnumKeyStrings.MAX_GPU_LEN.getKeyText(),
-                    EnumKeyStrings.MAX_CPU_FAN_HEIGHT.getKeyText(),
-                    EnumKeyStrings.MAX_PSU_LEN.getKeyText()
-                }; 
-                
-                // Set the column classes
-                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
-                    String.class, String.class, String.class, Integer.class, Integer.class, Integer.class
-                };
-                
-                // Populate the data.
-                data = new Object[GameData.cases.size()][columnClasses.length];
-                count = 0;
-              
-                
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                
-                break;
-            
-            */
             case PSU:
                 colKeys = new EnumKeyStrings[]{
                     EnumKeyStrings.MANUFACTURER,
@@ -120,7 +96,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.LENGTH
                 };
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                
                 break;
             case MOTHERBOARD:
                 colKeys = new EnumKeyStrings[]{
@@ -134,7 +110,6 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.RAM_TYPE,
                     EnumKeyStrings.CAN_OVERCLOCK,
                 };
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 break;
             case CPU:
                 // Set the headers (First four columns are standard and set later)
@@ -149,7 +124,6 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.MAX_MEM_CHAN,
                     EnumKeyStrings.CPU_SOCKET,
                 };      
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 break;
             case RAM:
                 // Set the headers (First four columns are standard and set later)
@@ -163,7 +137,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.SIZE_EACH_GB,
                     EnumKeyStrings.RAM_TYPE
                 }; 
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 break;
             default:
                 colKeys = new EnumKeyStrings[]{
@@ -171,10 +145,6 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.PART_NAME,
                     EnumKeyStrings.LEVEL,
                     EnumKeyStrings.PRICE,
-                    EnumKeyStrings.MANUFACTURER,
-                    EnumKeyStrings.PART_NAME,
-                    EnumKeyStrings.LEVEL,
-                    EnumKeyStrings.PRICE
                 };
         }
         // Set the column classes, headers, and data.
@@ -235,6 +205,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         btnCancel = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblMain = new javax.swing.JTable();
+        btnOKx2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -276,6 +247,14 @@ public class HardwarePicker extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tblMain);
 
+        btnOKx2.setText("OK (x2)");
+        btnOKx2.setEnabled(false);
+        btnOKx2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKx2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -287,6 +266,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnCancel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnOKx2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnOK)))
                 .addContainerGap())
         );
@@ -298,7 +279,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOK)
-                    .addComponent(btnCancel))
+                    .addComponent(btnCancel)
+                    .addComponent(btnOKx2))
                 .addContainerGap())
         );
 
@@ -306,14 +288,17 @@ public class HardwarePicker extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        int selRow = this.tblMain.getRowSorter().convertRowIndexToModel(this.tblMain.getSelectedRow());
-        if(selRow < 0) return;
-        this.pc.setHardware(GameData.getHardwareArray(hwType).get(selRow));
+        int[] selRows = this.tblMain.getSelectedRows();
+        for(int i=0; i < selRows.length; i++) selRows[i] = this.tblMain.getRowSorter().convertRowIndexToModel(selRows[i]);
+        //int selRow = this.tblMain.getRowSorter().convertRowIndexToModel(this.tblMain.getSelectedRow());
+        if(selRows.length == 0) return;
+        for(int i:selRows)
+            this.pc.addHardware(GameData.getHardwareArray(hwType).get(i));
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void tblMainMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMainMouseClicked
-        this.btnOK.setEnabled(this.tblMain.getSelectedRowCount() > 0);
+        
     }//GEN-LAST:event_tblMainMouseClicked
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -326,9 +311,14 @@ public class HardwarePicker extends javax.swing.JFrame {
         parent.requestFocus();
     }//GEN-LAST:event_formWindowClosed
 
+    private void btnOKx2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKx2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOKx2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
+    private javax.swing.JButton btnOKx2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblMain;
     // End of variables declaration//GEN-END:variables
