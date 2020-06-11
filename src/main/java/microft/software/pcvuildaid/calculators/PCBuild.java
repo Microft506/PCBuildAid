@@ -6,9 +6,9 @@
 package microft.software.pcvuildaid.calculators;
 
 import java.util.ArrayList;
-import static java.util.Objects.isNull;
-import microft.software.pcbuildaid.PCBuildData.Hardware.*;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
+import java.util.HashMap;
+import microft.software.pcbuildaid.PCBuildData.Hardware;
+import microft.software.pcbuildaid.resources.EnumHardwareType;
 
 /**
  *
@@ -16,14 +16,15 @@ import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
  */
 public class PCBuild {
 
-    private Hardware cpu;
-    private Hardware motherboard;
-    private Hardware theCase;
+    // The hashmap is used for one off hardware pieces.  RAM and GPU are different.
+    // Maybe some day CPUS will also be multiple hardware.
+    // The entry for multi hardware components will always be null.
+    private final HashMap<EnumHardwareType, Hardware> hardwareMap = new HashMap<>();
     
-    private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
+        private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
     
     public PCBuild() {
-        
+        for(EnumHardwareType hwType:EnumHardwareType.values()) hardwareMap.put(hwType, null);
     }
     
     public void clearOnHardwareChange(){
@@ -37,52 +38,19 @@ public class PCBuild {
     public void activateHardwareChange(){
         this.onHardwareChange.stream().forEach(x->x.run());
     }
-
-    // ********* CPU
     
-    public Hardware getCpu() {
-        return cpu;
+    // ********* Accessors and setters.
+    public Hardware getHardware(EnumHardwareType hwType){
+        return hardwareMap.get(hwType);
     }
-
-    public void setCpu(Hardware cpu) {
-        this.cpu = cpu;
+    
+    public void setHardware(Hardware hw){
+        hardwareMap.put(hw.getHardwareType(), hw);
         activateHardwareChange();
     }
     
-    public void clearCPU(){
-        this.cpu = null;
-        activateHardwareChange();
-    }
-
-    // ********** MOTHERBOARD
-    
-    public Hardware getMotherboard() {
-        return motherboard;
-    }
-
-    public void setMotherboard(Motherboard motherboard) {
-        this.motherboard = motherboard;
-        activateHardwareChange();
-    }
-    
-    public void clearMotherboard(){
-        this.motherboard = null;
-        activateHardwareChange();
-    }
-
-    // **************** CASE
-    
-    public void setTheCase(Case theCase) {
-        this.theCase = theCase;
-        activateHardwareChange();
-    }
-    
-    public Hardware getTheCase() {
-        return theCase;
-    }
-
-    public void clearThecase(){
-        this.theCase = null;
+    public void clearHardwareType(EnumHardwareType hwType){
+        hardwareMap.put(hwType, null);
         activateHardwareChange();
     }
 }

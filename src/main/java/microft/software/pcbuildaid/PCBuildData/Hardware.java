@@ -3,23 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package microft.software.pcbuildaid.PCBuildData.Hardware.Base;
+package microft.software.pcbuildaid.PCBuildData;
 
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItem;
+import microft.software.pcbuildaid.resources.EnumHardwareType;
 
 /**
  *
  * @author marcc
  */
-public abstract class Hardware {
-    protected PCBuilderItem sourceData;
+public class Hardware {
+    private PCBuilderItem sourceData;
+    private EnumHardwareType hardwareType;
 
-    public Hardware(PCBuilderItem sourceData) {
+    public Hardware(PCBuilderItem sourceData, EnumHardwareType hardwareType) {
         this.sourceData = sourceData;
+        this.hardwareType = hardwareType;
+        
+    }
+
+    public EnumHardwareType getHardwareType() {
+        return hardwareType;
     }
     
     public int readIntVal(EnumKeyStrings key){

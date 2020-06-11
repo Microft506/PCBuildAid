@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
 
 /**
@@ -202,6 +203,7 @@ public class MainUI extends javax.swing.JFrame {
         try {
             // Load in the data
             sourceData = new PCBuildSourceData(filename+ "\\PCBS_Data\\sharedassets1.assets");
+            GameData.populateHardware(sourceData);
         } catch (IOException ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             UIToolBox.popUp(this, "There was a problem reading the game file.  Choose your game location and try again.");

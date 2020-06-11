@@ -5,14 +5,11 @@
  */
 package microft.software.pcbuildaid.PCBuildData;
 
-import microft.software.pcbuildaid.PCBuildData.Hardware.CPU;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItemCollection;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import static java.util.Objects.isNull;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Case;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Motherboard;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 
 /**
@@ -47,43 +44,7 @@ public class PCBuildSourceData {
         for(int i=0; i<tables.size(); ++i) System.out.println("Table " + i + " [" + tables.get(i).getName() + "]");
         
         // Populate components
-        this.populateCPUs();
-        this.populateMotherboards();
-        this.populateCases();
-    }
-    
-    private void populateCPUs(){
-        System.out.print("Populating CPUs...");
-        PCBuilderItemCollection cpuTable = this.getTable(EnumHardwareType.CPU);
-        System.out.print("Found " + cpuTable.getNumRows() + " CPUs...");
-        cpuTable.getRows().stream().forEach(x->{
-            CPU y = new CPU(x);
-            if(!isNull(y) && y.isValid()) GameData.cpus.add(y);
-        });
-        System.out.println(GameData.cpus.size() + " are valid.");
-    }
-    
-    private void populateMotherboards(){
-        System.out.print("Populating Motherboards...");
-        PCBuilderItemCollection moboTable = this.getTable(EnumHardwareType.MOTHERBOARD);
-        System.out.print("Found " + moboTable.getNumRows() + " motherboards...");
-        moboTable.getRows().stream().forEach(x->{
-            Motherboard m = new Motherboard(x);
-            if(!isNull(m) && m.isValid()) GameData.motherboards.add(m);
-        });
-        System.out.println(GameData.motherboards.size() + " are valid.");
         
-    }
-    
-    private void populateCases(){
-        System.out.print("Populating Cases...");
-        PCBuilderItemCollection cases = this.getTable(EnumHardwareType.CASES);
-        System.out.print("Found " + cases.getNumRows() + " cases...");
-        cases.getRows().stream().forEach(x->{
-            Case c = new Case(x);
-            if(!isNull(c) && c.isValid()) GameData.cases.add(c);
-        });
-        System.out.println(GameData.cases.size() + " are valid.");
     }
     
     public PCBuilderItemCollection getTable(EnumHardwareType name){

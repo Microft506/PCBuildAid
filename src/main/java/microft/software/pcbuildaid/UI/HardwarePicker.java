@@ -13,7 +13,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
+import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcvuildaid.calculators.PCBuild;
 
 /**
@@ -59,7 +59,7 @@ public class HardwarePicker extends javax.swing.JFrame {
     
     private Object[][] getKeyData(EnumKeyStrings[] colHeaders, ArrayList<Hardware> hw){
         Object[][] rValue = new Object[hw.size()][colHeaders.length];
-        for(int row=0; row<hw.size(); row++) for(int i=0; i<rValue.length; i++){
+        for(int row=0; row<hw.size(); row++) for(int i=0; i<colHeaders.length; i++){
             if(colHeaders[i].getClassType().equals(Boolean.class)){
                 rValue[row][i] = hw.get(row).readBoolVal(colHeaders[i]);
             } else if(colHeaders[i].getClassType().equals(Integer.class)){
@@ -80,18 +80,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         switch(hwType){
             /*
-            case RAM:
-                // Set the headers (First four columns are standard and set later)
-                EnumKeyStrings[] col = new EnumKeyStrings[]{
-                    EnumKeyStrings.MANUFACTURER,
-                    EnumKeyStrings.PART_NAME,
-                    EnumKeyStrings.LEVEL,
-                    EnumKeyStrings.PRICE,
-                    EnumKeyStrings.LEVEL,
-                    EnumKeyStrings.FREQUENCY,
-                    EnumKeyStrings.SIZE_EACH_GB,
-                    EnumKeyStrings.RAM_TYPE
-                }; 
+            
                 
                 
                 break;
@@ -119,30 +108,34 @@ public class HardwarePicker extends javax.swing.JFrame {
                 this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 
                 break;
-            case MOTHERBOARD:
-                // Set the headers (First four columns are standard and set later)
-                headers = new String[]{
-                    EnumKeyStrings.CHIPSET.getKeyText(),
-                    EnumKeyStrings.CPU_SOCKET.getKeyText(),
-                    EnumKeyStrings.MOTHERBOARD_SIZES.getKeyText(),
-                    EnumKeyStrings.RAM_TYPE.getKeyText(),
-                    EnumKeyStrings.CAN_OVERCLOCK.getKeyText()
-                };   
-                
-                // Set the column classes
-                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
-                    String.class, String.class, String.class, String.class, Boolean.class
-                };
-                
-                // Populate the data.
-                data = new Object[GameData.motherboards.size()][columnClasses.length];
-                count = 0;
-                
-                
-                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                
-                break;
+            
             */
+            case PSU:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.SIZE,
+                    EnumKeyStrings.WATTAGE,
+                    EnumKeyStrings.LENGTH
+                };
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                break;
+            case MOTHERBOARD:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.CHIPSET,
+                    EnumKeyStrings.CPU_SOCKET,
+                    EnumKeyStrings.MOTHERBOARD_SIZES,
+                    EnumKeyStrings.RAM_TYPE,
+                    EnumKeyStrings.CAN_OVERCLOCK,
+                };
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                break;
             case CPU:
                 // Set the headers (First four columns are standard and set later)
                 colKeys = new EnumKeyStrings[]{
@@ -155,13 +148,29 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.MAX_MEM_CHAN,
                     EnumKeyStrings.CPU_SOCKET,
-                };                
-                
-                
+                };      
+                this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                break;
+            case RAM:
+                // Set the headers (First four columns are standard and set later)
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.FREQUENCY,
+                    EnumKeyStrings.SIZE_EACH_GB,
+                    EnumKeyStrings.RAM_TYPE
+                }; 
                 this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 break;
             default:
                 colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
                     EnumKeyStrings.MANUFACTURER,
                     EnumKeyStrings.PART_NAME,
                     EnumKeyStrings.LEVEL,
@@ -299,18 +308,7 @@ public class HardwarePicker extends javax.swing.JFrame {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         int selRow = this.tblMain.getRowSorter().convertRowIndexToModel(this.tblMain.getSelectedRow());
         if(selRow < 0) return;
-        switch(hwType){
-            case CPU:
-                //this.pc.setCpu(GameData.cpus.get(selRow));
-                this.pc.setCpu(GameData.cpus.get(selRow));
-                break;
-            case MOTHERBOARD:
-                this.pc.setMotherboard(GameData.motherboards.get(selRow));
-                break;
-            case CASES:
-                this.pc.setTheCase(GameData.cases.get(selRow));
-                break;
-        }
+        this.pc.setHardware(GameData.getHardwareArray(hwType).get(selRow));
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnOKActionPerformed
 

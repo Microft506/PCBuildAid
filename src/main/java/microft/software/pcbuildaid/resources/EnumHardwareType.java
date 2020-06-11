@@ -10,24 +10,28 @@ package microft.software.pcbuildaid.resources;
  * @author Marc
  */
 public enum EnumHardwareType {
-    RAM("RAM"),
-    WATER_COLLANTS("r Collants"),
-    WATER_COOLING("er Cooling"),
-    PSU("PUS"),
-    CPU("CPU"),
-    MOTHERBOARD("otherboard"),
-    CASES("Cases");
+    RAM("RAM", "RAM"),
+    WATER_COLLANTS("r Collants", "Water Coolant"),
+    WATER_COOLING("er Cooling", "Water Cooler"),
+    PSU("PSU", "Power Supply"),
+    CPU("CPU", "CPU"),
+    MOTHERBOARD("otherboard", "Motherboard"),
+    CASES("Cases", "Case");
     
     private final String key;
+    private final String description;
     
-    EnumHardwareType(String key){
+    EnumHardwareType(String key, String description){
         this.key = key;
+        this.description = description;
     }
 
     public String getKey() {
         return key;
     }
-    
-    
+
+    public String getDescription() {
+        return description;
+    }
     
 }

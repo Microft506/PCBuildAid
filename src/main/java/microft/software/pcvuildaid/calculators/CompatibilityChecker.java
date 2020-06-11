@@ -5,26 +5,18 @@
  */
 package microft.software.pcvuildaid.calculators;
 
+import microft.software.pcbuildaid.PCBuildData.Hardware;
+import java.util.ArrayList;
 import java.util.List;
-import static java.util.Objects.isNull;
-import microft.software.pcbuildaid.PCBuildData.Hardware.*;
 
 /**
  *
  * @author Marc
  */
 public class CompatibilityChecker {
-    public static boolean isCompatible(CPU cpu, Motherboard motherboard){
-        if(isNull(cpu) || isNull(motherboard)) return true;
-        // For these two to be compatible, they must have the same socket, and that's it.
-        return cpu.getSocketType().equalsIgnoreCase(motherboard.getSocketType());
-    }
-    
-    public static boolean isCompatible(Case thecase, Motherboard motherboard){
-        if(isNull(thecase) || isNull(motherboard)) return true;
-        List<String> availSizes = thecase.getMotherboardSizes();
-        availSizes.retainAll(motherboard.getMotherboardSizes());
-        return availSizes.size()>0;
+    public static List<String> isCompatible(Hardware unitA, Hardware unitB){
+        ArrayList<String> rValue = new ArrayList<>();
+        return  rValue;
     }
     
 }
