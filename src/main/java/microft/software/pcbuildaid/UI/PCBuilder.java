@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import static java.util.Objects.isNull;
 import javax.swing.JLabel;
 import microft.software.pcbuildaid.PCBuildData.Hardware.*;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
+import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcvuildaid.calculators.PCBuild;
 
 /**
@@ -65,7 +67,7 @@ public class PCBuilder extends javax.swing.JFrame {
     }
     
     private void displayCurrentMotherboard(){
-        Motherboard mobo = pc.getMotherboard();
+        Hardware mobo = pc.getMotherboard();
         motherboardLabels.stream().forEach(x->x.setText("-"));
         this.txtMotherboard.setText("No Motherboard Selected.");
         if(isNull(mobo)) return;
@@ -79,32 +81,29 @@ public class PCBuilder extends javax.swing.JFrame {
     }
     
     private void displayCurrentCPU(){
-        CPU cpu = pc.getCpu();
+        Hardware cpu = pc.getCpu();
         cpuLabels.stream().forEach(x->x.setText("-"));
         this.txtCPU.setText("No CPU Selected.");
         if(isNull(cpu)) return;
         this.txtCPU.setText(cpu.getConcatName());
-        this.lblCPUPrice.setText("$" + cpu.getPrice() + ".00");
-        this.lblCPUFreq.setText(((double)cpu.getFrequencyKhz()/1000) + " Mhz");
-        this.lblCPUBasicScore.setText(String.valueOf(cpu.getBaselineScore()));
-        this.lblCPUCores.setText(String.valueOf(cpu.getNumberOfCores()));
-        this.lblCPUOverclockable.setText(cpu.isOverclockable() ? "Up to " +
-                ((double)cpu.getMaxFreqKhz()/1000) + " MHz"
-                :"No");
-        this.lblCPUWattage.setText(cpu.getWattage() + " Watts");
-        this.lblCPUMemChan.setText(cpu.getMaxMemChannels() + 
-            (cpu.getMaxMemChannels() > 1 ? " channels":" channel")
-        );
-        this.lblCPUSocket.setText(cpu.getSocketType());
+        this.lblCPUPrice.setText(this.formatPrice(cpu));
+        this.lblCPUFreq.setText(this.formatFreq(cpu));
+        this.lblCPUBasicScore.setText(Integer.toString(cpu.readIntVal(EnumKeyStrings.BASIC_CPU_SCORE)));
+        this.lblCPUCores.setText(Integer.toString(cpu.readIntVal(EnumKeyStrings.CORES)));
+        this.lblCPUOverclockable.setText(this.formatIsOverClockable(cpu));
+        this.lblCPUWattage.setText(this.formatWattage(cpu));
+        this.lblCPUMemChan.setText(this.formatMaxMemChannels(cpu));
+        this.lblCPUSocket.setText(cpu.readVal(EnumKeyStrings.CPU_SOCKET));
     }
     
     private void displayCurrentCase(){
-        Case theCase = pc.getTheCase();
+        Hardware theCase = pc.getTheCase();
         caseLabels.stream().forEach(x->x.setText("-"));
         this.txtCase.setText("No Case Selected.");
         if(isNull(theCase)) return;
         this.txtCase.setText(theCase.getConcatName());
-        this.lblCaseCPUFanClearance.setText(theCase.getMaxCPUFanHeight() + " mm");
+        this.lblCaseCPUFanClearance.setText(theCase.readIntVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) + " mm");
+        this.lblCaseCPUFanClearance.setText(this.formatMaxCPUFanHeight(theCase));
         this.lblCaseGPULen.setText(theCase.getMaxGPULen() + " mm");
         this.lblCaseMoboSize.setText(theCase.getMotherboardSize());
         this.lblCasePSULen.setText(theCase.getMaxPSULen() + " mm");
@@ -115,6 +114,33 @@ public class PCBuilder extends javax.swing.JFrame {
     
     private String formatPrice(int Price){
         return "$" + Price + ".00";
+    }
+    
+    private String formatPrice(Hardware hw){
+        return "$" + hw.getPrice() + ".00";
+    }
+    
+    private String formatIsOverClockable(Hardware hw){
+        return hw.readBoolVal(EnumKeyStrings.CAN_OVERCLOCK) ?
+                "to " + hw.readIntVal(EnumKeyStrings.MAX_FREQ) + " MHz" :
+                "No";
+    }
+    
+    private String formatFreq(Hardware hw){
+        return ((double)hw.readIntVal(EnumKeyStrings.FREQUENCY)/1000) + " MHz";
+    }
+    
+    private String formatWattage(Hardware hw){
+        return hw.readIntVal(EnumKeyStrings.WATTAGE) + " Watts";
+    }
+    
+    private String formatMaxMemChannels(Hardware hw){
+        return hw.readIntVal(EnumKeyStrings.MAX_MEM_CHAN) + 
+                ((hw.readIntVal(EnumKeyStrings.MAX_MEM_CHAN) == 1)? " channel": " channels");
+    }
+    
+    private String formatMaxCPUFanHeight(Hardware hw){
+        return hw.readVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) + "mm";
     }
 
     /**
@@ -187,6 +213,8 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCasePSULen = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         lblCasePrice = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -724,17 +752,44 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel7.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jButton1.setText("...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(18, 18, 18))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1)
+                .addContainerGap(79, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(777, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -746,7 +801,9 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(202, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         pack();
@@ -771,6 +828,10 @@ public class PCBuilder extends javax.swing.JFrame {
     private void btnChooseCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseCaseActionPerformed
         (new HardwarePicker(this,pc, EnumHardwareType.CASES)).setVisible(true);
     }//GEN-LAST:event_btnChooseCaseActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        (new HardwarePicker(this, pc, EnumHardwareType.RAM)).setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     
     
@@ -781,6 +842,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnRemoveCPU;
     private javax.swing.JButton btnRemoveCPU1;
     private javax.swing.JButton btnRemoveCase;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -803,6 +865,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JLabel lblCPUBasicScore;
     private javax.swing.JLabel lblCPUBasicScoreTitle;
     private javax.swing.JLabel lblCPUCores;

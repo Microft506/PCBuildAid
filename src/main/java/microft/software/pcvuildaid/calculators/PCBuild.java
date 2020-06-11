@@ -8,6 +8,7 @@ package microft.software.pcvuildaid.calculators;
 import java.util.ArrayList;
 import static java.util.Objects.isNull;
 import microft.software.pcbuildaid.PCBuildData.Hardware.*;
+import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
 
 /**
  *
@@ -15,9 +16,9 @@ import microft.software.pcbuildaid.PCBuildData.Hardware.*;
  */
 public class PCBuild {
 
-    private CPU cpu;
-    private Motherboard motherboard;
-    private Case theCase;
+    private Hardware cpu;
+    private Hardware motherboard;
+    private Hardware theCase;
     
     private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
     
@@ -36,18 +37,14 @@ public class PCBuild {
     public void activateHardwareChange(){
         this.onHardwareChange.stream().forEach(x->x.run());
     }
-    
-    public boolean isCompatibleWith(CPU cpuToCheck){
-        return CompatibilityChecker.isCompatible(cpuToCheck, motherboard);
-    }
 
     // ********* CPU
     
-    public CPU getCpu() {
+    public Hardware getCpu() {
         return cpu;
     }
 
-    public void setCpu(CPU cpu) {
+    public void setCpu(Hardware cpu) {
         this.cpu = cpu;
         activateHardwareChange();
     }
@@ -59,7 +56,7 @@ public class PCBuild {
 
     // ********** MOTHERBOARD
     
-    public Motherboard getMotherboard() {
+    public Hardware getMotherboard() {
         return motherboard;
     }
 
@@ -80,7 +77,7 @@ public class PCBuild {
         activateHardwareChange();
     }
     
-    public Case getTheCase() {
+    public Hardware getTheCase() {
         return theCase;
     }
 

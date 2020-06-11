@@ -14,7 +14,6 @@ import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
-import microft.software.pcbuildaid.PCBuildData.Hardware.*;
 import microft.software.pcvuildaid.calculators.PCBuild;
 
 /**
@@ -22,12 +21,13 @@ import microft.software.pcvuildaid.calculators.PCBuild;
  * @author marcc
  */
 public class HardwarePicker extends javax.swing.JFrame {
-    private PCBuild pc;
-    private EnumHardwareType hwType;
-    private JFrame parent;
+    private final PCBuild pc;
+    private final EnumHardwareType hwType;
+    private final JFrame parent;
     
     /**
      * Creates new form CPUPicker
+     * @param parent
      * @param pc
      * @param hwType
      */
@@ -43,16 +43,58 @@ public class HardwarePicker extends javax.swing.JFrame {
         populateTable();
     }
     
-    public void populateTable(){
-        final Class[] columnClasses;
-        final String[] headers;
-        final Object[][] data; // [row][col]
+    private Class[] getKeyClasses(EnumKeyStrings[] colHeaders){
+        Class[] rValue = new Class[colHeaders.length];
+        for(int i=0; i<rValue.length; i++)
+            rValue[i] = colHeaders[i].getClassType();
+        return rValue;
+    }
+    
+    private String[] getKeyStrings(EnumKeyStrings[] colHeaders){
+        String[] rValue = new String[colHeaders.length];
+        for(int i=0; i<rValue.length; i++)
+            rValue[i] = colHeaders[i].getKeyText();
+        return rValue;
+    }
+    
+    private Object[][] getKeyData(EnumKeyStrings[] colHeaders, ArrayList<Hardware> hw){
+        Object[][] rValue = new Object[hw.size()][colHeaders.length];
+        for(int row=0; row<hw.size(); row++) for(int i=0; i<rValue.length; i++){
+            if(colHeaders[i].getClassType().equals(Boolean.class)){
+                rValue[row][i] = hw.get(row).readBoolVal(colHeaders[i]);
+            } else if(colHeaders[i].getClassType().equals(Integer.class)){
+                rValue[row][i] = hw.get(row).readIntVal(colHeaders[i]);
+            } else {
+                rValue[row][i] = hw.get(row).readVal(colHeaders[i]);
+            }
+        }
+        return rValue;
+    }
+    
+    public final void populateTable(){
         
-        ArrayList<Hardware> hw = new ArrayList<>();
+        final EnumKeyStrings[] colKeys;
         
-        int count;
+        ArrayList<Hardware> hw = GameData.getHardwareArray(hwType);
+
         
         switch(hwType){
+            /*
+            case RAM:
+                // Set the headers (First four columns are standard and set later)
+                EnumKeyStrings[] col = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.FREQUENCY,
+                    EnumKeyStrings.SIZE_EACH_GB,
+                    EnumKeyStrings.RAM_TYPE
+                }; 
+                
+                
+                break;
             case CASES:
                 // Set the headers (First four columns are standard and set later)
                 headers = new String[]{"","","","",
@@ -72,22 +114,14 @@ public class HardwarePicker extends javax.swing.JFrame {
                 // Populate the data.
                 data = new Object[GameData.cases.size()][columnClasses.length];
                 count = 0;
-                for(Case x:GameData.cases){
-                    hw.add(x);
-                    data[count][4] = x.getMotherboardSize();
-                    data[count][5] = x.getCaseSize();
-                    data[count][6] = x.getPSUSize();
-                    data[count][7] = x.getMaxGPULen();
-                    data[count][8] = x.getMaxCPUFanHeight();
-                    data[count++][9] = x.getMaxPSULen();
-                }
+              
                 
                 this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 
                 break;
             case MOTHERBOARD:
                 // Set the headers (First four columns are standard and set later)
-                headers = new String[]{"","","","",
+                headers = new String[]{
                     EnumKeyStrings.CHIPSET.getKeyText(),
                     EnumKeyStrings.CPU_SOCKET.getKeyText(),
                     EnumKeyStrings.MOTHERBOARD_SIZES.getKeyText(),
@@ -103,62 +137,43 @@ public class HardwarePicker extends javax.swing.JFrame {
                 // Populate the data.
                 data = new Object[GameData.motherboards.size()][columnClasses.length];
                 count = 0;
-                for(Motherboard x:GameData.motherboards){
-                    hw.add(x);
-                    data[count][4] = x.getChipset();
-                    data[count][5] = x.getSocketType();
-                    data[count][6] = x.getMotherboardSize();
-                    data[count][7] = x.getRamType();
-                    data[count++][8] = x.canOverclock();
-                }
+                
                 
                 this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 
                 break;
+            */
             case CPU:
                 // Set the headers (First four columns are standard and set later)
-                headers = new String[]{"","","","",
-                    EnumKeyStrings.CORES.getKeyText(),
-                    EnumKeyStrings.CAN_OVERCLOCK.getKeyText(),
-                    EnumKeyStrings.WATTAGE.getKeyText(),
-                    EnumKeyStrings.MAX_MEM_CHAN.getKeyText(),
-                    EnumKeyStrings.CPU_SOCKET.getKeyText()
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.CORES,
+                    EnumKeyStrings.CAN_OVERCLOCK,
+                    EnumKeyStrings.WATTAGE,
+                    EnumKeyStrings.MAX_MEM_CHAN,
+                    EnumKeyStrings.CPU_SOCKET,
                 };                
-                // Set the column classes
-                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class,
-                    Integer.class, Boolean.class, Integer.class, Integer.class, String.class
-                };
                 
-                // Populate the data.
-                data = new Object[GameData.cpus.size()][columnClasses.length];
-                count = 0;
-                for(CPU x:GameData.cpus){
-                    hw.add(x);
-                    data[count][4] = x.getNumberOfCores();
-                    data[count][5] = x.isOverclockable();
-                    data[count][6] = x.getWattage();
-                    data[count][7] = x.getMaxMemChannels();
-                    data[count++][8] = x.getSocketType();
-                }
                 
                 this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 break;
             default:
-                columnClasses = new Class[]{String.class, String.class, Integer.class, Integer.class};
-                data = new Object[][]{};
-                headers = new String[4];
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE
+                };
         }
-        headers[0] = EnumKeyStrings.MANUFACTURER.getKeyText();
-        headers[1] = EnumKeyStrings.PART_NAME.getKeyText();
-        headers[2] = EnumKeyStrings.LEVEL.getKeyText();
-        headers[3] = EnumKeyStrings.PRICE.getKeyText();
-        for(int i=0; i<hw.size(); ++i){
-            data[i][0]=hw.get(i).getManufacturer();
-            data[i][1]=hw.get(i).getPartName();
-            data[i][2]=hw.get(i).getLevel();
-            data[i][3]=hw.get(i).getPrice();
-        }
+        // Set the column classes, headers, and data.
+        final Class[]    columnClasses = this.getKeyClasses(colKeys);
+        final String[]   headers       = this.getKeyStrings(colKeys);
+        final Object[][] data          = this.getKeyData(colKeys, hw);
         
+        // Build the default table model
         DefaultTableModel dtm = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -286,6 +301,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         if(selRow < 0) return;
         switch(hwType){
             case CPU:
+                //this.pc.setCpu(GameData.cpus.get(selRow));
                 this.pc.setCpu(GameData.cpus.get(selRow));
                 break;
             case MOTHERBOARD:
