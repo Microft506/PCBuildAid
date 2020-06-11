@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import static java.util.Objects.isNull;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Case;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Motherboard;
-import microft.software.pcbuildaid.PCBuildData.Hardware.EnumHardwareType;
+import microft.software.pcbuildaid.resources.EnumHardwareType;
 
 /**
  *

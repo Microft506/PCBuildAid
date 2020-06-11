@@ -5,13 +5,14 @@
  */
 package microft.software.pcbuildaid.UI;
 
+import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
-import microft.software.pcbuildaid.PCBuildData.Hardware.Base.EnumKeyStrings;
+import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Base.Hardware;
 import microft.software.pcbuildaid.PCBuildData.Hardware.*;
 import microft.software.pcvuildaid.calculators.PCBuild;

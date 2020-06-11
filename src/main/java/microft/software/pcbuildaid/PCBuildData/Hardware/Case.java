@@ -5,6 +5,7 @@
  */
 package microft.software.pcbuildaid.PCBuildData.Hardware;
 
+import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import java.util.List;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItem;
 import microft.software.pcbuildaid.PCBuildData.Hardware.Base.*;
