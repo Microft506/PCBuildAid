@@ -10,30 +10,37 @@ package microft.software.pcbuildaid.resources;
  * @author Marc
  */
 public enum EnumHardwareType {
-    RAM("RAM", "RAM", 4),
-    WATER_COLLANTS("r Collants", "Water Coolant", 1),
-    WATER_COOLING("er Cooling", "Water Cooler", 1),
-    PSU("PSU", "Power Supply", 1),
-    CPU("CPU", "CPU", 1),
-    MOTHERBOARD("otherboard", "Motherboard", 1),
-    CASES("Cases", "Case", 1),
-    COOLER("Coolers", "Cooler", 1),
-    STORAGE("Storage", "Storage", 8);
+    RAM(new String[]{"RAM"}, "RAM", 4),
+    WATER_COLLANTS(new String[]{"r Collants"}, "Water Coolant", 1),
+    WATER_COOLING(new String[]{"er Cooling"}, "Water Cooler", 1),
+    PSU(new String[]{"PSU"}, "Power Supply", 1),
+    CPU(new String[]{"CPU"}, "CPU", 1),
+    MOTHERBOARD(new String[]{"otherboard"}, "Motherboard", 1),
+    CASES(new String[]{"Cases"}, "Case", 1),
+    COOLER(new String[]{"Coolers"}, "Cooler", 1),
+    STORAGE(new String[]{"Storage"}, "Storage", 8),
+    GPU(new String[]{"GPU", "Cooled GPU"}, "GPU", 2);
+    //GPU(new String[]{"GPU"}, "GPU", 2);
     
-    private final String key;
+    
+    private final String[] keys;
     private final String description;
     private final int maxNumberInBuild;
     
-    EnumHardwareType(String key, String description, int maxNumberInBuild){
-        this.key = key;
+    EnumHardwareType(String[] keys, String description, int maxNumberInBuild){
+        this.keys = keys;
         this.description = description;
         this.maxNumberInBuild = maxNumberInBuild;
     }
-
-    public String getKey() {
-        return key;
+    
+    public String[] getKeys(){
+        return keys;
     }
 
+    public String getKey() {
+        return keys[0];
+    }
+    
     public String getDescription() {
         return description;
     }

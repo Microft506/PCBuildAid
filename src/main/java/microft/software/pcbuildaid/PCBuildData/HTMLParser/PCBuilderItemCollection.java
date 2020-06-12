@@ -22,6 +22,11 @@ public class PCBuilderItemCollection {
         return rows;
     }
     
+    public PCBuilderItemCollection(String source, String name){
+        this(source);
+        this.name = name;
+    }
+
     public PCBuilderItemCollection(String source) {
         this.source = source;
         buildFromSource();
@@ -51,6 +56,11 @@ public class PCBuilderItemCollection {
         return name;
     }
     
-    
+    public String getSource(){
+        return source;
+    }
 
+    public void setName(String newname){
+        this.name = newname;
+    }
 }

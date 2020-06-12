@@ -48,8 +48,15 @@ public class PCBuildSourceData {
     }
     
     public PCBuilderItemCollection getTable(EnumHardwareType name){
-        for(PCBuilderItemCollection table:tables) if(table.getName().equals(name.getKey())) return table;
-        return null;
+        ArrayList<PCBuilderItemCollection> newTables = new ArrayList<>();
+        for(String key:name.getKeys()) 
+            for(PCBuilderItemCollection table:tables) if(table.getName().equals(key)) newTables.add(table);
+        if(newTables.isEmpty()) return null;
+        StringBuilder newString = new StringBuilder();
+        newTables.stream().forEach(x->newString.append(x.getSource()));
+        return new PCBuilderItemCollection(newString.toString(), name.getKey());
+        //for(PCBuilderItemCollection table:tables) if(table.getName().equals(name.getKey())) return table;
+        //return null;
     }
     
 }
