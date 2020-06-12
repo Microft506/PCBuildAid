@@ -10,6 +10,7 @@ package microft.software.pcbuildaid.resources;
  * @author Marc
  */
 public enum EnumKeyStrings {
+    AIR_FLOW("Air Flow", "0", Integer.class),
     BASIC_CPU_SCORE("Basic CPU Score", "0", Integer.class),
     CAN_OVERCLOCK("Can Overclock", "No", Boolean.class),
     CASE_SIZE("Case Size", "Unknown", String.class),
@@ -17,7 +18,9 @@ public enum EnumKeyStrings {
     CONCAT_NAME("Concat name", "Unknown", String.class),
     CORES("Cores", "1", Integer.class),
     CPU_SOCKET("CPU Socket", "Unknown", String.class), 
+    CPU_SOCKET_LIST("CPU Socket List", "Unknown", String.class),
     FREQUENCY("Frequency", "0", Integer.class),
+    HEIGHT("Height", "0", Integer.class),
     ID("ID", "Unknown", String.class),
     IMPORTED_TO_GAME("Imported to Game", "Yes", Boolean.class),
     IN_GAME("In Game", "Yes", Boolean.class),
@@ -33,6 +36,7 @@ public enum EnumKeyStrings {
     MODULARITY("Modularity", "None", String.class),
     MOTHERBOARD_SIZES("Motherboard Size", "", String.class),
     PART_NAME("Part Name", "Unknown", String.class),
+    PART_TYPE("Part Type", "Unknown", String.class),
     PRICE("Price", "0", Integer.class),
     PSU_SIZE("PSU size", "Unknown", String.class),
     RAM_TYPE("Ram Type", "Unknown", String.class),

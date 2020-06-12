@@ -28,6 +28,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private final ArrayList<JLabel> motherboardLabels = new ArrayList<>();
     private final ArrayList<JLabel> caseLabels = new ArrayList<>();
     private final ArrayList<JLabel> psuLabels = new ArrayList<>();
+    private final ArrayList<JLabel> coolerLabels = new ArrayList<>();
     
     /**
      * Creates new form BenchmarkCalculatorUI
@@ -66,6 +67,8 @@ public class PCBuilder extends javax.swing.JFrame {
         psuLabels.add(this.lblPSUSize);
         psuLabels.add(this.lblPSUWattage);
         
+        
+        
         this.lstRam.getSelectionModel().addListSelectionListener((e)->ramListSelectionListener());
         ramListSelectionListener();
         
@@ -89,6 +92,20 @@ public class PCBuilder extends javax.swing.JFrame {
         displayCurrentCase();
         displayCurrentPSU();
         displayCurrentRAM();
+        displayCurrentCooler();
+    }
+    
+    private void displayCurrentCooler(){
+        Hardware cooler = pc.getHardware(EnumHardwareType.COOLER);
+        coolerLabels.stream().forEach(x->x.setText("-"));
+        this.txtCooler.setText("No Cooler Selected");
+        if(isNull(cooler)) return;
+        this.txtCooler.setText(cooler.getConcatName());
+        this.lblCoolerPrice.setText(this.formatPrice(cooler));
+        this.lblCoolerAirFlow.setText(cooler.readVal(EnumKeyStrings.AIR_FLOW) + " CFM");
+        this.lblCoolerHeight.setText(cooler.readVal(EnumKeyStrings.HEIGHT) + " mm");
+        this.lblCoolerSockets.setText(cooler.readVal(EnumKeyStrings.CPU_SOCKET_LIST));
+        this.lblCoolerType.setText(cooler.readVal(EnumKeyStrings.PART_TYPE));
     }
     
     private void displayCurrentPSU(){
@@ -159,8 +176,6 @@ public class PCBuilder extends javax.swing.JFrame {
         this.lblRamType.setText(this.pc.getHardwareSet(EnumHardwareType.RAM).readUniqueStringVals(EnumKeyStrings.RAM_TYPE).stream().collect(Collectors.joining(", ")));
         this.lblRamCap.setText(this.pc.getHardwareSet(EnumHardwareType.RAM).readSumIntVal(EnumKeyStrings.SIZE_EACH_GB) + " GB");
         this.lblRamPrice.setText(this.formatPrice(this.pc.getHardwareSet(EnumHardwareType.RAM)));
-        
-        
     }
     
     private String formatPrice(int Price){
@@ -301,6 +316,22 @@ public class PCBuilder extends javax.swing.JFrame {
         btnRAMAdd1More = new javax.swing.JButton();
         btnRAMAdd2More = new javax.swing.JButton();
         jLabel20 = new javax.swing.JLabel();
+        jPanel11 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        btnCoolerRemove = new javax.swing.JButton();
+        btnCoolerAdd = new javax.swing.JButton();
+        txtCooler = new javax.swing.JTextField();
+        jPanel12 = new javax.swing.JPanel();
+        jLabel29 = new javax.swing.JLabel();
+        lblCoolerPrice = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        lblCoolerAirFlow = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        lblCoolerHeight = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        lblCoolerType = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        lblCoolerSockets = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -414,7 +445,7 @@ public class PCBuilder extends javax.swing.JFrame {
 
         lblCPUMemChanLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblCPUMemChanLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCPUMemChanLabel.setText("Mem. Channels");
+        lblCPUMemChanLabel.setText("Mem. Channels:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -1116,6 +1147,145 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        jPanel11.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel15.setText("Cooler:");
+
+        btnCoolerRemove.setText("Remove");
+        btnCoolerRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCoolerRemoveActionPerformed(evt);
+            }
+        });
+
+        btnCoolerAdd.setText("...");
+        btnCoolerAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCoolerAddActionPerformed(evt);
+            }
+        });
+
+        txtCooler.setEditable(false);
+        txtCooler.setText("jTextField1");
+
+        java.awt.GridBagLayout jPanel12Layout = new java.awt.GridBagLayout();
+        jPanel12Layout.columnWidths = new int[] {100, 100, 100, 100};
+        jPanel12.setLayout(jPanel12Layout);
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel29.setText("Price:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel29, gridBagConstraints);
+
+        lblCoolerPrice.setText("jLabel30");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel12.add(lblCoolerPrice, gridBagConstraints);
+
+        jLabel31.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel31.setText("Height:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel31, gridBagConstraints);
+
+        lblCoolerAirFlow.setText("jLabel32");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel12.add(lblCoolerAirFlow, gridBagConstraints);
+
+        jLabel33.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel33.setText("Air Flow:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel33, gridBagConstraints);
+
+        lblCoolerHeight.setText("jLabel34");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel12.add(lblCoolerHeight, gridBagConstraints);
+
+        jLabel25.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel25.setText("Type:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel25, gridBagConstraints);
+
+        lblCoolerType.setText("jLabel35");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel12.add(lblCoolerType, gridBagConstraints);
+
+        jLabel36.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel36.setText("Scoket(s):");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel36, gridBagConstraints);
+
+        lblCoolerSockets.setText("jLabel37");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel12.add(lblCoolerSockets, gridBagConstraints);
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCooler)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCoolerAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCoolerRemove)))
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(btnCoolerRemove)
+                    .addComponent(btnCoolerAdd)
+                    .addComponent(txtCooler, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1123,13 +1293,15 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(861, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1139,13 +1311,15 @@ public class PCBuilder extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         pack();
@@ -1203,6 +1377,14 @@ public class PCBuilder extends javax.swing.JFrame {
     private void btnRAMAdd2MoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRAMAdd2MoreActionPerformed
         this.pc.getHardwareSet(EnumHardwareType.RAM).addHardware(this.lstRam.getSelectedIndex(), EnumHardwareType.RAM.getMaxNumberInBuild());
     }//GEN-LAST:event_btnRAMAdd2MoreActionPerformed
+
+    private void btnCoolerAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCoolerAddActionPerformed
+        (new HardwarePicker(this,pc,EnumHardwareType.COOLER)).setVisible(true);
+    }//GEN-LAST:event_btnCoolerAddActionPerformed
+
+    private void btnCoolerRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCoolerRemoveActionPerformed
+        this.pc.clearHardwareType(EnumHardwareType.COOLER);
+    }//GEN-LAST:event_btnCoolerRemoveActionPerformed
     
     
     
@@ -1211,6 +1393,8 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnChooseCPU1;
     private javax.swing.JButton btnChooseCase;
     private javax.swing.JButton btnChoosePSU;
+    private javax.swing.JButton btnCoolerAdd;
+    private javax.swing.JButton btnCoolerRemove;
     private javax.swing.JButton btnRAMAdd1More;
     private javax.swing.JButton btnRAMAdd2More;
     private javax.swing.JButton btnRemoveCPU;
@@ -1225,6 +1409,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -1235,10 +1420,15 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1247,6 +1437,8 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1279,6 +1471,11 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblCasePSUSize;
     private javax.swing.JLabel lblCasePrice;
     private javax.swing.JLabel lblCaseSize;
+    private javax.swing.JLabel lblCoolerAirFlow;
+    private javax.swing.JLabel lblCoolerHeight;
+    private javax.swing.JLabel lblCoolerPrice;
+    private javax.swing.JLabel lblCoolerSockets;
+    private javax.swing.JLabel lblCoolerType;
     private javax.swing.JLabel lblMotherboardChipset;
     private javax.swing.JLabel lblMotherboardOverclockable;
     private javax.swing.JLabel lblMotherboardPrice;
@@ -1296,6 +1493,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JList<String> lstRam;
     private javax.swing.JTextField txtCPU;
     private javax.swing.JTextField txtCase;
+    private javax.swing.JTextField txtCooler;
     private javax.swing.JTextField txtMotherboard;
     private javax.swing.JTextField txtPSU;
     // End of variables declaration//GEN-END:variables

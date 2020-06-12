@@ -16,7 +16,8 @@ public enum EnumHardwareType {
     PSU("PSU", "Power Supply", 1),
     CPU("CPU", "CPU", 1),
     MOTHERBOARD("otherboard", "Motherboard", 1),
-    CASES("Cases", "Case", 1);
+    CASES("Cases", "Case", 1),
+    COOLER("Coolers", "Cooler", 1);
     
     private final String key;
     private final String description;

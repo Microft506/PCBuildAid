@@ -106,6 +106,18 @@ public class HardwarePicker extends javax.swing.JFrame {
 
         this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         switch(hwType){
+            case COOLER:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.PART_TYPE,
+                    EnumKeyStrings.AIR_FLOW,
+                    EnumKeyStrings.HEIGHT,
+                    EnumKeyStrings.CPU_SOCKET_LIST
+                };
+                break;
             case PSU:
                 colKeys = new EnumKeyStrings[]{
                     EnumKeyStrings.MANUFACTURER,
