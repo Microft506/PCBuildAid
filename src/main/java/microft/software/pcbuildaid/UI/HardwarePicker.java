@@ -157,6 +157,19 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.CPU_SOCKET,
                 };      
                 break;
+            case STORAGE:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.PART_TYPE,
+                    EnumKeyStrings.AIR_FLOW,
+                    EnumKeyStrings.HEIGHT,
+                    EnumKeyStrings.CPU_SOCKET_LIST
+                };
+                this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                break;
             case RAM:
                 // Set the headers (First four columns are standard and set later)
                 colKeys = new EnumKeyStrings[]{

@@ -43,6 +43,7 @@ public enum EnumKeyStrings {
     SELL_PRICE("SellPrice", "0", Integer.class),
     SIZE("Size", "Unknown", String.class),
     SIZE_EACH_GB("Size each (GB)", "0", Integer.class),
+    SIZE_GB("Size (GB)", "0", Integer.class),
     WATTAGE("Wattage", "0", Integer.class),
     WORKING_IN_GAME("Working in game", "Yes", Boolean.class);
 

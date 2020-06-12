@@ -64,13 +64,9 @@ public class PCBuild {
     }
 
     public void addHardware(Hardware hw, int num) {
-        if (isSetType(hw.getHardwareType())) {
-            for (int i = 0; i < num; ++i) {
-                hardwareSetMap.get(hw.getHardwareType()).addHardware(hw);
-            }
-        } else {
-            hardwareMap.put(hw.getHardwareType(), hw);
-        }
+        if (isSetType(hw.getHardwareType())) 
+            for (int i = 0; i < num; ++i) hardwareSetMap.get(hw.getHardwareType()).addHardware(hw);
+        else hardwareMap.put(hw.getHardwareType(), hw);
         activateHardwareChange();
     }
 
@@ -84,11 +80,6 @@ public class PCBuild {
     }
 
     private boolean isSetType(EnumHardwareType hwType) {
-        switch (hwType) {
-            case RAM:
-                return true;
-            default:
-                return false;
-        }
+        return (hwType.getMaxNumberInBuild() > 1);
     }
 }

@@ -72,9 +72,7 @@ public class HardwareSet {
     }
 
     public void addHardware(Hardware hw) {
-        if (hw.getHardwareType().equals(EnumHardwareType.RAM)) {
-            hardwareList.add(hw);
-        }
+        hardwareList.add(hw);
         trimListToMax();
         this.fireListChange();
     }
