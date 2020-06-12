@@ -41,13 +41,33 @@ public class HardwarePicker extends javax.swing.JFrame {
         this.setExtendedState( this.getExtendedState()|JFrame.MAXIMIZED_BOTH );
         
         this.btnOKx2.setVisible(hwType.getMaxNumberInBuild() >= 2);
+        this.btnOKx4.setVisible(hwType.getMaxNumberInBuild() >= 4);
         
         this.tblMain.getSelectionModel().addListSelectionListener((e)->{
             this.btnOK.setEnabled(this.tblMain.getSelectedRowCount() > 0);
-            this.btnOKx2.setEnabled(this.tblMain.getSelectedRowCount() == 1 && hwType.getMaxNumberInBuild() >= 2);
+            this.btnOKx2.setEnabled((this.tblMain.getSelectedRowCount() * 2) <= hwType.getMaxNumberInBuild());
+            this.btnOKx4.setEnabled((this.tblMain.getSelectedRowCount() * 4) <= hwType.getMaxNumberInBuild());
         });
         
         populateTable();
+    }
+    
+    private void addItems(int count){
+        // Grab an array of selection indexes.
+        int[] selRows = this.tblMain.getSelectedRows();
+
+        // Compensate for any sorting that might have been done.
+        for(int i=0; i < selRows.length; i++) selRows[i] = this.tblMain.getRowSorter().convertRowIndexToModel(selRows[i]);
+
+        // Exit if there's nothing (which shouldn't ever happen)
+        if(selRows.length == 0) return;
+        
+        // Iterate through each selection and add as many times as requested.
+        for(int i:selRows)  for (int j=0; j<count; ++j)
+            this.pc.addHardware(GameData.getHardwareArray(hwType).get(i));
+        
+        // Close the window.
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
     
     private Class[] getKeyClasses(EnumKeyStrings[] colHeaders){
@@ -206,6 +226,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblMain = new javax.swing.JTable();
         btnOKx2 = new javax.swing.JButton();
+        btnOKx4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -255,6 +276,14 @@ public class HardwarePicker extends javax.swing.JFrame {
             }
         });
 
+        btnOKx4.setText("OK (x4)");
+        btnOKx4.setEnabled(false);
+        btnOKx4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKx4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -266,6 +295,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnCancel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnOKx4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnOKx2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnOK)))
@@ -280,7 +311,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOK)
                     .addComponent(btnCancel)
-                    .addComponent(btnOKx2))
+                    .addComponent(btnOKx2)
+                    .addComponent(btnOKx4))
                 .addContainerGap())
         );
 
@@ -288,17 +320,11 @@ public class HardwarePicker extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        int[] selRows = this.tblMain.getSelectedRows();
-        for(int i=0; i < selRows.length; i++) selRows[i] = this.tblMain.getRowSorter().convertRowIndexToModel(selRows[i]);
-        //int selRow = this.tblMain.getRowSorter().convertRowIndexToModel(this.tblMain.getSelectedRow());
-        if(selRows.length == 0) return;
-        for(int i:selRows)
-            this.pc.addHardware(GameData.getHardwareArray(hwType).get(i));
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        addItems(1);
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void tblMainMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMainMouseClicked
-        
+        if(evt.getClickCount() == 2) addItems(1);
     }//GEN-LAST:event_tblMainMouseClicked
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -312,13 +338,18 @@ public class HardwarePicker extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void btnOKx2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKx2ActionPerformed
-        // TODO add your handling code here:
+        addItems(2);
     }//GEN-LAST:event_btnOKx2ActionPerformed
+
+    private void btnOKx4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKx4ActionPerformed
+        addItems(4);
+    }//GEN-LAST:event_btnOKx4ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
     private javax.swing.JButton btnOKx2;
+    private javax.swing.JButton btnOKx4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblMain;
     // End of variables declaration//GEN-END:variables

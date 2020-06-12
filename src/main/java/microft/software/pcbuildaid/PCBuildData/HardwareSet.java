@@ -1,63 +1,128 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License
+ *
+ * Copyright 2020 Marc Cabot.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package microft.software.pcbuildaid.PCBuildData;
 
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.Objects.isNull;
+import java.util.stream.Collectors;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
+import microft.software.pcbuildaid.resources.EnumKeyStrings;
 
 /**
  *
- * @author Marc
+ * @author Marc Cabot
  */
-public class HardwareSet{
+public class HardwareSet {
+
     private final ArrayList<Hardware> hardwareList = new ArrayList<>();
-    private final ArrayList<Runnable> onListChange = new ArrayList<>();
-    
+    private Runnable onListChange;
+
     private final EnumHardwareType hwType;
 
     public HardwareSet(EnumHardwareType hwType) {
         this.hwType = hwType;
     }
-    
-    public void clear(){
+
+    public void clear() {
         hardwareList.clear();
+        this.fireListChange();
+    }
+
+    public void fireListChange() {
+        if (!isNull(onListChange)) {
+            onListChange.run();
+        }
+    }
+
+    public void clearOnListChange() {
+        onListChange = null;
+    }
+
+    public void OnListChange(Runnable r) {
+        onListChange = r;
     }
     
-    public void fireListChange(){
-        onListChange.stream().forEach(x->x.run());
+    public void addHardware(int index, int count){
+        for(int i=0; i<count; ++i) 
+            this.hardwareList.add(this.hardwareList.get(index));
+        this.trimListToMax();
+        this.fireListChange();
+    }
+
+    public void addHardware(Hardware hw) {
+        if (hw.getHardwareType().equals(EnumHardwareType.RAM)) {
+            hardwareList.add(hw);
+        }
+        trimListToMax();
+        this.fireListChange();
     }
     
-    public void clearOnListChange(){
-        onListChange.clear();
+    private void trimListToMax(){
+        while(this.hardwareList.size() > this.hwType.getMaxNumberInBuild()) this.hardwareList.remove(0);
     }
     
-    public void OnListChange(Runnable r){
-        onListChange.add(r);
+    public void makeAllLikeIndex(int index){
+        Hardware src = hardwareList.get(index);
+        hardwareList.clear();
+        for(int i=0; i<hwType.getMaxNumberInBuild(); ++i) hardwareList.add(src);
+        this.fireListChange();
     }
     
-    public void addHardware(Hardware hw){
-        if(this.getCount() > hwType.getMaxNumberInBuild()) hardwareList.remove(0);
-        if(hw.getHardwareType().equals(EnumHardwareType.RAM)) hardwareList.add(hw);
+    public int getNumEmptySlots(){
+        return this.hwType.getMaxNumberInBuild() - this.hardwareList.size();
     }
-    
-    public int getCount(){
+
+    public int getCount() {
         return hardwareList.size();
     }
-    
-    public void removeHardwareAtIndex(int index){
-        if(index < hardwareList.size()) hardwareList.remove(index);
+
+    public void removeHardwareAtIndex(int index) {
+        if (index < hardwareList.size()) {
+            hardwareList.remove(index);
+        }
+        this.fireListChange();
     }
 
     public EnumHardwareType getHardwareType() {
         return hwType;
     }
-    
-    public List<Hardware> getHardwareList(){
+
+    public List<Hardware> getHardwareList() {
         return this.hardwareList;
     }
+
+    public int readSumIntVal(EnumKeyStrings key) {
+        return hardwareList.stream().collect(Collectors.summingInt(x -> x.readIntVal(key)));
+    }
     
+    public List<String> readUniqueStringVals(EnumKeyStrings key){
+        ArrayList<String> rValue = new ArrayList<>();
+        this.hardwareList.stream().forEach(x->{
+            if(!rValue.contains(x.readVal(key))) rValue.add(x.readVal(key));
+        });
+        return rValue;
+    }
+
 }

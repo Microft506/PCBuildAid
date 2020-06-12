@@ -7,12 +7,14 @@ package microft.software.pcbuildaid.UI;
 
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import static java.util.Objects.isNull;
-import javax.swing.DefaultListModel;
+import java.util.stream.Collectors;
 import javax.swing.JLabel;
+import javax.swing.event.ListSelectionEvent;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
-import static microft.software.pcbuildaid.resources.EnumHardwareType.RAM;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcvuildaid.calculators.PCBuild;
 
@@ -64,8 +66,19 @@ public class PCBuilder extends javax.swing.JFrame {
         psuLabels.add(this.lblPSUSize);
         psuLabels.add(this.lblPSUWattage);
         
+        this.lstRam.getSelectionModel().addListSelectionListener((e)->ramListSelectionListener());
+        ramListSelectionListener();
+        
         pc.addONHardwareChange(()->reactToHardwareChange());
         pc.activateHardwareChange();
+    }
+    
+    private void ramListSelectionListener(){
+        this.btnRAMAdd1More.setEnabled(
+                (this.lstRam.getSelectedIndices().length <= this.pc.getHardwareSet(EnumHardwareType.RAM).getNumEmptySlots()) &&
+                this.lstRam.getSelectedIndices().length > 0
+        );
+        this.btnRAMAdd2More.setEnabled(this.lstRam.getSelectedIndices().length == 1);
     }
     
     private void reactToHardwareChange(){
@@ -143,10 +156,20 @@ public class PCBuilder extends javax.swing.JFrame {
         String[] lines = new String[ram.getCount()];
         for(int i=0; i<lines.length; i++) lines[i] = ram.getHardwareList().get(i).getConcatName();
         this.lstRam.setListData(lines);
+        this.lblRamType.setText(this.pc.getHardwareSet(EnumHardwareType.RAM).readUniqueStringVals(EnumKeyStrings.RAM_TYPE).stream().collect(Collectors.joining(", ")));
+        this.lblRamCap.setText(this.pc.getHardwareSet(EnumHardwareType.RAM).readSumIntVal(EnumKeyStrings.SIZE_EACH_GB) + " GB");
+        this.lblRamPrice.setText(this.formatPrice(this.pc.getHardwareSet(EnumHardwareType.RAM)));
+        
+        
     }
     
     private String formatPrice(int Price){
         return "$" + Price + ".00";
+    }
+    
+    private String formatPrice(HardwareSet hws){
+        return "$" + hws.readSumIntVal(EnumKeyStrings.PRICE) + ((hws.readSumIntVal(EnumKeyStrings.SELL_PRICE) > 0) ? 
+                " ($" + hws.readSumIntVal(EnumKeyStrings.SELL_PRICE) + " used)" : ".00");
     }
     
     private String formatPrice(Hardware hw){
@@ -267,6 +290,17 @@ public class PCBuilder extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         lstRam = new javax.swing.JList<>();
+        jButton2 = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        lblRamCap = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        lblRamPrice = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        lblRamType = new javax.swing.JLabel();
+        btnRAMAdd1More = new javax.swing.JButton();
+        btnRAMAdd2More = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -963,25 +997,123 @@ public class PCBuilder extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(lstRam);
 
+        jButton2.setText("Clear/Remove");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        java.awt.GridBagLayout jPanel10Layout = new java.awt.GridBagLayout();
+        jPanel10Layout.columnWidths = new int[] {75, 75, 75, 75, 75, 75};
+        jPanel10.setLayout(jPanel10Layout);
+
+        lblRamCap.setText("jLabel20");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel10.add(lblRamCap, gridBagConstraints);
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel22.setText("Price:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel10.add(jLabel22, gridBagConstraints);
+
+        lblRamPrice.setText("jLabel25");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel10.add(lblRamPrice, gridBagConstraints);
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel27.setText("Type:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel10.add(jLabel27, gridBagConstraints);
+
+        jLabel28.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel28.setText("Capacity:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel10.add(jLabel28, gridBagConstraints);
+
+        lblRamType.setText("jLabel29");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel10.add(lblRamType, gridBagConstraints);
+
+        btnRAMAdd1More.setText("Add 1 More of Selected");
+        btnRAMAdd1More.setEnabled(false);
+        btnRAMAdd1More.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRAMAdd1MoreActionPerformed(evt);
+            }
+        });
+
+        btnRAMAdd2More.setText("Fill with Selected");
+        btnRAMAdd2More.setEnabled(false);
+        btnRAMAdd2More.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRAMAdd2MoreActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel20.setText("RAM:");
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+            .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRAMAdd1More, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRAMAdd2More, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                        .addComponent(jLabel20)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(11, Short.MAX_VALUE))))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(btnRAMAdd2More)
+                    .addComponent(btnRAMAdd1More))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -997,7 +1129,7 @@ public class PCBuilder extends javax.swing.JFrame {
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(188, Short.MAX_VALUE))
+                .addContainerGap(861, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1007,13 +1139,13 @@ public class PCBuilder extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         pack();
@@ -1054,6 +1186,23 @@ public class PCBuilder extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         (new HardwarePicker(this,pc, EnumHardwareType.RAM)).setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Integer[] selIndexes = Arrays.stream(this.lstRam.getSelectedIndices()).boxed().toArray(Integer[]::new);
+        if(selIndexes.length == 0) this.pc.getHardwareSet(EnumHardwareType.RAM).clear();
+        else {    
+            Arrays.sort(selIndexes, Collections.reverseOrder());
+            for(int selIndex:selIndexes) this.pc.getHardwareSet(EnumHardwareType.RAM).removeHardwareAtIndex(selIndex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnRAMAdd1MoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRAMAdd1MoreActionPerformed
+        for(int i:this.lstRam.getSelectedIndices()) this.pc.getHardwareSet(EnumHardwareType.RAM).addHardware(i, 1);
+    }//GEN-LAST:event_btnRAMAdd1MoreActionPerformed
+
+    private void btnRAMAdd2MoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRAMAdd2MoreActionPerformed
+        this.pc.getHardwareSet(EnumHardwareType.RAM).addHardware(this.lstRam.getSelectedIndex(), EnumHardwareType.RAM.getMaxNumberInBuild());
+    }//GEN-LAST:event_btnRAMAdd2MoreActionPerformed
     
     
     
@@ -1062,11 +1211,14 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnChooseCPU1;
     private javax.swing.JButton btnChooseCase;
     private javax.swing.JButton btnChoosePSU;
+    private javax.swing.JButton btnRAMAdd1More;
+    private javax.swing.JButton btnRAMAdd2More;
     private javax.swing.JButton btnRemoveCPU;
     private javax.swing.JButton btnRemoveCPU1;
     private javax.swing.JButton btnRemoveCase;
     private javax.swing.JButton btnRemovePSU;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1078,10 +1230,14 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1090,6 +1246,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1133,6 +1290,9 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblPSUPrice;
     private javax.swing.JLabel lblPSUSize;
     private javax.swing.JLabel lblPSUWattage;
+    private javax.swing.JLabel lblRamCap;
+    private javax.swing.JLabel lblRamPrice;
+    private javax.swing.JLabel lblRamType;
     private javax.swing.JList<String> lstRam;
     private javax.swing.JTextField txtCPU;
     private javax.swing.JTextField txtCase;

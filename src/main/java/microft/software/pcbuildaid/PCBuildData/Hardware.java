@@ -16,8 +16,8 @@ import microft.software.pcbuildaid.resources.EnumHardwareType;
  * @author marcc
  */
 public class Hardware {
-    private PCBuilderItem sourceData;
-    private EnumHardwareType hardwareType;
+    private final PCBuilderItem sourceData;
+    private final EnumHardwareType hardwareType;
 
     public Hardware(PCBuilderItem sourceData, EnumHardwareType hardwareType) {
         this.sourceData = sourceData;
