@@ -34,6 +34,8 @@
                       <Component id="btnCancel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkLevelFilter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="chkCompatible" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnOKx4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -58,6 +60,7 @@
                   <Component id="btnOKx2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnOKx4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="chkLevelFilter" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="chkCompatible" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -125,6 +128,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLevelFilterActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="chkCompatible">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Compatible with current build"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkCompatibleActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

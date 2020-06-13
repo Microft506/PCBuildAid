@@ -211,6 +211,19 @@ public class HardwarePicker extends javax.swing.JFrame {
                 };
                 this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 break;
+            case CASES:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.MOTHERBOARD_SIZES,
+                    EnumKeyStrings.MAX_PSU_LEN,
+                    EnumKeyStrings.MAX_CPU_FAN_HEIGHT,
+                    EnumKeyStrings.MAX_GPU_LEN
+                };
+                break;
+     
             default:
                 colKeys = new EnumKeyStrings[]{
                     EnumKeyStrings.MANUFACTURER,
@@ -282,6 +295,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         btnOKx2 = new javax.swing.JButton();
         btnOKx4 = new javax.swing.JButton();
         chkLevelFilter = new javax.swing.JCheckBox();
+        chkCompatible = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -343,6 +357,13 @@ public class HardwarePicker extends javax.swing.JFrame {
             }
         });
 
+        chkCompatible.setText("Compatible with current build");
+        chkCompatible.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkCompatibleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -355,6 +376,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                         .addComponent(btnCancel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(chkLevelFilter)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkCompatible)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnOKx4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -374,7 +397,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                     .addComponent(btnCancel)
                     .addComponent(btnOKx2)
                     .addComponent(btnOKx4)
-                    .addComponent(chkLevelFilter))
+                    .addComponent(chkLevelFilter)
+                    .addComponent(chkCompatible))
                 .addContainerGap())
         );
 
@@ -411,11 +435,16 @@ public class HardwarePicker extends javax.swing.JFrame {
         populateTable();
     }//GEN-LAST:event_chkLevelFilterActionPerformed
 
+    private void chkCompatibleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkCompatibleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chkCompatibleActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
     private javax.swing.JButton btnOKx2;
     private javax.swing.JButton btnOKx4;
+    private javax.swing.JCheckBox chkCompatible;
     private javax.swing.JCheckBox chkLevelFilter;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblMain;

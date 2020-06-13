@@ -10,12 +10,15 @@ import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import static java.util.Objects.isNull;
 import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
+import microft.software.pcvuildaid.calculators.CompatibilityChecker;
+import microft.software.pcvuildaid.calculators.CompatibilityNote;
 import microft.software.pcvuildaid.calculators.PCBuild;
 import microft.software.pcvuildaid.calculators.PCCostTracker;
 
@@ -133,6 +136,11 @@ public class PCBuilder extends javax.swing.JFrame {
         displayCurrentStorage();
         displayCurrentGPUs();
         updatePrices();
+        
+        List<CompatibilityNote> compatNotes = CompatibilityChecker.checkInterCompatibilities(pc);
+        //this.lstNotes.removeAll();
+        this.lstNotes.setListData(compatNotes.stream().map(x->x.getNote()).toArray(String[]::new));
+            
     }
     
     private void displayCurrentCooler(){
@@ -154,7 +162,7 @@ public class PCBuilder extends javax.swing.JFrame {
         this.txtPSU.setText("No PSU Selected.");
         if(isNull(psu)) return;
         this.txtPSU.setText(psu.getConcatName());
-        this.lblPSULen.setText(psu.readVal(EnumKeyStrings.LENGTH));
+        this.lblPSULen.setText(psu.readVal(EnumKeyStrings.LENGTH) + " mm");
         this.lblPSUModulatiry.setText(psu.readVal(EnumKeyStrings.MODULARITY));
         this.lblPSUPrice.setText(this.formatPrice(psu));
         this.lblPSUSize.setText(psu.readVal(EnumKeyStrings.SIZE));
@@ -197,7 +205,7 @@ public class PCBuilder extends javax.swing.JFrame {
         this.txtCase.setText("No Case Selected.");
         if(isNull(theCase)) return;
         this.txtCase.setText(theCase.getConcatName());
-        this.lblCaseCPUFanClearance.setText(theCase.readIntVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) + " mm");
+        this.lblCaseCPUFanClearance.setText(theCase.readVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) + " mm");
         this.lblCaseCPUFanClearance.setText(this.formatMaxCPUFanHeight(theCase));
         this.lblCaseGPULen.setText(theCase.readVal(EnumKeyStrings.MAX_GPU_LEN) + " mm");
         this.lblCaseMoboSize.setText(theCase.readVal(EnumKeyStrings.MOTHERBOARD_SIZES));
@@ -424,7 +432,7 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel46 = new javax.swing.JLabel();
         lblGPUVRam = new javax.swing.JLabel();
         jPanel17 = new javax.swing.JPanel();
-        jLabel35 = new javax.swing.JLabel();
+        lblCostAnalyzer = new javax.swing.JLabel();
         jPanel18 = new javax.swing.JPanel();
         jLabel41 = new javax.swing.JLabel();
         jLabel42 = new javax.swing.JLabel();
@@ -462,6 +470,12 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCostStorage = new javax.swing.JLabel();
         lblCostGPU = new javax.swing.JLabel();
         lblCostTotal = new javax.swing.JLabel();
+        jPanel19 = new javax.swing.JPanel();
+        lblCostAnalyzer1 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        lstNotes = new javax.swing.JList<>();
+        jPanel20 = new javax.swing.JPanel();
+        lblCostAnalyzer2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
@@ -1699,8 +1713,8 @@ public class PCBuilder extends javax.swing.JFrame {
 
         jPanel17.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
-        jLabel35.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel35.setText("Price Checker:");
+        lblCostAnalyzer.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCostAnalyzer.setText("Cost Analyzer:");
 
         jPanel18.setLayout(new java.awt.GridBagLayout());
 
@@ -2011,16 +2025,73 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel35)))
+                    .addComponent(lblCostAnalyzer)))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel35)
+                .addComponent(lblCostAnalyzer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
+        );
+
+        jPanel19.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        lblCostAnalyzer1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCostAnalyzer1.setText("Notes:");
+
+        lstNotes.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane4.setViewportView(lstNotes);
+
+        javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
+        jPanel19.setLayout(jPanel19Layout);
+        jPanel19Layout.setHorizontalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addGroup(jPanel19Layout.createSequentialGroup()
+                        .addComponent(lblCostAnalyzer1)
+                        .addGap(0, 478, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel19Layout.setVerticalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblCostAnalyzer1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4)
+                .addContainerGap())
+        );
+
+        jPanel20.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        lblCostAnalyzer2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCostAnalyzer2.setText("Wattage Checker:");
+
+        javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
+        jPanel20.setLayout(jPanel20Layout);
+        jPanel20Layout.setHorizontalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblCostAnalyzer2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel20Layout.setVerticalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel20Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblCostAnalyzer2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -2030,7 +2101,12 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -2042,8 +2118,9 @@ public class PCBuilder extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2067,8 +2144,11 @@ public class PCBuilder extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         pack();
@@ -2300,7 +2380,6 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
-    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
@@ -2335,7 +2414,9 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -2346,6 +2427,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblCPUBasicScore;
     private javax.swing.JLabel lblCPUBasicScoreTitle;
     private javax.swing.JLabel lblCPUCores;
@@ -2374,6 +2456,9 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblCoolerPrice;
     private javax.swing.JLabel lblCoolerSockets;
     private javax.swing.JLabel lblCoolerType;
+    private javax.swing.JLabel lblCostAnalyzer;
+    private javax.swing.JLabel lblCostAnalyzer1;
+    private javax.swing.JLabel lblCostAnalyzer2;
     private javax.swing.JLabel lblCostCPU;
     private javax.swing.JLabel lblCostCase;
     private javax.swing.JLabel lblCostCooler;
@@ -2405,6 +2490,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblStorageType;
     private javax.swing.JLabel lblStoragelTotalCapacity;
     private javax.swing.JList<String> lstGPU;
+    private javax.swing.JList<String> lstNotes;
     private javax.swing.JList<String> lstRam;
     private javax.swing.JList<String> lstStorage;
     private javax.swing.JTextField txtCPU;
