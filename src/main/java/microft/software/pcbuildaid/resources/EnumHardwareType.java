@@ -22,7 +22,6 @@ public enum EnumHardwareType {
     GPU(new String[]{"GPU", "Cooled GPU"}, "GPU", 2);
     //GPU(new String[]{"GPU"}, "GPU", 2);
     
-    
     private final String[] keys;
     private final String description;
     private final int maxNumberInBuild;
@@ -48,7 +47,5 @@ public enum EnumHardwareType {
     public int getMaxNumberInBuild() {
         return maxNumberInBuild;
     }
-    
-    
     
 }

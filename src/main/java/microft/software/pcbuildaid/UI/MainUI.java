@@ -10,7 +10,6 @@ import static java.util.Objects.isNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import microft.software.pcbuildaid.PCBuildData.GameData;
@@ -22,13 +21,21 @@ import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
  */
 public class MainUI extends javax.swing.JFrame {
 
+    private PCBuildSourceData sourceData;
+   
+    
     /**
      * Creates new form Main
      */
     public MainUI() {
-        final Preferences userRoot = Preferences.userRoot();
-        usr = Preferences.userNodeForPackage(userRoot.getClass());
+        
         initComponents();
+    }
+    
+    public void moveLevel(int inc){
+        this.txtLevel.setText(Integer.toString(Integer.parseInt(this.txtLevel.getText())+inc));
+        GameData.setLevel(Integer.parseInt(this.txtLevel.getText()));
+        GameData.setSetting("gameLevel", Integer.toString(GameData.getLevel()));
     }
 
     /**
@@ -50,6 +57,9 @@ public class MainUI extends javax.swing.JFrame {
         btnLaunchBenchmarkCalculator = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        btnLevelDown = new javax.swing.JButton();
+        txtLevel = new javax.swing.JTextField();
+        btnLevelUp = new javax.swing.JButton();
 
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
@@ -114,6 +124,25 @@ public class MainUI extends javax.swing.JFrame {
         jButton5.setText("jButton5");
         jPanel2.add(jButton5);
 
+        btnLevelDown.setText("-");
+        btnLevelDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLevelDownActionPerformed(evt);
+            }
+        });
+
+        txtLevel.setEditable(false);
+        txtLevel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtLevel.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtLevel.setText("0");
+
+        btnLevelUp.setText("+");
+        btnLevelUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLevelUpActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -122,7 +151,14 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnLevelDown)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLevelUp)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -132,7 +168,12 @@ public class MainUI extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLevelDown)
+                    .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLevelUp))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         pack();
@@ -145,6 +186,14 @@ public class MainUI extends javax.swing.JFrame {
     private void btnLaunchBenchmarkCalculatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaunchBenchmarkCalculatorActionPerformed
         (new PCBuilder()).setVisible(true);
     }//GEN-LAST:event_btnLaunchBenchmarkCalculatorActionPerformed
+
+    private void btnLevelDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelDownActionPerformed
+        moveLevel(-1);
+    }//GEN-LAST:event_btnLevelDownActionPerformed
+
+    private void btnLevelUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelUpActionPerformed
+        moveLevel(1);
+    }//GEN-LAST:event_btnLevelUpActionPerformed
 
     /**
      * @param args the command line arguments
@@ -189,6 +238,8 @@ public class MainUI extends javax.swing.JFrame {
                 Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }
             MainUI me = new MainUI();
+            me.txtLevel.setText(GameData.getSetting("gameLevel", "5"));
+            GameData.setLevel(Integer.parseInt(GameData.getSetting("gameLevel", "5")));
             me.setVisible(true);
             me.loadGameData();
         });
@@ -197,7 +248,7 @@ public class MainUI extends javax.swing.JFrame {
 
     private void loadGameData() {
         // Pull the game directory location from the registry or apply default.
-        String filename = usr.get("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
+        String filename = GameData.getSetting("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
         this.txtGameFile.setText(filename);
                 
         try {
@@ -227,7 +278,7 @@ public class MainUI extends javax.swing.JFrame {
         }
         
         // If you've made it this far, it must be ok.  Save the new file location.
-        usr.put("DefaultDir", this.txtGameFile.getText());
+        GameData.setSetting("DefaultDir", this.txtGameFile.getText());
         setButtonsEnabled();
     }
     
@@ -236,11 +287,12 @@ public class MainUI extends javax.swing.JFrame {
         this.btnLaunchBenchmarkCalculator.setEnabled(en);
     }
 
-    private PCBuildSourceData sourceData;
-    private Preferences usr;
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLaunchBenchmarkCalculator;
+    private javax.swing.JButton btnLevelDown;
+    private javax.swing.JButton btnLevelUp;
     private javax.swing.JFileChooser dirChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
@@ -250,5 +302,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField txtGameFile;
+    private javax.swing.JTextField txtLevel;
     // End of variables declaration//GEN-END:variables
 }

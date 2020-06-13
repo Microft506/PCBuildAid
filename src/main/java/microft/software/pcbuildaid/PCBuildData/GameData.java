@@ -8,6 +8,7 @@ package microft.software.pcbuildaid.PCBuildData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static java.util.Objects.isNull;
+import java.util.prefs.Preferences;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItemCollection;
 import microft.software.pcbuildaid.resources.*;
 
@@ -17,9 +18,21 @@ import microft.software.pcbuildaid.resources.*;
  */
 public class GameData {
     private static final ArrayList<PCBuilderItemCollection> tables = new ArrayList<>();
-    
+    private static int level;
     private static final HashMap<EnumHardwareType, ArrayList<Hardware>> hardwareListMap = new HashMap<>();
-     
+
+    public static String getSetting(String key, String defaultString){
+        final Preferences userRoot = Preferences.userRoot();
+        final Preferences usr = Preferences.userNodeForPackage(userRoot.getClass());
+        return usr.get(key, defaultString);
+    }
+    
+    public static void setSetting(String key, String value){
+        final Preferences userRoot = Preferences.userRoot();
+        final Preferences usr = Preferences.userNodeForPackage(userRoot.getClass());
+        usr.put(key, value);
+    }
+    
     public static void populateHardware(PCBuildSourceData pcbsd){
         for(EnumHardwareType hwType: EnumHardwareType.values()){
             hardwareListMap.put(hwType, new ArrayList<>());
@@ -49,4 +62,14 @@ public class GameData {
     public static ArrayList<Hardware> getHardwareArray(EnumHardwareType hwType){
         return hardwareListMap.get(hwType);
     }
+
+    public static int getLevel() {
+        return level;
+    }
+
+    public static void setLevel(int level) {
+        GameData.level = level;
+    }
+    
+    
 }

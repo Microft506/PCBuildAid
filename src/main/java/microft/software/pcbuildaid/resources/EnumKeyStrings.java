@@ -19,6 +19,8 @@ public enum EnumKeyStrings {
     CORES("Cores", "1", Integer.class),
     CPU_SOCKET("CPU Socket", "Unknown", String.class), 
     CPU_SOCKET_LIST("CPU Socket List", "Unknown", String.class),
+    DOUBLE_GPU_SLI("Double GPU SLI", "No", Boolean.class),
+    DOUBLE_GPU_SUPPORTED("Double GPU supported", "No", Boolean.class),
     FREQUENCY("Frequency", "0", Integer.class),
     HEIGHT("Height", "0", Integer.class),
     ID("ID", "Unknown", String.class),
@@ -44,6 +46,7 @@ public enum EnumKeyStrings {
     SIZE("Size", "Unknown", String.class),
     SIZE_EACH_GB("Size each (GB)", "0", Integer.class),
     SIZE_GB("Size (GB)", "0", Integer.class),
+    VRAM_GB("VRAM (GB)", "0", Integer.class),
     WATTAGE("Wattage", "0", Integer.class),
     WORKING_IN_GAME("Working in game", "Yes", Boolean.class);
 

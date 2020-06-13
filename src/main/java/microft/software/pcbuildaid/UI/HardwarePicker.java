@@ -8,6 +8,8 @@ package microft.software.pcbuildaid.UI;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +26,7 @@ public class HardwarePicker extends javax.swing.JFrame {
     private final PCBuild pc;
     private final EnumHardwareType hwType;
     private final JFrame parent;
+    private List<Hardware> tableList;
     
     /**
      * Creates new form CPUPicker
@@ -49,6 +52,8 @@ public class HardwarePicker extends javax.swing.JFrame {
             this.btnOKx4.setEnabled((this.tblMain.getSelectedRowCount() * 4) <= hwType.getMaxNumberInBuild());
         });
         
+        this.chkLevelFilter.setText("Filter to level " + GameData.getLevel());
+        
         populateTable();
     }
     
@@ -64,7 +69,8 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         // Iterate through each selection and add as many times as requested.
         for(int i:selRows)  for (int j=0; j<count; ++j)
-            this.pc.addHardware(GameData.getHardwareArray(hwType).get(i));
+            //this.pc.addHardware(GameData.getHardwareArray(hwType).get(i));
+            this.pc.addHardware(this.tableList.get(i));
         
         // Close the window.
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
@@ -84,7 +90,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         return rValue;
     }
     
-    private Object[][] getKeyData(EnumKeyStrings[] colHeaders, ArrayList<Hardware> hw){
+    private Object[][] getKeyData(EnumKeyStrings[] colHeaders, List<Hardware> hw){
         Object[][] rValue = new Object[hw.size()][colHeaders.length];
         for(int row=0; row<hw.size(); row++) for(int i=0; i<colHeaders.length; i++){
             if(colHeaders[i].getClassType().equals(Boolean.class)){
@@ -102,8 +108,15 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         final EnumKeyStrings[] colKeys;
         
-        ArrayList<Hardware> hw = GameData.getHardwareArray(hwType);
+        ArrayList<Hardware> hwOG = GameData.getHardwareArray(hwType);
 
+        List<Hardware> hw = hwOG.stream().filter(x->{
+            return x.getLevel()<=GameData.getLevel() || !this.chkLevelFilter.isSelected();
+            
+        }).collect(Collectors.toList());
+        
+        tableList = hw;
+        
         this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         switch(hwType){
             case COOLER:
@@ -184,6 +197,20 @@ public class HardwarePicker extends javax.swing.JFrame {
                 }; 
                 this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 break;
+            case GPU:
+                colKeys = new EnumKeyStrings[]{
+                    EnumKeyStrings.MANUFACTURER,
+                    EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.LEVEL,
+                    EnumKeyStrings.PRICE,
+                    EnumKeyStrings.VRAM_GB,
+                    EnumKeyStrings.WATTAGE,
+                    EnumKeyStrings.LENGTH,
+                    EnumKeyStrings.DOUBLE_GPU_SLI,
+                    EnumKeyStrings.DOUBLE_GPU_SUPPORTED
+                };
+                this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                break;
             default:
                 colKeys = new EnumKeyStrings[]{
                     EnumKeyStrings.MANUFACTURER,
@@ -196,6 +223,8 @@ public class HardwarePicker extends javax.swing.JFrame {
         final Class[]    columnClasses = this.getKeyClasses(colKeys);
         final String[]   headers       = this.getKeyStrings(colKeys);
         final Object[][] data          = this.getKeyData(colKeys, hw);
+        
+        if(data.length == 0) return;
         
         // Build the default table model
         DefaultTableModel dtm = new DefaultTableModel(){
@@ -252,6 +281,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         tblMain = new javax.swing.JTable();
         btnOKx2 = new javax.swing.JButton();
         btnOKx4 = new javax.swing.JButton();
+        chkLevelFilter = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -277,13 +307,10 @@ public class HardwarePicker extends javax.swing.JFrame {
 
         tblMain.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         tblMain.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -309,6 +336,13 @@ public class HardwarePicker extends javax.swing.JFrame {
             }
         });
 
+        chkLevelFilter.setText("Available at level");
+        chkLevelFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLevelFilterActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -319,6 +353,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnCancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkLevelFilter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnOKx4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -337,7 +373,8 @@ public class HardwarePicker extends javax.swing.JFrame {
                     .addComponent(btnOK)
                     .addComponent(btnCancel)
                     .addComponent(btnOKx2)
-                    .addComponent(btnOKx4))
+                    .addComponent(btnOKx4)
+                    .addComponent(chkLevelFilter))
                 .addContainerGap())
         );
 
@@ -370,11 +407,16 @@ public class HardwarePicker extends javax.swing.JFrame {
         addItems(4);
     }//GEN-LAST:event_btnOKx4ActionPerformed
 
+    private void chkLevelFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkLevelFilterActionPerformed
+        populateTable();
+    }//GEN-LAST:event_chkLevelFilterActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
     private javax.swing.JButton btnOKx2;
     private javax.swing.JButton btnOKx4;
+    private javax.swing.JCheckBox chkLevelFilter;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblMain;
     // End of variables declaration//GEN-END:variables

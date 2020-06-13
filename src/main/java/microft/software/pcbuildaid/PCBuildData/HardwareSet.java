@@ -115,6 +115,14 @@ public class HardwareSet {
         return hardwareList.stream().collect(Collectors.summingInt(x -> x.readIntVal(key)));
     }
     
+    public int readMaxIntVal(EnumKeyStrings key){
+        return hardwareList.stream().mapToInt(x->x.readIntVal(key)).max().getAsInt();
+    }
+    
+    public int readMinIntVal(EnumKeyStrings key){
+        return hardwareList.stream().mapToInt(x->x.readIntVal(key)).min().getAsInt();
+    }
+    
     public List<String> readUniqueStringVals(EnumKeyStrings key){
         ArrayList<String> rValue = new ArrayList<>();
         this.hardwareList.stream().forEach(x->{
