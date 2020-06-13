@@ -5,9 +5,11 @@
  */
 package microft.software.pcbuildaid.PCBuildData;
 
+import java.util.ArrayList;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import microft.software.pcbuildaid.PCBuildData.HTMLParser.PCBuilderItem;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 
@@ -41,20 +43,22 @@ public class Hardware {
             return def;
         }
     }
-    
+        
     public boolean readBoolVal(EnumKeyStrings key){
         String v = this.readVal(key);
         return (v.equalsIgnoreCase("yes") || v.equals("1"));
     }
     
     public String readVal(EnumKeyStrings ks){
+        if(ks.equals(EnumKeyStrings._MULTI_GPU_SUPPORT))
+            return this.getDualGPUCompatList().stream().collect(Collectors.joining(", "));
         return readVal(ks.getKeyText(), ks.getDefValText());
     }
     
     public List<String> readValList(EnumKeyStrings ks){
         return Arrays.asList(this.readVal(ks).split("\\s*,\\s*"));
     }
-    
+        
     private String readVal(String key, String def){
         return sourceData.getCellData(key, def);
     }
@@ -81,6 +85,13 @@ public class Hardware {
     
     public int getSellPrice(){
         return this.readIntVal(EnumKeyStrings.SELL_PRICE);
+    }
+    
+    private List<String>getDualGPUCompatList(){
+        ArrayList<String> rValue = new ArrayList<>();
+        if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SLI) || this.readBoolVal(EnumKeyStrings.SUPPORT_SLI)) rValue.add("SLI");
+        if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SUPPORTED) || this.readBoolVal(EnumKeyStrings.SUPPORT_CROSSFIRE)) rValue.add("Crossfire");
+        return rValue;
     }
     
     public boolean isValid(){

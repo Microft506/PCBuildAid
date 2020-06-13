@@ -38,6 +38,11 @@ class HardwarePair {
     private final Hardware[] hwa;
     private final HardwareSet[] hwsa;
 
+    public HardwarePair(HardwareSet a){
+        hwsa = new HardwareSet[]{a};
+        hwa = new Hardware[0];
+    }
+    
     public HardwarePair(HardwareSet a, HardwareSet b){
         hwsa = new HardwareSet[]{a,b};
         hwa = new Hardware[0];

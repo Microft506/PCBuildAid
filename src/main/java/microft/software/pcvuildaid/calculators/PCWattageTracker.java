@@ -27,6 +27,6 @@ package microft.software.pcvuildaid.calculators;
  *
  * @author marcc
  */
-public class IList {
+public class PCWattageTracker {
     
 }

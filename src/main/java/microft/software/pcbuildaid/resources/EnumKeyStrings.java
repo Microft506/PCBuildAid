@@ -35,6 +35,7 @@ public enum EnumKeyStrings {
     MAX_GPU_LEN("Max GPU length", "999", Integer.class),
     MAX_MEM_CHAN("Max Memory Channels", "1", Integer.class),
     MAX_PSU_LEN("Max PSU length", "999", Integer.class),
+    MEMORY_SPEED_STEPS("Memory Speed Steps", "", String.class),
     MODULARITY("Modularity", "None", String.class),
     MOTHERBOARD_SIZES("Motherboard Size", "", String.class),
     PART_NAME("Part Name", "Unknown", String.class),
@@ -46,9 +47,12 @@ public enum EnumKeyStrings {
     SIZE("Size", "Unknown", String.class),
     SIZE_EACH_GB("Size each (GB)", "0", Integer.class),
     SIZE_GB("Size (GB)", "0", Integer.class),
+    SUPPORT_SLI("Support SLI", "No", Boolean.class),
+    SUPPORT_CROSSFIRE("Support Crossfire", "No", Boolean.class),
     VRAM_GB("VRAM (GB)", "0", Integer.class),
     WATTAGE("Wattage", "0", Integer.class),
-    WORKING_IN_GAME("Working in game", "Yes", Boolean.class);
+    WORKING_IN_GAME("Working in game", "Yes", Boolean.class), 
+    _MULTI_GPU_SUPPORT("Multi-GPU Support", "", String.class);
 
     private final String text, defText;
     private final Class c;

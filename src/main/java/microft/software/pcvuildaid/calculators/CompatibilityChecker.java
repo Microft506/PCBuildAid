@@ -8,6 +8,7 @@ package microft.software.pcvuildaid.calculators;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static java.util.Objects.isNull;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
@@ -46,14 +47,32 @@ public class CompatibilityChecker {
         
         HardwareSet gpus = xpc.getHardwareSet(EnumHardwareType.GPU);
         rValue.addAll(isCompatible(theCase, gpus));
+        rValue.addAll(isCompatible(motherboard, gpus));
+        rValue.addAll(isCompatible(gpus));
         
         Hardware cpu = xpc.getHardware(EnumHardwareType.CPU);
         rValue.addAll(isCompatible(motherboard, cpu));
+        
+        HardwareSet rams = xpc.getHardwareSet(EnumHardwareType.RAM);
+        rValue.addAll(isCompatible(motherboard, rams));
+        rValue.addAll(isCompatible(rams));
+        
+        
         
         return rValue;
     }
     
     
+    public static List<CompatibilityNote> isCompatible(HardwareSet units){
+        ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(units)) return rValue;
+        HardwarePair hwp = new HardwarePair(units);
+        if(hwp.isOnlyOfType(EnumHardwareType.GPU))
+            rValue.addAll(checkGPUs(hwp));
+        if(hwp.isOnlyOfType(EnumHardwareType.RAM))
+            rValue.addAll(checkRAMs(hwp));
+        return rValue;
+    }
     
     public static List<CompatibilityNote> isCompatible(Hardware unitA, HardwareSet unitsB){
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
@@ -61,6 +80,8 @@ public class CompatibilityChecker {
         HardwarePair hwp = new HardwarePair(unitA, unitsB);
         if(hwp.isOfTypes(EnumHardwareType.CASES, EnumHardwareType.GPU))
             rValue.addAll(checkCaseGPU(hwp));
+        if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.GPU))
+            rValue.addAll(checkMotherboardGPU(hwp));
         return rValue;
     }
     
@@ -76,6 +97,8 @@ public class CompatibilityChecker {
             rValue.addAll(checkCaseCooler(hwp));
         if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.CPU))
             rValue.addAll(checkMotherboardCPU(hwp));
+        if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.RAM))
+            rValue.addAll(checkMotherboardRAM(hwp));
         return  rValue;
     }
     
@@ -135,6 +158,53 @@ public class CompatibilityChecker {
             rValue.add(new CompatibilityNote("CPU Socket ("
                     + cpu.readVal(EnumKeyStrings.CPU_SOCKET) +") does not match motherboard ("
                     + motherboard.readVal(EnumKeyStrings.CPU_SOCKET) +")", 3));
+        return rValue;
+    }
+    
+    private static List<CompatibilityNote> checkMotherboardRAM(HardwarePair hwp){
+        // This is an incredible waste of time...
+        Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
+        HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
+        ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        rams.getHardwareList().stream().forEach(ram->{
+            if(!motherboard.readVal(EnumKeyStrings.RAM_TYPE).equals(ram.readVal(EnumKeyStrings.RAM_TYPE)))
+                rValue.add(new CompatibilityNote("RAM: " + ram.readVal(EnumKeyStrings.PART_NAME)
+                        + " type (" + ram.readVal(EnumKeyStrings.RAM_TYPE)
+                        + ") does not match motherboard (" + motherboard.readVal(EnumKeyStrings.RAM_TYPE)
+                        + ").", 3));
+        });
+        return rValue;
+    }
+    
+    private static List<CompatibilityNote> checkMotherboardGPU(HardwarePair hwp){
+        Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
+        HardwareSet gpus = hwp.getHardwareSet(EnumHardwareType.GPU);
+        ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(gpus.getCount() < 2) return rValue; // if there's only one video board, it's all good.
+        if(Collections.disjoint(motherboard.readValList(EnumKeyStrings._MULTI_GPU_SUPPORT), gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT)))
+            rValue.add(new CompatibilityNote("Motherboard does not support selected dual GPUs", 3));
+        
+        return rValue;
+    }
+    
+    private static List<CompatibilityNote> checkGPUs(HardwarePair hwp){
+        HardwareSet gpus = hwp.getHardwareSet(EnumHardwareType.GPU);
+        ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(gpus.getCount() < 2) return rValue;
+        if(!gpus.getHardwareList().get(0).readVal(EnumKeyStrings.CHIPSET).equals(gpus.getHardwareList().get(1).readVal(EnumKeyStrings.CHIPSET)))
+            rValue.add(new CompatibilityNote("Dual GPUs have different chipsets.", 3));
+        if(gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT).isEmpty())
+            rValue.add(new CompatibilityNote("Dual GPUs do not have a common bridge support (such as SLI or Crossfire)", 3));
+        return rValue;
+    }
+    
+    private static List<CompatibilityNote> checkRAMs(HardwarePair hwp){
+        HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
+        ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(rams.getCount() < 2) return rValue;
+        // RAM sticks must be of all the same frequency.
+        if(rams.readCommonStringVals(EnumKeyStrings.FREQUENCY).isEmpty())
+            rValue.add(new CompatibilityNote("RAM contains sticks of varying frequencies",3));
         return rValue;
     }
 }

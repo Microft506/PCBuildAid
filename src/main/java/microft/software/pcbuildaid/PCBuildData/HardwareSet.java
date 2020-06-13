@@ -41,8 +41,17 @@ public class HardwareSet {
 
     private final EnumHardwareType hwType;
 
+    
+    
     public HardwareSet(EnumHardwareType hwType) {
         this.hwType = hwType;
+    }
+    
+    public HardwareSet combine(HardwareSet hws){
+        HardwareSet rValue = new HardwareSet(this.hwType);
+        this.hardwareList.stream().forEach(x->rValue.addHardware(x));
+        hws.hardwareList.stream().forEach(x->rValue.addHardware(x));
+        return rValue;
     }
 
     public void clear() {
@@ -128,6 +137,20 @@ public class HardwareSet {
         this.hardwareList.stream().forEach(x->{
             if(!rValue.contains(x.readVal(key))) rValue.add(x.readVal(key));
         });
+        return rValue;
+    }
+    
+    public List<String> readCommonStringVals(EnumKeyStrings key){
+        List<String> rValue;
+        if(this.hardwareList.isEmpty()) return new ArrayList<>();
+        rValue = this.hardwareList.get(0).readValList(key).stream().filter(rv->{
+            if(rv.length()==0) return false;
+            boolean rVal = true;
+            for(Hardware hw:this.hardwareList)
+                rVal = rVal && hw.readValList(key).contains(rv);
+            return rVal;
+        }).collect(Collectors.toList());
+        
         return rValue;
     }
     

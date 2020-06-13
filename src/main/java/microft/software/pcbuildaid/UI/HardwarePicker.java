@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
+import microft.software.pcvuildaid.calculators.CompatibilityChecker;
 import microft.software.pcvuildaid.calculators.PCBuild;
 
 /**
@@ -110,10 +111,14 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         ArrayList<Hardware> hwOG = GameData.getHardwareArray(hwType);
 
-        List<Hardware> hw = hwOG.stream().filter(x->{
-            return x.getLevel()<=GameData.getLevel() || !this.chkLevelFilter.isSelected();
-            
-        }).collect(Collectors.toList());
+        // First filter also copies to a local list.
+        List<Hardware> hw = hwOG.stream().filter(x->
+            x.getLevel()<=GameData.getLevel() || !this.chkLevelFilter.isSelected()
+        ).collect(Collectors.toList());
+        
+        // Now we can just remove from that list.
+        if(this.chkCompatible.isSelected())
+            hw.removeIf(x->!CompatibilityChecker.checkInterCompatibilities(pc, x).isEmpty());
         
         tableList = hw;
         
@@ -154,6 +159,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.MOTHERBOARD_SIZES,
                     EnumKeyStrings.RAM_TYPE,
                     EnumKeyStrings.CAN_OVERCLOCK,
+                    EnumKeyStrings._MULTI_GPU_SUPPORT
                 };
                 break;
             case CPU:
@@ -201,13 +207,13 @@ public class HardwarePicker extends javax.swing.JFrame {
                 colKeys = new EnumKeyStrings[]{
                     EnumKeyStrings.MANUFACTURER,
                     EnumKeyStrings.PART_NAME,
+                    EnumKeyStrings.CHIPSET,
                     EnumKeyStrings.LEVEL,
                     EnumKeyStrings.PRICE,
                     EnumKeyStrings.VRAM_GB,
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.LENGTH,
-                    EnumKeyStrings.DOUBLE_GPU_SLI,
-                    EnumKeyStrings.DOUBLE_GPU_SUPPORTED
+                    EnumKeyStrings._MULTI_GPU_SUPPORT
                 };
                 this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 break;
@@ -436,7 +442,7 @@ public class HardwarePicker extends javax.swing.JFrame {
     }//GEN-LAST:event_chkLevelFilterActionPerformed
 
     private void chkCompatibleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkCompatibleActionPerformed
-        // TODO add your handling code here:
+        populateTable();
     }//GEN-LAST:event_chkCompatibleActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -82,7 +82,6 @@ public class PCCostTracker {
      *
      */
     public void reactToPCHardwareChange(){
-        System.out.println("Reacting to hardware change.");
         for(EnumHardwareType hwt: EnumHardwareType.values()){
             if(this.include.get(hwt)) {
                 newPrices.put(hwt,
