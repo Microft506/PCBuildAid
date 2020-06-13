@@ -136,10 +136,12 @@ public class HardwareSet {
     }
     
     public int readMaxIntVal(EnumKeyStrings key){
+        if(hardwareList.isEmpty()) return 0;
         return hardwareList.stream().mapToInt(x->x.readIntVal(key)).max().getAsInt();
     }
     
     public int readMinIntVal(EnumKeyStrings key){
+        if(hardwareList.isEmpty()) return 0;
         return hardwareList.stream().mapToInt(x->x.readIntVal(key)).min().getAsInt();
     }
     

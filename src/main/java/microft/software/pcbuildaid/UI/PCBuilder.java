@@ -247,6 +247,9 @@ public class PCBuilder extends javax.swing.JFrame {
         this.lstGPU.setListData(lines);
         this.lblGPUPrice.setText(this.formatPrice(pc.getHardwareSet(EnumHardwareType.GPU)));
         this.lblGPUDualType.setText(gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT).stream().collect(Collectors.joining(", ")));
+        this.lblGPUWattage.setText(gpus.readSumIntVal(EnumKeyStrings.WATTAGE) + " Watts");
+        this.lblGPUVRam.setText(gpus.readSumIntVal(EnumKeyStrings.VRAM_GB) + " Gigs");
+        this.lblGPUMaxLen.setText(gpus.readMaxIntVal(EnumKeyStrings.LENGTH) + " mm");
     }
     
     private String formatPrice(int Price){
