@@ -77,11 +77,13 @@ public class CompatibilityChecker {
     public static List<CompatibilityNote> isCompatible(Hardware unitA, HardwareSet unitsB){
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
         if(isNull(unitA) || isNull(unitsB)) return rValue;
+        if(unitA.getHardwareType().equals(unitsB.getHardwareType()))
+            return isCompatible(unitsB.combine(unitA));
         HardwarePair hwp = new HardwarePair(unitA, unitsB);
         if(hwp.isOfTypes(EnumHardwareType.CASES, EnumHardwareType.GPU))
             rValue.addAll(checkCaseGPU(hwp));
         if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.GPU))
-            rValue.addAll(checkMotherboardGPU(hwp));
+            rValue.addAll(checkMotherboardGPU(hwp));           
         return rValue;
     }
     
@@ -108,6 +110,7 @@ public class CompatibilityChecker {
         Hardware theCase = hwp.getHardware(EnumHardwareType.CASES);
         Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(theCase)||isNull(motherboard)) return rValue;
         // Check motherboard size
         if(!theCase.readValList(EnumKeyStrings.MOTHERBOARD_SIZES).contains(motherboard.readVal(EnumKeyStrings.MOTHERBOARD_SIZES)))
             rValue.add(new CompatibilityNote("Case does not support motherboard size " + motherboard.readVal(EnumKeyStrings.MOTHERBOARD_SIZES), 3));
@@ -118,6 +121,7 @@ public class CompatibilityChecker {
         Hardware theCase = hwp.getHardware(EnumHardwareType.CASES);
         Hardware psu = hwp.getHardware(EnumHardwareType.PSU);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(theCase)||isNull(psu)) return rValue;
         if(!theCase.readValList(EnumKeyStrings.PSU_SIZE).contains(psu.readVal(EnumKeyStrings.SIZE)))
             rValue.add(new CompatibilityNote("Case does not support PSU size: " + psu.readVal(EnumKeyStrings.SIZE), 3));
         if(theCase.readIntVal(EnumKeyStrings.MAX_PSU_LEN) < psu.readIntVal(EnumKeyStrings.LENGTH))
@@ -131,6 +135,7 @@ public class CompatibilityChecker {
         Hardware theCase = hwp.getHardware(EnumHardwareType.CASES);
         Hardware cooler = hwp.getHardware(EnumHardwareType.COOLER);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(theCase)||isNull(cooler)) return rValue;
         if(theCase.readIntVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) < cooler.readIntVal(EnumKeyStrings.HEIGHT))
             rValue.add(new CompatibilityNote("Cooler height ("+cooler.readVal(EnumKeyStrings.HEIGHT)+" mm) exceeds case ("+theCase.readVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT)+" mm)",3));
         return rValue;
@@ -140,6 +145,7 @@ public class CompatibilityChecker {
         Hardware theCase = hwp.getHardware(EnumHardwareType.CASES);
         HardwareSet gpus = hwp.getHardwareSet(EnumHardwareType.GPU);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(theCase)||isNull(gpus)||gpus.isEmpty()) return rValue;
         gpus.getHardwareList().stream().forEach(gpu->{
             if(gpu.readIntVal(EnumKeyStrings.LENGTH) > theCase.readIntVal(EnumKeyStrings.MAX_GPU_LEN))
                 rValue.add(new CompatibilityNote("GPU: " + gpu.readVal(EnumKeyStrings.PART_NAME) 
@@ -154,6 +160,7 @@ public class CompatibilityChecker {
         Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
         Hardware cpu = hwp.getHardware(EnumHardwareType.CPU);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(motherboard)||isNull(cpu)) return rValue;
         if(!motherboard.readVal(EnumKeyStrings.CPU_SOCKET).equalsIgnoreCase(cpu.readVal(EnumKeyStrings.CPU_SOCKET)))
             rValue.add(new CompatibilityNote("CPU Socket ("
                     + cpu.readVal(EnumKeyStrings.CPU_SOCKET) +") does not match motherboard ("
@@ -166,6 +173,7 @@ public class CompatibilityChecker {
         Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
         HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(motherboard)||isNull(rams)||rams.isEmpty()) return rValue;
         rams.getHardwareList().stream().forEach(ram->{
             if(!motherboard.readVal(EnumKeyStrings.RAM_TYPE).equals(ram.readVal(EnumKeyStrings.RAM_TYPE)))
                 rValue.add(new CompatibilityNote("RAM: " + ram.readVal(EnumKeyStrings.PART_NAME)
@@ -180,6 +188,7 @@ public class CompatibilityChecker {
         Hardware motherboard = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
         HardwareSet gpus = hwp.getHardwareSet(EnumHardwareType.GPU);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(motherboard)||isNull(gpus)||gpus.isEmpty()) return rValue;
         if(gpus.getCount() < 2) return rValue; // if there's only one video board, it's all good.
         if(Collections.disjoint(motherboard.readValList(EnumKeyStrings._MULTI_GPU_SUPPORT), gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT)))
             rValue.add(new CompatibilityNote("Motherboard does not support selected dual GPUs", 3));
@@ -190,6 +199,7 @@ public class CompatibilityChecker {
     private static List<CompatibilityNote> checkGPUs(HardwarePair hwp){
         HardwareSet gpus = hwp.getHardwareSet(EnumHardwareType.GPU);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(gpus))return rValue;
         if(gpus.getCount() < 2) return rValue;
         if(!gpus.getHardwareList().get(0).readVal(EnumKeyStrings.CHIPSET).equals(gpus.getHardwareList().get(1).readVal(EnumKeyStrings.CHIPSET)))
             rValue.add(new CompatibilityNote("Dual GPUs have different chipsets.", 3));
@@ -201,6 +211,7 @@ public class CompatibilityChecker {
     private static List<CompatibilityNote> checkRAMs(HardwarePair hwp){
         HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
         ArrayList<CompatibilityNote> rValue = new ArrayList<>();
+        if(isNull(rams)) return rValue;
         if(rams.getCount() < 2) return rValue;
         // RAM sticks must be of all the same frequency.
         if(rams.readCommonStringVals(EnumKeyStrings.FREQUENCY).isEmpty())

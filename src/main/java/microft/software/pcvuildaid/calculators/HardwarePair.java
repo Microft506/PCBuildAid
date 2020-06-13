@@ -49,8 +49,7 @@ class HardwarePair {
     }
     
     public HardwarePair(HardwareSet a, Hardware b){
-        hwsa = new HardwareSet[]{a};
-        hwa = new Hardware[]{b};
+        this(b,a);
     }
     
     public HardwarePair(Hardware a, HardwareSet b){

@@ -122,6 +122,8 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         tableList = hw;
         
+        this.tblMain.removeAll();
+        
         this.tblMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         switch(hwType){
             case COOLER:
@@ -243,7 +245,7 @@ public class HardwarePicker extends javax.swing.JFrame {
         final String[]   headers       = this.getKeyStrings(colKeys);
         final Object[][] data          = this.getKeyData(colKeys, hw);
         
-        if(data.length == 0) return;
+        //if(data.length == 0) return;
         
         // Build the default table model
         DefaultTableModel dtm = new DefaultTableModel(){
@@ -281,7 +283,8 @@ public class HardwarePicker extends javax.swing.JFrame {
             
         };
         
-        tblMain.setModel(dtm);
+        if(data.length==0) tblMain.setModel(new DefaultTableModel());
+        else tblMain.setModel(dtm);
         tblMain.setAutoCreateRowSorter(true);      
     }
 

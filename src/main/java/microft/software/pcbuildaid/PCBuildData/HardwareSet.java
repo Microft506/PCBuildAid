@@ -53,7 +53,18 @@ public class HardwareSet {
         hws.hardwareList.stream().forEach(x->rValue.addHardware(x));
         return rValue;
     }
+    
+    public HardwareSet combine(Hardware hw){
+        HardwareSet rValue = new HardwareSet(this.hwType);
+        this.hardwareList.stream().forEach(x->rValue.addHardware(x));
+        rValue.addHardware(hw);
+        return rValue;
+    }
 
+    public boolean isEmpty(){
+        return this.hardwareList.isEmpty();
+    }
+    
     public void clear() {
         hardwareList.clear();
         this.fireListChange();
