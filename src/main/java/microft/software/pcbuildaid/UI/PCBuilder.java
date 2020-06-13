@@ -5,6 +5,7 @@
  */
 package microft.software.pcbuildaid.UI;
 
+import java.awt.Color;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcvuildaid.calculators.PCBuild;
+import microft.software.pcvuildaid.calculators.PCCostTracker;
 
 /**
  *
@@ -23,18 +25,21 @@ import microft.software.pcvuildaid.calculators.PCBuild;
  */
 public class PCBuilder extends javax.swing.JFrame {
     private final PCBuild pc = new PCBuild();
+    private final PCCostTracker pcCostTracker = new PCCostTracker(pc);
     private final ArrayList<JLabel> cpuLabels = new ArrayList<>();
     private final ArrayList<JLabel> motherboardLabels = new ArrayList<>();
     private final ArrayList<JLabel> caseLabels = new ArrayList<>();
     private final ArrayList<JLabel> psuLabels = new ArrayList<>();
     private final ArrayList<JLabel> coolerLabels = new ArrayList<>();
-    private final ArrayList<JLabel> gpuLabels = new ArrayList<>();
+    private final ArrayList<JLabel> gpuLabels = new ArrayList<>(); 
     
     /**
      * Creates new form BenchmarkCalculatorUI
      */
     public PCBuilder() {
         initComponents();    
+        
+        this.getContentPane().setBackground(Color.GRAY);
         
         // Add labels to CPU list.
         cpuLabels.add(this.lblCPUBasicScore);
@@ -86,6 +91,9 @@ public class PCBuilder extends javax.swing.JFrame {
         
         pc.addONHardwareChange(()->reactToHardwareChange());
         pc.activateHardwareChange();
+        
+        pcCostTracker.addOnCostChange(()->updatePrices());
+        updatePrices();
     }
     
     private void storageListSelectionListener(){
@@ -101,6 +109,18 @@ public class PCBuilder extends javax.swing.JFrame {
         this.btnRAMAdd2More.setEnabled(this.lstRam.getSelectedIndices().length == 1);
     }
     
+    private void updatePrices(){
+        this.lblCostCPU.setText("$" + pcCostTracker.getPrice(EnumHardwareType.CPU));
+        this.lblCostCase.setText("$" + pcCostTracker.getPrice(EnumHardwareType.CASES));
+        this.lblCostCooler.setText("$" + pcCostTracker.getPrice(EnumHardwareType.COOLER));
+        this.lblCostGPU.setText("$" + pcCostTracker.getPrice(EnumHardwareType.GPU));
+        this.lblCostMobo.setText("$" + pcCostTracker.getPrice(EnumHardwareType.MOTHERBOARD));
+        this.lblCostPSU.setText("$" + pcCostTracker.getPrice(EnumHardwareType.PSU));
+        this.lblCostRAM.setText("$" + pcCostTracker.getPrice(EnumHardwareType.RAM));
+        this.lblCostStorage.setText("$" + pcCostTracker.getPrice(EnumHardwareType.STORAGE));
+        this.lblCostTotal.setText("$" + pcCostTracker.getTotalPrice());
+    }
+    
     private void reactToHardwareChange(){
         // this is where we react to hardware changes.
         // Display the currently selected case.
@@ -112,9 +132,8 @@ public class PCBuilder extends javax.swing.JFrame {
         displayCurrentCooler();
         displayCurrentStorage();
         displayCurrentGPUs();
+        updatePrices();
     }
-    
-    
     
     private void displayCurrentCooler(){
         Hardware cooler = pc.getHardware(EnumHardwareType.COOLER);
@@ -404,10 +423,50 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel44 = new javax.swing.JLabel();
         jLabel46 = new javax.swing.JLabel();
         lblGPUVRam = new javax.swing.JLabel();
+        jPanel17 = new javax.swing.JPanel();
+        jLabel35 = new javax.swing.JLabel();
+        jPanel18 = new javax.swing.JPanel();
+        jLabel41 = new javax.swing.JLabel();
+        jLabel42 = new javax.swing.JLabel();
+        jLabel43 = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        chkIncludeCase = new javax.swing.JCheckBox();
+        chkUseCase = new javax.swing.JCheckBox();
+        lblCostCase = new javax.swing.JLabel();
+        jLabel48 = new javax.swing.JLabel();
+        jLabel49 = new javax.swing.JLabel();
+        chkIncludeMobo = new javax.swing.JCheckBox();
+        chkUseMobo = new javax.swing.JCheckBox();
+        chkIncludeCPU = new javax.swing.JCheckBox();
+        chkUseCPU = new javax.swing.JCheckBox();
+        jLabel50 = new javax.swing.JLabel();
+        jLabel51 = new javax.swing.JLabel();
+        jLabel52 = new javax.swing.JLabel();
+        jLabel53 = new javax.swing.JLabel();
+        jLabel54 = new javax.swing.JLabel();
+        chkIncludePSU = new javax.swing.JCheckBox();
+        chkIncludeCooler = new javax.swing.JCheckBox();
+        chkIncludeRAM = new javax.swing.JCheckBox();
+        chkIncludeStorage = new javax.swing.JCheckBox();
+        chkIncludeGPU = new javax.swing.JCheckBox();
+        chkUsePSU = new javax.swing.JCheckBox();
+        chkUseCooler = new javax.swing.JCheckBox();
+        chkUseRAM = new javax.swing.JCheckBox();
+        chkUseStorage = new javax.swing.JCheckBox();
+        chkUseGPU = new javax.swing.JCheckBox();
+        lblCostMobo = new javax.swing.JLabel();
+        lblCostCPU = new javax.swing.JLabel();
+        lblCostPSU = new javax.swing.JLabel();
+        lblCostCooler = new javax.swing.JLabel();
+        lblCostRAM = new javax.swing.JLabel();
+        lblCostStorage = new javax.swing.JLabel();
+        lblCostGPU = new javax.swing.JLabel();
+        lblCostTotal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
-        setBackground(new java.awt.Color(102, 102, 102));
+        setBackground(new java.awt.Color(0, 0, 0));
+        setForeground(new java.awt.Color(153, 153, 153));
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
@@ -1101,6 +1160,7 @@ public class PCBuilder extends javax.swing.JFrame {
             }
         });
 
+        lstRam.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lstRam.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4" };
             public int getSize() { return strings.length; }
@@ -1193,22 +1253,25 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                        .addComponent(btnRamAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRamClearRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRAMAdd1More, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRAMAdd2More, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                        .addComponent(jLabel20)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addComponent(btnRamAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRamClearRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRAMAdd1More, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRAMAdd2More, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(10, 10, 10))))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1373,6 +1436,7 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel30.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel30.setText("Storage:");
 
+        lstStorage.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lstStorage.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -1508,6 +1572,7 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel32.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel32.setText("GPU:");
 
+        lstGPU.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lstGPU.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -1632,23 +1697,352 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel17.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel35.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel35.setText("Price Checker:");
+
+        jPanel18.setLayout(new java.awt.GridBagLayout());
+
+        jLabel41.setText("Used?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanel18.add(jLabel41, gridBagConstraints);
+
+        jLabel42.setText("Cost");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        jPanel18.add(jLabel42, gridBagConstraints);
+
+        jLabel43.setText("CPU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel43, gridBagConstraints);
+
+        jLabel45.setText("Include?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanel18.add(jLabel45, gridBagConstraints);
+
+        chkIncludeCase.setSelected(true);
+        chkIncludeCase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeCaseActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        jPanel18.add(chkIncludeCase, gridBagConstraints);
+
+        chkUseCase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseCaseActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        jPanel18.add(chkUseCase, gridBagConstraints);
+
+        lblCostCase.setText("jLabel47");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        jPanel18.add(lblCostCase, gridBagConstraints);
+
+        jLabel48.setText("Case:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel48, gridBagConstraints);
+
+        jLabel49.setText("Motherboard:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel49, gridBagConstraints);
+
+        chkIncludeMobo.setSelected(true);
+        chkIncludeMobo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeMoboActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        jPanel18.add(chkIncludeMobo, gridBagConstraints);
+
+        chkUseMobo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseMoboActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        jPanel18.add(chkUseMobo, gridBagConstraints);
+
+        chkIncludeCPU.setSelected(true);
+        chkIncludeCPU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeCPUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        jPanel18.add(chkIncludeCPU, gridBagConstraints);
+
+        chkUseCPU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseCPUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        jPanel18.add(chkUseCPU, gridBagConstraints);
+
+        jLabel50.setText("PSU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel50, gridBagConstraints);
+
+        jLabel51.setText("Cooler:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel51, gridBagConstraints);
+
+        jLabel52.setText("RAM:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel52, gridBagConstraints);
+
+        jLabel53.setText("Storage:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel53, gridBagConstraints);
+
+        jLabel54.setText("GPU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel18.add(jLabel54, gridBagConstraints);
+
+        chkIncludePSU.setSelected(true);
+        chkIncludePSU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludePSUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        jPanel18.add(chkIncludePSU, gridBagConstraints);
+
+        chkIncludeCooler.setSelected(true);
+        chkIncludeCooler.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeCoolerActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        jPanel18.add(chkIncludeCooler, gridBagConstraints);
+
+        chkIncludeRAM.setSelected(true);
+        chkIncludeRAM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeRAMActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        jPanel18.add(chkIncludeRAM, gridBagConstraints);
+
+        chkIncludeStorage.setSelected(true);
+        chkIncludeStorage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeStorageActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        jPanel18.add(chkIncludeStorage, gridBagConstraints);
+
+        chkIncludeGPU.setSelected(true);
+        chkIncludeGPU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeGPUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        jPanel18.add(chkIncludeGPU, gridBagConstraints);
+
+        chkUsePSU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUsePSUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        jPanel18.add(chkUsePSU, gridBagConstraints);
+
+        chkUseCooler.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseCoolerActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        jPanel18.add(chkUseCooler, gridBagConstraints);
+
+        chkUseRAM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseRAMActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        jPanel18.add(chkUseRAM, gridBagConstraints);
+
+        chkUseStorage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseStorageActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        jPanel18.add(chkUseStorage, gridBagConstraints);
+
+        chkUseGPU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkUseGPUActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 8;
+        jPanel18.add(chkUseGPU, gridBagConstraints);
+
+        lblCostMobo.setText("jLabel55");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        jPanel18.add(lblCostMobo, gridBagConstraints);
+
+        lblCostCPU.setText("jLabel56");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        jPanel18.add(lblCostCPU, gridBagConstraints);
+
+        lblCostPSU.setText("jLabel57");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
+        jPanel18.add(lblCostPSU, gridBagConstraints);
+
+        lblCostCooler.setText("jLabel58");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 5;
+        jPanel18.add(lblCostCooler, gridBagConstraints);
+
+        lblCostRAM.setText("jLabel59");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 6;
+        jPanel18.add(lblCostRAM, gridBagConstraints);
+
+        lblCostStorage.setText("jLabel60");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 7;
+        jPanel18.add(lblCostStorage, gridBagConstraints);
+
+        lblCostGPU.setText("jLabel61");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 8;
+        jPanel18.add(lblCostGPU, gridBagConstraints);
+
+        lblCostTotal.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblCostTotal.setText("jLabel47");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 9;
+        jPanel18.add(lblCostTotal, gridBagConstraints);
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel35)))
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel35)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -1672,7 +2066,9 @@ public class PCBuilder extends javax.swing.JFrame {
                         .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         pack();
@@ -1772,6 +2168,70 @@ public class PCBuilder extends javax.swing.JFrame {
             for(int selIndex:selIndexes) this.pc.getHardwareSet(EnumHardwareType.GPU).removeHardwareAtIndex(selIndex);
         }
     }//GEN-LAST:event_btnGPUClearRemoveActionPerformed
+
+    private void chkIncludeMoboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeMoboActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.MOTHERBOARD, this.chkIncludeMobo.isSelected());
+    }//GEN-LAST:event_chkIncludeMoboActionPerformed
+
+    private void chkUseCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCPUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.CPU, this.chkUseCPU.isSelected());
+    }//GEN-LAST:event_chkUseCPUActionPerformed
+
+    private void chkIncludeCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeCPUActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.CPU, this.chkIncludeCPU.isSelected());
+    }//GEN-LAST:event_chkIncludeCPUActionPerformed
+
+    private void chkIncludeCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeCaseActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.CASES, this.chkIncludeCase.isSelected());
+    }//GEN-LAST:event_chkIncludeCaseActionPerformed
+
+    private void chkIncludePSUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludePSUActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.PSU, this.chkIncludePSU.isSelected());
+    }//GEN-LAST:event_chkIncludePSUActionPerformed
+
+    private void chkIncludeCoolerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeCoolerActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.COOLER, this.chkIncludeCooler.isSelected());
+    }//GEN-LAST:event_chkIncludeCoolerActionPerformed
+
+    private void chkIncludeRAMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeRAMActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.RAM, this.chkIncludeRAM.isSelected());
+    }//GEN-LAST:event_chkIncludeRAMActionPerformed
+
+    private void chkIncludeStorageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeStorageActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.STORAGE, this.chkIncludeStorage.isSelected());
+    }//GEN-LAST:event_chkIncludeStorageActionPerformed
+
+    private void chkIncludeGPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeGPUActionPerformed
+        this.pcCostTracker.setInclude(EnumHardwareType.GPU, this.chkIncludeGPU.isSelected());
+    }//GEN-LAST:event_chkIncludeGPUActionPerformed
+
+    private void chkUseCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCaseActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.CASES, this.chkUseCase.isSelected());
+    }//GEN-LAST:event_chkUseCaseActionPerformed
+
+    private void chkUseMoboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseMoboActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.MOTHERBOARD, this.chkUseMobo.isSelected());
+    }//GEN-LAST:event_chkUseMoboActionPerformed
+
+    private void chkUsePSUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsePSUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.PSU, this.chkUsePSU.isSelected());
+    }//GEN-LAST:event_chkUsePSUActionPerformed
+
+    private void chkUseCoolerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCoolerActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.COOLER, this.chkUseCooler.isSelected());
+    }//GEN-LAST:event_chkUseCoolerActionPerformed
+
+    private void chkUseRAMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseRAMActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.RAM, this.chkUseRAM.isSelected());
+    }//GEN-LAST:event_chkUseRAMActionPerformed
+
+    private void chkUseStorageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseStorageActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.STORAGE, this.chkUseStorage.isSelected());
+    }//GEN-LAST:event_chkUseStorageActionPerformed
+
+    private void chkUseGPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseGPUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.GPU, this.chkUseGPU.isSelected());
+    }//GEN-LAST:event_chkUseGPUActionPerformed
     
     
     
@@ -1796,6 +2256,22 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnStorageAdd1More;
     private javax.swing.JButton btnStorageAdd2More;
     private javax.swing.JButton btnStorageClearRemove;
+    private javax.swing.JCheckBox chkIncludeCPU;
+    private javax.swing.JCheckBox chkIncludeCase;
+    private javax.swing.JCheckBox chkIncludeCooler;
+    private javax.swing.JCheckBox chkIncludeGPU;
+    private javax.swing.JCheckBox chkIncludeMobo;
+    private javax.swing.JCheckBox chkIncludePSU;
+    private javax.swing.JCheckBox chkIncludeRAM;
+    private javax.swing.JCheckBox chkIncludeStorage;
+    private javax.swing.JCheckBox chkUseCPU;
+    private javax.swing.JCheckBox chkUseCase;
+    private javax.swing.JCheckBox chkUseCooler;
+    private javax.swing.JCheckBox chkUseGPU;
+    private javax.swing.JCheckBox chkUseMobo;
+    private javax.swing.JCheckBox chkUsePSU;
+    private javax.swing.JCheckBox chkUseRAM;
+    private javax.swing.JCheckBox chkUseStorage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1824,15 +2300,27 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel50;
+    private javax.swing.JLabel jLabel51;
+    private javax.swing.JLabel jLabel52;
+    private javax.swing.JLabel jLabel53;
+    private javax.swing.JLabel jLabel54;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1845,6 +2333,8 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1884,6 +2374,15 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblCoolerPrice;
     private javax.swing.JLabel lblCoolerSockets;
     private javax.swing.JLabel lblCoolerType;
+    private javax.swing.JLabel lblCostCPU;
+    private javax.swing.JLabel lblCostCase;
+    private javax.swing.JLabel lblCostCooler;
+    private javax.swing.JLabel lblCostGPU;
+    private javax.swing.JLabel lblCostMobo;
+    private javax.swing.JLabel lblCostPSU;
+    private javax.swing.JLabel lblCostRAM;
+    private javax.swing.JLabel lblCostStorage;
+    private javax.swing.JLabel lblCostTotal;
     private javax.swing.JLabel lblGPUMaxLen;
     private javax.swing.JLabel lblGPUPrice;
     private javax.swing.JLabel lblGPUVRam;

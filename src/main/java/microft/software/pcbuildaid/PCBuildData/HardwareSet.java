@@ -130,5 +130,13 @@ public class HardwareSet {
         });
         return rValue;
     }
+    
+    public int getTotalPrice(){
+        return this.readSumIntVal(EnumKeyStrings.PRICE);
+    }
+    
+    public int getTotalSellPrice(){
+        return this.readSumIntVal(EnumKeyStrings.SELL_PRICE);
+    }
 
 }

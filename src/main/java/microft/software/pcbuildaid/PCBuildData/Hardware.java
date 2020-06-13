@@ -79,6 +79,10 @@ public class Hardware {
         return this.readIntVal(EnumKeyStrings.PRICE);
     }
     
+    public int getSellPrice(){
+        return this.readIntVal(EnumKeyStrings.SELL_PRICE);
+    }
+    
     public boolean isValid(){
         String a = this.readVal(EnumKeyStrings.IN_GAME);
         String b = this.readVal(EnumKeyStrings.IMPORTED_TO_GAME);
