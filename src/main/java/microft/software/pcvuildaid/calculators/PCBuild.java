@@ -5,11 +5,13 @@
  */
 package microft.software.pcvuildaid.calculators;
 
+import microft.software.pcbuildaid.PCBuildData.Note;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import static java.util.Objects.isNull;
+import microft.software.pcbuildaid.PCBuildData.EnumNoteType;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
@@ -185,14 +187,7 @@ public class PCBuild {
         HardwareSet ramSet = this.hardwareSetMap.get(EnumHardwareType.RAM);
         if(ramSet.isEmpty()) return 0;
         
-        List<String> ramFreqs = ramSet.readCommonStringVals(EnumKeyStrings.FREQUENCY);
-        if(ramFreqs.size() != 1) return 0;
-        int ramFreq;
-        try{
-            ramFreq = Integer.parseInt(ramFreqs.get(0));
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        int ramFreq = getInstalledMemFreq();
         
         List<Integer> moboFreqs = mobo.readIntValList(EnumKeyStrings.MEMORY_SPEED_STEPS);
         if(moboFreqs.contains(ramFreq)) return ramFreq;
@@ -202,9 +197,31 @@ public class PCBuild {
         return Math.min(maxMoboFreq, ramFreq);
     }
     
+    public int getInstalledMemFreq(){
+        // Note that if there isn't a common memory frequency, this will return 0.
+        HardwareSet ramSet = this.hardwareSetMap.get(EnumHardwareType.RAM);
+        if(ramSet.isEmpty()) return 0;
+        
+        List<String> ramFreqs = ramSet.readCommonStringVals(EnumKeyStrings.FREQUENCY);
+        if(ramFreqs.size() != 1) return 0;
+        try{
+            return Integer.parseInt(ramFreqs.get(0));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+    
     public List<Note> checkForNotes(){
         ArrayList<Note> rValue = new ArrayList<>();
-        rValue.add(new Note("This is a test note.", 2));
+        
+        // Check to see if the the installed ram is faster than what the pc is capable of.
+        int installedRAMFreq = this.getInstalledMemFreq();
+        int maxRAMFreq = this.getMaxPossibleMemFreq();
+        
+        if(maxRAMFreq > 0 && installedRAMFreq > 0 && maxRAMFreq < installedRAMFreq)
+            rValue.add(new Note("Installed ram runs at " + installedRAMFreq + " MHz, Motherboard can only provide up to " + maxRAMFreq + " MHz.",EnumNoteType.GENERAL));
+        
+        
         return rValue;
     }
 }

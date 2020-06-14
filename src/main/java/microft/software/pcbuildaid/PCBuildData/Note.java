@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package microft.software.pcvuildaid.calculators;
+package microft.software.pcbuildaid.PCBuildData;
 
 /**
  *
@@ -29,20 +29,19 @@ package microft.software.pcvuildaid.calculators;
  */
 public class Note {
     private final String note;
-    private final int severity;
+    private final EnumNoteType type;
 
-    public Note(String note, int severity) {
+    public Note(String note, EnumNoteType type) {
         this.note = note;
-        this.severity = severity;
+        this.type = type;
     }
 
     public String getNote() {
         return note;
     }
-
-    public int getSeverity() {
-        return severity;
-    }
     
+    public String getNoteWithType(){
+        return "[" + type + "] " + note;
+    }
     
 }

@@ -5,12 +5,14 @@
  */
 package microft.software.pcvuildaid.calculators;
 
+import microft.software.pcbuildaid.PCBuildData.Note;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import static java.util.Objects.isNull;
+import microft.software.pcbuildaid.PCBuildData.EnumNoteType;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
@@ -113,7 +115,7 @@ public class CompatibilityChecker {
         if(isNull(theCase)||isNull(motherboard)) return rValue;
         // Check motherboard size
         if(!theCase.readValList(EnumKeyStrings.MOTHERBOARD_SIZES).contains(motherboard.readVal(EnumKeyStrings.MOTHERBOARD_SIZES)))
-            rValue.add(new Note("Case does not support motherboard size " + motherboard.readVal(EnumKeyStrings.MOTHERBOARD_SIZES), 3));
+            rValue.add(new Note("Case does not support motherboard size " + motherboard.readVal(EnumKeyStrings.MOTHERBOARD_SIZES), EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
     
@@ -123,11 +125,11 @@ public class CompatibilityChecker {
         ArrayList<Note> rValue = new ArrayList<>();
         if(isNull(theCase)||isNull(psu)) return rValue;
         if(!theCase.readValList(EnumKeyStrings.PSU_SIZE).contains(psu.readVal(EnumKeyStrings.SIZE)))
-            rValue.add(new Note("Case does not support PSU size: " + psu.readVal(EnumKeyStrings.SIZE), 3));
+            rValue.add(new Note("Case does not support PSU size: " + psu.readVal(EnumKeyStrings.SIZE), EnumNoteType.INCOMPATIBILITY));
         if(theCase.readIntVal(EnumKeyStrings.MAX_PSU_LEN) < psu.readIntVal(EnumKeyStrings.LENGTH))
             rValue.add(new Note("PSU is too short (PSU: " 
                     + psu.readIntVal(EnumKeyStrings.LENGTH) + " mm, Max: " 
-                    + theCase.readIntVal(EnumKeyStrings.MAX_PSU_LEN), 3));
+                    + theCase.readIntVal(EnumKeyStrings.MAX_PSU_LEN), EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
     
@@ -137,7 +139,7 @@ public class CompatibilityChecker {
         ArrayList<Note> rValue = new ArrayList<>();
         if(isNull(theCase)||isNull(cooler)) return rValue;
         if(theCase.readIntVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT) < cooler.readIntVal(EnumKeyStrings.HEIGHT))
-            rValue.add(new Note("Cooler height ("+cooler.readVal(EnumKeyStrings.HEIGHT)+" mm) exceeds case ("+theCase.readVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT)+" mm)",3));
+            rValue.add(new Note("Cooler height ("+cooler.readVal(EnumKeyStrings.HEIGHT)+" mm) exceeds case ("+theCase.readVal(EnumKeyStrings.MAX_CPU_FAN_HEIGHT)+" mm)", EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
     
@@ -151,7 +153,7 @@ public class CompatibilityChecker {
                 rValue.add(new Note("GPU: " + gpu.readVal(EnumKeyStrings.PART_NAME) 
                         + " ("+ gpu.readVal(EnumKeyStrings.LENGTH) 
                         + " mm) is too long for case ("
-                        + theCase.readVal(EnumKeyStrings.MAX_GPU_LEN) +" mm)", 3));
+                        + theCase.readVal(EnumKeyStrings.MAX_GPU_LEN) +" mm)", EnumNoteType.INCOMPATIBILITY));
         });
         return rValue;
     }
@@ -164,7 +166,7 @@ public class CompatibilityChecker {
         if(!motherboard.readVal(EnumKeyStrings.CPU_SOCKET).equalsIgnoreCase(cpu.readVal(EnumKeyStrings.CPU_SOCKET)))
             rValue.add(new Note("CPU Socket ("
                     + cpu.readVal(EnumKeyStrings.CPU_SOCKET) +") does not match motherboard ("
-                    + motherboard.readVal(EnumKeyStrings.CPU_SOCKET) +")", 3));
+                    + motherboard.readVal(EnumKeyStrings.CPU_SOCKET) +")", EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
     
@@ -179,7 +181,7 @@ public class CompatibilityChecker {
                 rValue.add(new Note("RAM: " + ram.readVal(EnumKeyStrings.PART_NAME)
                         + " type (" + ram.readVal(EnumKeyStrings.RAM_TYPE)
                         + ") does not match motherboard (" + motherboard.readVal(EnumKeyStrings.RAM_TYPE)
-                        + ").", 3));
+                        + ").", EnumNoteType.INCOMPATIBILITY));
         });
         return rValue;
     }
@@ -191,7 +193,7 @@ public class CompatibilityChecker {
         if(isNull(motherboard)||isNull(gpus)||gpus.isEmpty()) return rValue;
         if(gpus.getCount() < 2) return rValue; // if there's only one video board, it's all good.
         if(Collections.disjoint(motherboard.readValList(EnumKeyStrings._MULTI_GPU_SUPPORT), gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT)))
-            rValue.add(new Note("Motherboard does not support selected dual GPUs", 3));
+            rValue.add(new Note("Motherboard does not support selected dual GPUs", EnumNoteType.INCOMPATIBILITY));
         
         return rValue;
     }
@@ -202,9 +204,9 @@ public class CompatibilityChecker {
         if(isNull(gpus))return rValue;
         if(gpus.getCount() < 2) return rValue;
         if(!gpus.getHardwareList().get(0).readVal(EnumKeyStrings.CHIPSET).equals(gpus.getHardwareList().get(1).readVal(EnumKeyStrings.CHIPSET)))
-            rValue.add(new Note("Dual GPUs have different chipsets.", 3));
+            rValue.add(new Note("Dual GPUs have different chipsets.", EnumNoteType.INCOMPATIBILITY));
         if(gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT).isEmpty())
-            rValue.add(new Note("Dual GPUs do not have a common bridge support (such as SLI or Crossfire)", 3));
+            rValue.add(new Note("Dual GPUs do not have a common bridge support (such as SLI or Crossfire)", EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
     
@@ -215,7 +217,7 @@ public class CompatibilityChecker {
         if(rams.getCount() < 2) return rValue;
         // RAM sticks must be of all the same frequency.
         if(rams.readCommonStringVals(EnumKeyStrings.FREQUENCY).isEmpty())
-            rValue.add(new Note("RAM contains sticks of varying frequencies",3));
+            rValue.add(new Note("RAM contains sticks of varying frequencies", EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
 }

@@ -19,7 +19,7 @@ import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcvuildaid.calculators.BenchmarkCalc;
 import microft.software.pcvuildaid.calculators.CompatibilityChecker;
-import microft.software.pcvuildaid.calculators.Note;
+import microft.software.pcbuildaid.PCBuildData.Note;
 import microft.software.pcvuildaid.calculators.PCBuild;
 import microft.software.pcvuildaid.calculators.PCCostTracker;
 import microft.software.pcvuildaid.calculators.PCWattageTracker;
@@ -163,11 +163,14 @@ public class PCBuilder extends javax.swing.JFrame {
         displayCurrentGPUs();
         updatePrices();
         calcBenchmarks();
-        
-        List<Note> compatNotes = CompatibilityChecker.checkInterCompatibilities(pc);
-        //this.lstNotes.removeAll();
-        this.lstNotes.setListData(compatNotes.stream().map(x->x.getNote()).toArray(String[]::new));
-            
+        updateNotes();
+    }
+    
+    private void updateNotes(){
+        List<Note> Notes = CompatibilityChecker.checkInterCompatibilities(pc);
+        Notes.addAll(pc.checkForNotes());
+
+        this.lstNotes.setListData(Notes.stream().map(x->x.getNoteWithType()).toArray(String[]::new));
     }
     
     private void calcBenchmarks(){
@@ -2175,6 +2178,7 @@ public class PCBuilder extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lstNotes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane4.setViewportView(lstNotes);
 
         javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
