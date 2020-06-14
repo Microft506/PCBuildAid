@@ -23,10 +23,61 @@
  */
 package microft.software.pcvuildaid.calculators;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import static java.util.Objects.isNull;
+import microft.software.pcbuildaid.PCBuildData.Hardware;
+import microft.software.pcbuildaid.PCBuildData.HardwareSet;
+import microft.software.pcbuildaid.resources.EnumHardwareType;
+import microft.software.pcbuildaid.resources.EnumKeyStrings;
+
 /**
  *
  * @author marcc
  */
 public class PCWattageTracker {
+    private final ArrayList<Runnable> onWattageChange = new ArrayList<>();
+    private final HashMap<EnumHardwareType, Integer> wattages = new HashMap<>();
+    private final PCBuild pc;
+
+    public PCWattageTracker(PCBuild pc) {
+        // Initialize a wattage for each hardware type.
+        Arrays.asList(EnumHardwareType.values()).stream().forEach(x->wattages.put(x, 0));
+        this.pc = pc;
+        pc.addONHardwareChange(()->reactToHardwareChange());
+    }
+    
+    private void reactToHardwareChange(){
+        Arrays.asList(EnumHardwareType.values()).stream().forEach(hwType->{
+            Hardware hw = pc.getHardware(hwType);
+            HardwareSet hws = pc.getHardwareSet(hwType);
+            if(!isNull(hw)) this.wattages.put(hwType, hw.readIntVal(EnumKeyStrings.WATTAGE));
+            if(!isNull(hws)) this.wattages.put(hwType, this.wattages.get(hwType) + hws.readSumIntVal(EnumKeyStrings.WATTAGE));
+        });
+        fireWattageChange();
+    }
+    
+    private void fireWattageChange(){
+        onWattageChange.stream().forEach(x->x.run());
+    }
+    
+    public void addOnWattageChange(Runnable r){
+        onWattageChange.add(r);
+    }
+    
+    public int getPowerBalance(){
+        int rValue = 0;
+        for(EnumHardwareType hwType:EnumHardwareType.values())
+            if(!hwType.equals(EnumHardwareType.PSU))
+                rValue -= wattages.get(hwType);
+        rValue += wattages.get(EnumHardwareType.PSU);
+        return rValue;
+    }
+    
+    public int getWattageFor(EnumHardwareType hwType){
+        return wattages.get(hwType);
+    }
+    
     
 }

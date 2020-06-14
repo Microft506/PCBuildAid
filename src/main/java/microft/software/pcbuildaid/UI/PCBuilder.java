@@ -21,6 +21,7 @@ import microft.software.pcvuildaid.calculators.CompatibilityChecker;
 import microft.software.pcvuildaid.calculators.CompatibilityNote;
 import microft.software.pcvuildaid.calculators.PCBuild;
 import microft.software.pcvuildaid.calculators.PCCostTracker;
+import microft.software.pcvuildaid.calculators.PCWattageTracker;
 
 /**
  *
@@ -28,6 +29,7 @@ import microft.software.pcvuildaid.calculators.PCCostTracker;
  */
 public class PCBuilder extends javax.swing.JFrame {
     private final PCBuild pc = new PCBuild();
+    private final PCWattageTracker pcWattageTracker = new PCWattageTracker(pc);
     private final PCCostTracker pcCostTracker = new PCCostTracker(pc);
     private final ArrayList<JLabel> cpuLabels = new ArrayList<>();
     private final ArrayList<JLabel> motherboardLabels = new ArrayList<>();
@@ -97,6 +99,9 @@ public class PCBuilder extends javax.swing.JFrame {
         
         pcCostTracker.addOnCostChange(()->updatePrices());
         updatePrices();
+        
+        pcWattageTracker.addOnWattageChange(()->updateWattages());
+        updateWattages();
     }
     
     private void storageListSelectionListener(){
@@ -110,6 +115,13 @@ public class PCBuilder extends javax.swing.JFrame {
                 this.lstRam.getSelectedIndices().length > 0
         );
         this.btnRAMAdd2More.setEnabled(this.lstRam.getSelectedIndices().length == 1);
+    }
+    
+    private void updateWattages(){
+        this.lblWattagePSU.setText(Integer.toString(this.pcWattageTracker.getWattageFor(EnumHardwareType.PSU)));
+        this.lblWattageCPU.setText("- " + this.pcWattageTracker.getWattageFor(EnumHardwareType.CPU));
+        this.lblWattageGPU.setText("- " + this.pcWattageTracker.getWattageFor(EnumHardwareType.GPU));
+        this.lblWattageBalance.setText(Integer.toString(this.pcWattageTracker.getPowerBalance()));
     }
     
     private void updatePrices(){
@@ -483,6 +495,15 @@ public class PCBuilder extends javax.swing.JFrame {
         lstNotes = new javax.swing.JList<>();
         jPanel20 = new javax.swing.JPanel();
         lblCostAnalyzer2 = new javax.swing.JLabel();
+        jPanel22 = new javax.swing.JPanel();
+        lblWattagePSU = new javax.swing.JLabel();
+        jLabel56 = new javax.swing.JLabel();
+        jLabel57 = new javax.swing.JLabel();
+        jLabel58 = new javax.swing.JLabel();
+        lblWattageCPU = new javax.swing.JLabel();
+        lblWattageBalance = new javax.swing.JLabel();
+        lblWattageGPU = new javax.swing.JLabel();
+        jLabel62 = new javax.swing.JLabel();
         jPanel21 = new javax.swing.JPanel();
         jLabel47 = new javax.swing.JLabel();
 
@@ -2102,13 +2123,80 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCostAnalyzer2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblCostAnalyzer2.setText("Wattage Checker:");
 
+        jPanel22.setLayout(new java.awt.GridBagLayout());
+
+        lblWattagePSU.setText("jLabel55");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel22.add(lblWattagePSU, gridBagConstraints);
+
+        jLabel56.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel56.setText("PSU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel22.add(jLabel56, gridBagConstraints);
+
+        jLabel57.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel57.setText("CPU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel22.add(jLabel57, gridBagConstraints);
+
+        jLabel58.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel58.setText("GPU:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel22.add(jLabel58, gridBagConstraints);
+
+        lblWattageCPU.setText("jLabel59");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel22.add(lblWattageCPU, gridBagConstraints);
+
+        lblWattageBalance.setText("jLabel60");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel22.add(lblWattageBalance, gridBagConstraints);
+
+        lblWattageGPU.setText("jLabel61");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel22.add(lblWattageGPU, gridBagConstraints);
+
+        jLabel62.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel62.setText("Balance:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel22.add(jLabel62, gridBagConstraints);
+
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
         jPanel20.setLayout(jPanel20Layout);
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblCostAnalyzer2)
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCostAnalyzer2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel20Layout.setVerticalGroup(
@@ -2116,6 +2204,8 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(jPanel20Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblCostAnalyzer2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -2147,7 +2237,7 @@ public class PCBuilder extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -2165,7 +2255,7 @@ public class PCBuilder extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -2194,10 +2284,11 @@ public class PCBuilder extends javax.swing.JFrame {
                             .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(66, Short.MAX_VALUE))
         );
 
@@ -2452,7 +2543,11 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel52;
     private javax.swing.JLabel jLabel53;
     private javax.swing.JLabel jLabel54;
+    private javax.swing.JLabel jLabel56;
+    private javax.swing.JLabel jLabel57;
+    private javax.swing.JLabel jLabel58;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel62;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -2470,6 +2565,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
+    private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -2543,6 +2639,10 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel lblStoragePrice;
     private javax.swing.JLabel lblStorageType;
     private javax.swing.JLabel lblStoragelTotalCapacity;
+    private javax.swing.JLabel lblWattageBalance;
+    private javax.swing.JLabel lblWattageCPU;
+    private javax.swing.JLabel lblWattageGPU;
+    private javax.swing.JLabel lblWattagePSU;
     private javax.swing.JList<String> lstGPU;
     private javax.swing.JList<String> lstNotes;
     private javax.swing.JList<String> lstRam;
