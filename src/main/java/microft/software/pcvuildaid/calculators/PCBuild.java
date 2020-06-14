@@ -122,7 +122,7 @@ public class PCBuild {
         return this.oc_currentCPURatio;
     }
     
-    private void resetCPUClockFreq(){
+    public void resetCPUClockFreq(){
         Hardware cpu = this.hardwareMap.get(EnumHardwareType.CPU);
         Hardware mobo = this.hardwareMap.get(EnumHardwareType.MOTHERBOARD);
         if(isNull(cpu)||isNull(mobo)){
