@@ -43,6 +43,15 @@ public class Hardware {
             return def;
         }
     }
+    
+    public double readDoubleVal(EnumKeyStrings key){
+        String v = readVal(key);
+        try{
+            return Double.parseDouble(v);
+        } catch (NumberFormatException e){
+            return Double.parseDouble(key.getDefValText());
+        }
+    }
         
     public boolean readBoolVal(EnumKeyStrings key){
         String v = this.readVal(key);
@@ -53,6 +62,13 @@ public class Hardware {
         if(ks.equals(EnumKeyStrings._MULTI_GPU_SUPPORT))
             return this.getDualGPUCompatList().stream().collect(Collectors.joining(", "));
         return readVal(ks.getKeyText(), ks.getDefValText());
+    }
+    
+    public List<Integer> readIntValList(EnumKeyStrings key){
+        ArrayList<Integer> rValue = new ArrayList<>();
+        List<String> values = this.readValList(key);
+        values.stream().forEach(x->rValue.add(Integer.parseInt(x)));
+        return rValue;
     }
     
     public List<String> readValList(EnumKeyStrings ks){

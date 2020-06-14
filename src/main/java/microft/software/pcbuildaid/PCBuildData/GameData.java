@@ -17,6 +17,10 @@ import microft.software.pcbuildaid.resources.*;
  * @author Marc
  */
 public class GameData {
+    
+    public static final double[] CPU_FREQ_BASE_ENV = new double[]{50,300};
+    public static final double[] CPU_FREQ_RATIO_ENF = new double[]{1,84};
+    
     private static final ArrayList<PCBuilderItemCollection> tables = new ArrayList<>();
     private static int level;
     private static final HashMap<EnumHardwareType, ArrayList<Hardware>> hardwareListMap = new HashMap<>();
