@@ -61,8 +61,9 @@ public class BenchmarkCalc {
         if(isNull(ramSet)||ramSet.isEmpty()) return 0;
         
         double ramChans = ramSet.getCount();
-        if(ramChans == 3) ramChans = 2;
-                
+        
+        double maxMemChan = cpu.readDoubleVal(EnumKeyStrings.MAX_MEM_CHAN);
+        ramChans = Math.min(ramChans, maxMemChan);
         double mcm = cpu.readDoubleVal(EnumKeyStrings.MEM_CHAN_MULT);
         System.out.println("mem chan mult: " + mcm);
         
@@ -76,14 +77,7 @@ public class BenchmarkCalc {
         HardwareSet ramSet = pc.getHardwareSet(EnumHardwareType.RAM);
         if(isNull(ramSet)||ramSet.isEmpty()) return 0;
         
-        List<String> ramFreqs = ramSet.readCommonStringVals(EnumKeyStrings.FREQUENCY);
-        if(ramFreqs.size()!=1) return 0;
-        double ramFreq;
-        try { 
-            ramFreq = Double.parseDouble(ramFreqs.get(0));
-        } catch (NumberFormatException e){
-            ramFreq = 0;
-        }
+        double ramFreq = pc.getMaxPossibleMemFreq();
         
         double mcm = cpu.readDoubleVal(EnumKeyStrings.MEM_CLOCK_MULT);
         System.out.println("mem clock mult: " + mcm);

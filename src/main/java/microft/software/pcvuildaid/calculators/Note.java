@@ -27,11 +27,11 @@ package microft.software.pcvuildaid.calculators;
  *
  * @author marcc
  */
-public class CompatibilityNote {
+public class Note {
     private final String note;
     private final int severity;
 
-    public CompatibilityNote(String note, int severity) {
+    public Note(String note, int severity) {
         this.note = note;
         this.severity = severity;
     }

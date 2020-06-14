@@ -6,7 +6,9 @@
 package microft.software.pcvuildaid.calculators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import static java.util.Objects.isNull;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
@@ -175,5 +177,34 @@ public class PCBuild {
         
         this.oc_currentCPUBaseClock = newVal;
         this.fireCPUClockChange();
+    }
+    
+    public int getMaxPossibleMemFreq(){
+        Hardware mobo = this.hardwareMap.get(EnumHardwareType.MOTHERBOARD);
+        if(isNull(mobo)) return 0;
+        HardwareSet ramSet = this.hardwareSetMap.get(EnumHardwareType.RAM);
+        if(ramSet.isEmpty()) return 0;
+        
+        List<String> ramFreqs = ramSet.readCommonStringVals(EnumKeyStrings.FREQUENCY);
+        if(ramFreqs.size() != 1) return 0;
+        int ramFreq;
+        try{
+            ramFreq = Integer.parseInt(ramFreqs.get(0));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+        
+        List<Integer> moboFreqs = mobo.readIntValList(EnumKeyStrings.MEMORY_SPEED_STEPS);
+        if(moboFreqs.contains(ramFreq)) return ramFreq;
+        
+        moboFreqs.removeIf(x->x>ramFreq);
+        int maxMoboFreq = Collections.max(moboFreqs);
+        return Math.min(maxMoboFreq, ramFreq);
+    }
+    
+    public List<Note> checkForNotes(){
+        ArrayList<Note> rValue = new ArrayList<>();
+        rValue.add(new Note("This is a test note.", 2));
+        return rValue;
     }
 }

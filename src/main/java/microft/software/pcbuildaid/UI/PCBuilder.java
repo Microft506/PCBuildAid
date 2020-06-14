@@ -19,7 +19,7 @@ import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcvuildaid.calculators.BenchmarkCalc;
 import microft.software.pcvuildaid.calculators.CompatibilityChecker;
-import microft.software.pcvuildaid.calculators.CompatibilityNote;
+import microft.software.pcvuildaid.calculators.Note;
 import microft.software.pcvuildaid.calculators.PCBuild;
 import microft.software.pcvuildaid.calculators.PCCostTracker;
 import microft.software.pcvuildaid.calculators.PCWattageTracker;
@@ -164,7 +164,7 @@ public class PCBuilder extends javax.swing.JFrame {
         updatePrices();
         calcBenchmarks();
         
-        List<CompatibilityNote> compatNotes = CompatibilityChecker.checkInterCompatibilities(pc);
+        List<Note> compatNotes = CompatibilityChecker.checkInterCompatibilities(pc);
         //this.lstNotes.removeAll();
         this.lstNotes.setListData(compatNotes.stream().map(x->x.getNote()).toArray(String[]::new));
             
