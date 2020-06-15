@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import static java.util.Objects.isNull;
+import java.util.stream.Collectors;
 import microft.software.pcbuildaid.PCBuildData.EnumNoteType;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
@@ -79,8 +80,11 @@ public class CompatibilityChecker {
     public static List<Note> isCompatible(Hardware unitA, HardwareSet unitsB){
         ArrayList<Note> rValue = new ArrayList<>();
         if(isNull(unitA) || isNull(unitsB)) return rValue;
+        
+        // If unitA is the same as the set of unit B, combine and check the set.
         if(unitA.getHardwareType().equals(unitsB.getHardwareType()))
             return isCompatible(unitsB.combine(unitA));
+        
         HardwarePair hwp = new HardwarePair(unitA, unitsB);
         if(hwp.isOfTypes(EnumHardwareType.CASES, EnumHardwareType.GPU))
             rValue.addAll(checkCaseGPU(hwp));
@@ -207,6 +211,7 @@ public class CompatibilityChecker {
             rValue.add(new Note("Dual GPUs have different chipsets.", EnumNoteType.INCOMPATIBILITY));
         if(gpus.readCommonStringVals(EnumKeyStrings._MULTI_GPU_SUPPORT).isEmpty())
             rValue.add(new Note("Dual GPUs do not have a common bridge support (such as SLI or Crossfire)", EnumNoteType.INCOMPATIBILITY));
+        
         return rValue;
     }
     
@@ -217,7 +222,9 @@ public class CompatibilityChecker {
         if(rams.getCount() < 2) return rValue;
         // RAM sticks must be of all the same frequency.
         if(rams.readCommonStringVals(EnumKeyStrings.FREQUENCY).isEmpty())
-            rValue.add(new Note("RAM contains sticks of varying frequencies", EnumNoteType.INCOMPATIBILITY));
+            rValue.add(new Note("RAM contains sticks of varying frequencies: " + rams.readUniqueStringVals(EnumKeyStrings.FREQUENCY).stream().collect(Collectors.joining(", ")) + " MHz", EnumNoteType.INCOMPATIBILITY));
+        if(rams.readCommonStringVals(EnumKeyStrings.SIZE_EACH_GB).isEmpty())
+            rValue.add(new Note("RAM contains multiple capacities: " + rams.readUniqueStringVals(EnumKeyStrings.SIZE_EACH_GB).stream().collect(Collectors.joining(", ")) + " GB" , EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
 }

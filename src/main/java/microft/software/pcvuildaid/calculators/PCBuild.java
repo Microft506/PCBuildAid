@@ -302,14 +302,21 @@ public class PCBuild {
         // Check to see if the the installed ram is faster than what the pc is capable of.
         int installedRAMFreq = this.getInstalledMemFreq();
         int maxRAMFreq = this.getMaxPossibleMemFreq();
+        int defRAMFreq = 0;
+        if(!isNull(this.hardwareMap.get(EnumHardwareType.MOTHERBOARD)))
+            defRAMFreq = this.hardwareMap.get(EnumHardwareType.MOTHERBOARD).readIntVal(EnumKeyStrings.DEFAULT_RAM_FREQ);
         
         if(maxRAMFreq > 0 && installedRAMFreq > 0 && maxRAMFreq < installedRAMFreq)
             rValue.add(new Note("Installed ram runs at " + installedRAMFreq + " MHz, Motherboard can only provide up to " + maxRAMFreq + " MHz.",EnumNoteType.GENERAL));
         
-        rValue.add(new Note("GPU Memory Frequency: " + this.getCurrentGPUMemClock(), EnumNoteType.GENERAL));
-        rValue.add(new Note("GPU Core Frequency: " + this.getCurrentGPUCoreClock(), EnumNoteType.GENERAL));
+        if(this.getHardwareSet(EnumHardwareType.GPU).readUniqueStringVals(EnumKeyStrings.BASE_CORE_CLOCK_FREQ).size() > 1)
+            rValue.add(new Note("GPUs have different base core clocks.  Unless overclocked, one will be throttled.", EnumNoteType.GENERAL));
         
+        if(this.getHardwareSet(EnumHardwareType.GPU).readUniqueStringVals(EnumKeyStrings.BASE_MEM_CLOCK_FREQ).size() > 1)
+            rValue.add(new Note("GPUs have different base memory clocks.  Unless overclocked, one will be throttled.", EnumNoteType.GENERAL));
         
+        if(defRAMFreq != 0 && installedRAMFreq > defRAMFreq)
+            rValue.add(new Note("Installed RAM is faster than the default motherboard RAM clock.  Remember to turn on ???", EnumNoteType.GENERAL));
         
         return rValue;
     }
