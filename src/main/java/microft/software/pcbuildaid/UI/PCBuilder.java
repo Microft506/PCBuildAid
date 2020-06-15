@@ -97,7 +97,7 @@ public class PCBuilder extends javax.swing.JFrame {
         this.storageListSelectionListener();
         
         pc.addONHardwareChange(()->reactToHardwareChange());
-        pc.activateHardwareChange();
+        pc.fireHardwareChange();
         pc.onCPUorGPUClockChange(()->this.reactToCPUorGPUOverclockChange());
         this.reactToCPUorGPUOverclockChange();
         
@@ -108,14 +108,30 @@ public class PCBuilder extends javax.swing.JFrame {
         updateWattages();
     }
     
+    private void reactToHardwareChange(){
+        // this is where we react to hardware changes.
+        // Display the currently selected case.
+        displayCurrentCPU();
+        displayCurrentMotherboard();
+        displayCurrentCase();
+        displayCurrentPSU();
+        displayCurrentRAM();
+        displayCurrentCooler();
+        displayCurrentStorage();
+        displayCurrentGPUs();
+        updatePrices();
+        reactToCPUorGPUOverclockChange();
+        
+    }
+    
     private void reactToCPUorGPUOverclockChange(){
-        System.out.println("CPU/GPU Change");
         this.txtCPUBaseClock.setText(Integer.toString((int)pc.getCurrentBaseClocFreq()));
         this.txtClockMultiplier.setText(Double.toString(pc.getCurrentCPURatio()));
         this.lblCPUFinalFreq.setText((int)pc.getCurrentCPUClockFreq() + " MHz");
         this.txtGPUClock.setText(Integer.toString((int)pc.getCurrentGPUCoreClock()));
         this.txtGPUMemClock.setText(Integer.toString((int)pc.getCurrentGPUMemClock()));
         calcBenchmarks();
+        updateNotes();
     }
     
     
@@ -151,23 +167,10 @@ public class PCBuilder extends javax.swing.JFrame {
         this.lblCostTotal.setText("$" + pcCostTracker.getTotalPrice());
     }
     
-    private void reactToHardwareChange(){
-        // this is where we react to hardware changes.
-        // Display the currently selected case.
-        displayCurrentCPU();
-        displayCurrentMotherboard();
-        displayCurrentCase();
-        displayCurrentPSU();
-        displayCurrentRAM();
-        displayCurrentCooler();
-        displayCurrentStorage();
-        displayCurrentGPUs();
-        updatePrices();
-        calcBenchmarks();
-        updateNotes();
-    }
+    
     
     private void updateNotes(){
+        System.out.println("Updating notes");
         List<Note> Notes = CompatibilityChecker.checkInterCompatibilities(pc);
         Notes.addAll(pc.checkForNotes());
 
@@ -550,6 +553,7 @@ public class PCBuilder extends javax.swing.JFrame {
         lblWattageBalance = new javax.swing.JLabel();
         lblWattageGPU = new javax.swing.JLabel();
         jLabel62 = new javax.swing.JLabel();
+        btnDEBUG = new javax.swing.JButton();
         jPanel21 = new javax.swing.JPanel();
         jLabel47 = new javax.swing.JLabel();
         jLabel67 = new javax.swing.JLabel();
@@ -2306,6 +2310,13 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel22.add(jLabel62, gridBagConstraints);
 
+        btnDEBUG.setText("Debug");
+        btnDEBUG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDEBUGActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
         jPanel20.setLayout(jPanel20Layout);
         jPanel20Layout.setHorizontalGroup(
@@ -2316,6 +2327,10 @@ public class PCBuilder extends javax.swing.JFrame {
                     .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCostAnalyzer2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel20Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnDEBUG)
+                .addGap(82, 82, 82))
         );
         jPanel20Layout.setVerticalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2324,7 +2339,9 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(lblCostAnalyzer2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnDEBUG)
+                .addGap(38, 38, 38))
         );
 
         jPanel21.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -3101,6 +3118,11 @@ public class PCBuilder extends javax.swing.JFrame {
     private void btnGPUOCResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUOCResetActionPerformed
         pc.resetGPUClockFreq();
     }//GEN-LAST:event_btnGPUOCResetActionPerformed
+
+    private void btnDEBUGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDEBUGActionPerformed
+        System.out.println("GPU Core Clock: " + this.pc.getCurrentGPUCoreClock());
+        System.out.println("GPU Mem Clock: " + this.pc.getCurrentGPUMemClock());
+    }//GEN-LAST:event_btnDEBUGActionPerformed
     
     
     
@@ -3119,6 +3141,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnChoosePSU;
     private javax.swing.JButton btnCoolerAdd;
     private javax.swing.JButton btnCoolerRemove;
+    private javax.swing.JButton btnDEBUG;
     private javax.swing.JButton btnGPUAdd;
     private javax.swing.JButton btnGPUBaseClockD1;
     private javax.swing.JButton btnGPUBaseClockD10;

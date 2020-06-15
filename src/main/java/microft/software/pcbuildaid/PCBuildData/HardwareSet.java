@@ -24,6 +24,7 @@
 package microft.software.pcbuildaid.PCBuildData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static java.util.Objects.isNull;
 import java.util.stream.Collectors;
@@ -119,6 +120,7 @@ public class HardwareSet {
     public void removeHardwareAtIndex(int index) {
         if (index < hardwareList.size()) {
             hardwareList.remove(index);
+            System.out.println("Removed item at index " + index + " from " +this.hwType.getDescription());
         }
         this.fireListChange();
     }
@@ -173,6 +175,24 @@ public class HardwareSet {
     
     public int getTotalSellPrice(){
         return this.readSumIntVal(EnumKeyStrings.SELL_PRICE);
+    }
+    
+    public void swap(int index1, int index2){
+        // Make sure we can.
+        if(this.hardwareList.size() <= Math.max(index1, index2)) return;
+        Collections.swap(this.hardwareList, index1, index2);
+        this.fireListChange();
+    }
+    
+    public List<Integer> readUniqueIntVals(EnumKeyStrings key){
+        List<String> stringVals = readUniqueStringVals(key);
+        ArrayList<Integer> rValue = new ArrayList<>();
+        stringVals.stream().forEach(x -> {
+            try{
+                rValue.add(Integer.parseInt(x));
+            } catch (Exception e){}
+        });
+        return rValue;
     }
 
 }

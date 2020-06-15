@@ -118,9 +118,11 @@ public class BenchmarkCalc {
         double ccm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_CORE_CLOCK_MULT);
         double mcm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_MEM_CLOCK_MULT);
         double bma2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_BENCHMARK_ADJ);
-        double x1 = 0.5/((ccm1*cc)+(mcm1*mc)+bma1);
-        double x2 = 0.5/((ccm2*cc)+(mcm2*mc)+bma2);
-        return 164/(x1+x2);
+        double x1 = (ccm1*cc)+(mcm1*mc)+bma1;
+        double x2 = (ccm2*cc)+(mcm2*mc)+bma2;
+        System.out.println(gpu.getConcatName() + " X1=" + x1);
+        System.out.println(gpu.getConcatName() + " X2=" + x2);
+        return 164/((0.5/x1)+(0.5/x2));
     }
     
     public static int getSystemScore(PCBuild pc){

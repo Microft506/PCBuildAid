@@ -32,14 +32,21 @@ public class PCBuild {
     private EnumHardwareType lastChangeType;
     
     // CPU and GPU Overclocking values
-    private Runnable onCPUGPUClockChange;
+    
     private double oc_currentCPUBaseClock;
     private double oc_currentCPURatio;
     private double oc_currentGPUCoreClock;
     private double oc_currentGPUMemClock;
     
-    // Multi hardware objects.
+    // Events
+    // Note that a hardware change may include a cpu/gpu clock change.
+    // Event pipe:
+    // onHardwareChange                 onCPUGPUClockChange
+    //       |                                  |
+    //      \ /                                \ /
+    //    Update Hardware display -> Update overclock dispay -> Update Benchmark display
     private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
+    private Runnable onCPUGPUClockChange;
     
     public PCBuild() {
         // Initialize all hardware to null
@@ -49,8 +56,8 @@ public class PCBuild {
         }
 
         // Ensure all hardware sets notify when they are changed.
-        hardwareSetMap.forEach((k, v) -> v.OnListChange(() -> this.activateHardwareChange()));
-        
+        // Note: Not doing this anymore.  Any hardware changes should go through pc interface.
+        hardwareSetMap.forEach((k, v) -> v.OnListChange(() -> this.reactToHardwareSetMapChange(k)));
     }
 
     public void clearOnHardwareChange() {
@@ -60,8 +67,18 @@ public class PCBuild {
     public void addONHardwareChange(Runnable r) {
         onHardwareChange.add(r);
     }
+    
+    private void reactToHardwareSetMapChange(EnumHardwareType hwType){
+        System.out.println("Direct adjustment to hardware set detected: " + hwType.getDescription());
+        this.fireHardwareChange();
+        if(hwType.equals(EnumHardwareType.GPU)) this.resetGPUClockFreq();
+        if(hwType.equals(EnumHardwareType.CPU) || hwType.equals(EnumHardwareType.MOTHERBOARD)) this.resetCPUClockFreq();
+        
+        
+    }
 
-    public void activateHardwareChange() {
+    public void fireHardwareChange() {
+        System.out.println("Firing hardware change..");
         this.onHardwareChange.stream().forEach(x -> x.run());
     }
 
@@ -79,13 +96,14 @@ public class PCBuild {
     }
 
     public void addHardware(Hardware hw, int num) {
+        System.out.println("Adding hardware: " + hw.getConcatName());
         if (isSetType(hw.getHardwareType())) 
             for (int i = 0; i < num; ++i) hardwareSetMap.get(hw.getHardwareType()).addHardware(hw);
         else hardwareMap.put(hw.getHardwareType(), hw);
         lastChangeType = hw.getHardwareType();
-        activateHardwareChange();
         if(hw.getHardwareType().equals(EnumHardwareType.CPU) || hw.getHardwareType().equals(EnumHardwareType.MOTHERBOARD)) resetCPUClockFreq();
         if(hw.getHardwareType().equals(EnumHardwareType.GPU)) this.resetGPUClockFreq();
+        fireHardwareChange();
     }
 
     public void clearHardwareType(EnumHardwareType hwType) {
@@ -95,9 +113,9 @@ public class PCBuild {
             hardwareMap.put(hwType, null);
         }
         lastChangeType = hwType;
-        activateHardwareChange();
         if(hwType.equals(EnumHardwareType.CPU) || hwType.equals(EnumHardwareType.MOTHERBOARD)) resetCPUClockFreq();
         if(hwType.equals(EnumHardwareType.GPU)) this.resetGPUClockFreq();
+        fireHardwareChange();
     }
 
     private boolean isSetType(EnumHardwareType hwType) {
@@ -111,6 +129,7 @@ public class PCBuild {
     // *********** CPU and GPU Clocking
        
     private void fireCPUorGPUClockChange(){
+        System.out.println("Firing CPU/GPU Clock Change");
         if(!isNull(this.onCPUGPUClockChange)) this.onCPUGPUClockChange.run();
     }
     
@@ -154,6 +173,7 @@ public class PCBuild {
     }
     
     public void resetGPUClockFreq(){
+        System.out.println("Resetting GPU Clock Freq..");
         this.oc_currentGPUCoreClock = (double)(this.getGPUCoreClockRange()[0]);
         this.oc_currentGPUMemClock =  (double)(this.getGPUMemClockRange()[0]);
         this.fireCPUorGPUClockChange();
@@ -269,17 +289,11 @@ public class PCBuild {
         HardwareSet gpuSet = this.hardwareSetMap.get(EnumHardwareType.GPU);
         int[] rValue = new int[]{0,0};
         if(gpuSet.isEmpty()) return rValue;
-        List<String> a = gpuSet.readCommonStringVals(EnumKeyStrings.BASE_MEM_CLOCK_FREQ);
-        List<String> b = gpuSet.readCommonStringVals(EnumKeyStrings.GPU_MAX_MEM_CLOCK);
-        if(!(a.size()==1&&b.size()==1)) return rValue;
-        try{
-            rValue[0] = Integer.parseInt(a.get(0));
-            rValue[1] = Integer.parseInt(b.get(0));
-        } catch (NumberFormatException e){
-            return new int[]{0,0};
-        }
-        if(rValue[1]<rValue[0]) rValue[1]=rValue[0];
-        return rValue;
+        List<Integer> a = gpuSet.readUniqueIntVals(EnumKeyStrings.BASE_MEM_CLOCK_FREQ);
+        List<Integer> b = gpuSet.readUniqueIntVals(EnumKeyStrings.GPU_MAX_MEM_CLOCK);
+        return new int[] { a.stream().mapToInt(x->x).min().getAsInt(), 
+                           b.stream().mapToInt(x->x).min().getAsInt()
+        };
     }
     
     public List<Note> checkForNotes(){
@@ -294,6 +308,8 @@ public class PCBuild {
         
         rValue.add(new Note("GPU Memory Frequency: " + this.getCurrentGPUMemClock(), EnumNoteType.GENERAL));
         rValue.add(new Note("GPU Core Frequency: " + this.getCurrentGPUCoreClock(), EnumNoteType.GENERAL));
+        
+        
         
         return rValue;
     }
