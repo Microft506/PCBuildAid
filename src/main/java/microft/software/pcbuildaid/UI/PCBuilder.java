@@ -98,8 +98,8 @@ public class PCBuilder extends javax.swing.JFrame {
         
         pc.addONHardwareChange(()->reactToHardwareChange());
         pc.activateHardwareChange();
-        pc.onCPUClockChange(()->reactToCPUOverclockChange());
-        reactToCPUOverclockChange();
+        pc.onCPUorGPUClockChange(()->this.reactToCPUorGPUOverclockChange());
+        this.reactToCPUorGPUOverclockChange();
         
         pcCostTracker.addOnCostChange(()->updatePrices());
         updatePrices();
@@ -108,12 +108,13 @@ public class PCBuilder extends javax.swing.JFrame {
         updateWattages();
     }
     
-    private void reactToCPUOverclockChange(){
-        this.txtCPUBaseClock.setText(Double.toString(pc.getCurrentBaseClocFreq()));
+    private void reactToCPUorGPUOverclockChange(){
+        System.out.println("CPU/GPU Change");
+        this.txtCPUBaseClock.setText(Integer.toString((int)pc.getCurrentBaseClocFreq()));
         this.txtClockMultiplier.setText(Double.toString(pc.getCurrentCPURatio()));
-        double cpuFreq = pc.getCurrentCPUClockFreq();
-        if(cpuFreq == 0) this.lblCPUFinalFreq.setText("");
-        else this.lblCPUFinalFreq.setText(pc.getCurrentCPUClockFreq() + " MHz");
+        this.lblCPUFinalFreq.setText((int)pc.getCurrentCPUClockFreq() + " MHz");
+        this.txtGPUClock.setText(Integer.toString((int)pc.getCurrentGPUCoreClock()));
+        this.txtGPUMemClock.setText(Integer.toString((int)pc.getCurrentGPUMemClock()));
         calcBenchmarks();
     }
     
@@ -184,6 +185,12 @@ public class PCBuilder extends javax.swing.JFrame {
         this.txtBMMemChan.setText(formatDouble(memChan,2));
         this.txtBMMemClk.setText(formatDouble(memClk,2));
         this.lblBMCPUScore.setText(Integer.toString((int)Math.floor(basicCPU+ocCPU+memChan+memClk)));
+        
+        this.txtGPU1Score.setText(Integer.toString((int)Math.floor(BenchmarkCalc.getGPUScore(pc, 1))));
+        this.txtGPU2Score.setText(Integer.toString((int)Math.floor(BenchmarkCalc.getGPUScore(pc, 2))));
+        this.txtGPUCombinedScore.setText(Integer.toString((int)Math.floor(BenchmarkCalc.getGPUScore(pc, 0))));
+        
+        this.lblBMOverallScore.setText(Integer.toString(BenchmarkCalc.getSystemScore(pc)));
     }
     
     private String formatDouble(double val, int decimalPlaces){
@@ -555,6 +562,15 @@ public class PCBuilder extends javax.swing.JFrame {
         txtBMMemClk = new javax.swing.JTextField();
         lblBMCPUScore = new javax.swing.JLabel();
         jLabel71 = new javax.swing.JLabel();
+        jLabel76 = new javax.swing.JLabel();
+        jLabel77 = new javax.swing.JLabel();
+        txtGPU1Score = new javax.swing.JTextField();
+        txtGPU2Score = new javax.swing.JTextField();
+        jLabel78 = new javax.swing.JLabel();
+        txtGPUCombinedScore = new javax.swing.JTextField();
+        jLabel79 = new javax.swing.JLabel();
+        jLabel80 = new javax.swing.JLabel();
+        lblBMOverallScore = new javax.swing.JLabel();
         jPanel23 = new javax.swing.JPanel();
         jLabel55 = new javax.swing.JLabel();
         jLabel59 = new javax.swing.JLabel();
@@ -573,6 +589,22 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCPUFinalFreq = new javax.swing.JLabel();
         jLabel66 = new javax.swing.JLabel();
         btnOCCPUReset = new javax.swing.JButton();
+        jLabel65 = new javax.swing.JLabel();
+        jLabel72 = new javax.swing.JLabel();
+        txtGPUClock = new javax.swing.JTextField();
+        jLabel73 = new javax.swing.JLabel();
+        btnGPUBaseClockD10 = new javax.swing.JButton();
+        btnGPUBaseClockD1 = new javax.swing.JButton();
+        btnGPUBaseClockU1 = new javax.swing.JButton();
+        btnGPUBaseClockU10 = new javax.swing.JButton();
+        jLabel74 = new javax.swing.JLabel();
+        txtGPUMemClock = new javax.swing.JTextField();
+        jLabel75 = new javax.swing.JLabel();
+        btnGPUMemClockU10 = new javax.swing.JButton();
+        btnGPUMemClockU1 = new javax.swing.JButton();
+        btnGPUMemClockD1 = new javax.swing.JButton();
+        btnGPUMemClockD10 = new javax.swing.JButton();
+        btnGPUOCReset = new javax.swing.JButton();
 
         jLabel63.setText("jLabel63");
 
@@ -2165,7 +2197,7 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(lblCostAnalyzer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jPanel19.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2324,13 +2356,40 @@ public class PCBuilder extends javax.swing.JFrame {
         txtBMMemClk.setEditable(false);
         txtBMMemClk.setText("jTextField4");
 
-        lblBMCPUScore.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblBMCPUScore.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblBMCPUScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblBMCPUScore.setText("jLabel65");
 
-        jLabel71.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        jLabel71.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
         jLabel71.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel71.setText("CPU");
+
+        jLabel76.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
+        jLabel76.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel76.setText("GPU");
+
+        jLabel77.setText("GPU 1 Score:");
+
+        txtGPU1Score.setEditable(false);
+        txtGPU1Score.setText("jTextField1");
+
+        txtGPU2Score.setEditable(false);
+        txtGPU2Score.setText("jTextField2");
+
+        jLabel78.setText("GPU 2 Score:");
+
+        txtGPUCombinedScore.setEditable(false);
+        txtGPUCombinedScore.setText("jTextField1");
+
+        jLabel79.setText("Combined Score:");
+
+        jLabel80.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
+        jLabel80.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel80.setText("GPU");
+
+        lblBMOverallScore.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblBMOverallScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblBMOverallScore.setText("jLabel81");
 
         javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
         jPanel21.setLayout(jPanel21Layout);
@@ -2339,36 +2398,44 @@ public class PCBuilder extends javax.swing.JFrame {
             .addGroup(jPanel21Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel71, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
-                                .addComponent(jLabel47)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())
+                    .addComponent(jLabel71, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
-                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel70, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel69, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtBMMemClk)
-                                    .addComponent(txtBMMemChan)))
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addComponent(jLabel68, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtBMCPUOC))
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel70, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel69, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtBMMemChan)
+                            .addComponent(txtBMMemClk)))
+                    .addComponent(jLabel76, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblBMCPUScore, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
+                        .addComponent(jLabel68, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBMCPUOC))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
                                 .addComponent(jLabel67, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtBMBasicCPU, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(32, 32, 32))
+                                .addComponent(txtBMBasicCPU, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
+                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel77)
+                                    .addComponent(jLabel78)
+                                    .addComponent(jLabel79))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtGPUCombinedScore, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                                    .addComponent(txtGPU2Score, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtGPU1Score, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                    .addComponent(jLabel80, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addComponent(lblBMCPUScore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(jLabel47)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(lblBMOverallScore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel21Layout.setVerticalGroup(
             jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2395,13 +2462,31 @@ public class PCBuilder extends javax.swing.JFrame {
                     .addComponent(txtBMMemClk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblBMCPUScore)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel76)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel77)
+                    .addComponent(txtGPU1Score, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtGPU2Score, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel78))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtGPUCombinedScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel79))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel80)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblBMOverallScore)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         jPanel23.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel55.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel55.setText("Overclocking:");
+        jLabel55.setText("CPU Overclocking:");
 
         jLabel59.setText("CPU Base Clock:");
 
@@ -2444,7 +2529,7 @@ public class PCBuilder extends javax.swing.JFrame {
             }
         });
 
-        jLabel64.setText("Clock Multiplier:");
+        jLabel64.setText("CPU Multiplier:");
 
         txtClockMultiplier.setEditable(false);
         txtClockMultiplier.setBackground(new java.awt.Color(255, 255, 255));
@@ -2491,6 +2576,84 @@ public class PCBuilder extends javax.swing.JFrame {
             }
         });
 
+        jLabel65.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel65.setText("GPU Overclocking:");
+
+        jLabel72.setText("GPU Clock");
+
+        txtGPUClock.setText("jTextField1");
+
+        jLabel73.setText("MHz");
+
+        btnGPUBaseClockD10.setText("-10");
+        btnGPUBaseClockD10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUBaseClockD10ActionPerformed(evt);
+            }
+        });
+
+        btnGPUBaseClockD1.setText("-1");
+        btnGPUBaseClockD1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUBaseClockD1ActionPerformed(evt);
+            }
+        });
+
+        btnGPUBaseClockU1.setText("+1");
+        btnGPUBaseClockU1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUBaseClockU1ActionPerformed(evt);
+            }
+        });
+
+        btnGPUBaseClockU10.setText("+10");
+        btnGPUBaseClockU10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUBaseClockU10ActionPerformed(evt);
+            }
+        });
+
+        jLabel74.setText("MHz");
+
+        txtGPUMemClock.setText("jTextField1");
+
+        jLabel75.setText("VRAM Clock");
+
+        btnGPUMemClockU10.setText("+10");
+        btnGPUMemClockU10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUMemClockU10ActionPerformed(evt);
+            }
+        });
+
+        btnGPUMemClockU1.setText("+1");
+        btnGPUMemClockU1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUMemClockU1ActionPerformed(evt);
+            }
+        });
+
+        btnGPUMemClockD1.setText("-1");
+        btnGPUMemClockD1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUMemClockD1ActionPerformed(evt);
+            }
+        });
+
+        btnGPUMemClockD10.setText("-10");
+        btnGPUMemClockD10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUMemClockD10ActionPerformed(evt);
+            }
+        });
+
+        btnGPUOCReset.setText("Reset");
+        btnGPUOCReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGPUOCResetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel23Layout = new javax.swing.GroupLayout(jPanel23);
         jPanel23.setLayout(jPanel23Layout);
         jPanel23Layout.setHorizontalGroup(
@@ -2499,30 +2662,49 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel23Layout.createSequentialGroup()
-                        .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(jPanel23Layout.createSequentialGroup()
-                                .addComponent(jLabel59)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCPUBaseClock))
-                            .addGroup(jPanel23Layout.createSequentialGroup()
-                                .addComponent(btnCPUBaseClockD10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCPUBaseClockD1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCPUBaseClockU1)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCPUBaseClockU10)
+                            .addComponent(jLabel65)
+                            .addGroup(jPanel23Layout.createSequentialGroup()
+                                .addComponent(btnGPUBaseClockD10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnGPUBaseClockD1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnGPUBaseClockU1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnGPUBaseClockU10))
+                            .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel23Layout.createSequentialGroup()
+                                    .addComponent(jLabel75)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtGPUMemClock)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel74))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel23Layout.createSequentialGroup()
+                                    .addComponent(btnGPUMemClockD10)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel23Layout.createSequentialGroup()
+                                            .addGap(10, 10, 10)
+                                            .addComponent(btnGPUOCReset, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel23Layout.createSequentialGroup()
+                                            .addComponent(btnGPUMemClockD1)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(btnGPUMemClockU1)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(btnGPUMemClockU10)))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel23Layout.createSequentialGroup()
-                                .addComponent(jLabel60)
-                                .addGap(142, 142, 142)))
+                                .addComponent(jLabel72)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtGPUClock, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel73)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel23Layout.createSequentialGroup()
                         .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel55)
                             .addGroup(jPanel23Layout.createSequentialGroup()
                                 .addComponent(jLabel64)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtClockMultiplier, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel66))
@@ -2537,7 +2719,23 @@ public class PCBuilder extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnCPUClockMultU1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCPUClockMultU10)))
+                                .addComponent(btnCPUClockMultU10))
+                            .addGroup(jPanel23Layout.createSequentialGroup()
+                                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(jPanel23Layout.createSequentialGroup()
+                                        .addComponent(jLabel59)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtCPUBaseClock))
+                                    .addGroup(jPanel23Layout.createSequentialGroup()
+                                        .addComponent(btnCPUBaseClockD10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnCPUBaseClockD1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnCPUBaseClockU1)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnCPUBaseClockU10)
+                                    .addComponent(jLabel60))))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel23Layout.setVerticalGroup(
@@ -2571,7 +2769,33 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCPUFinalFreq, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnOCCPUReset))
-                .addContainerGap(147, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel65)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel72)
+                    .addComponent(txtGPUClock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel73))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGPUBaseClockU1)
+                    .addComponent(btnGPUBaseClockD10)
+                    .addComponent(btnGPUBaseClockD1)
+                    .addComponent(btnGPUBaseClockU10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel75)
+                    .addComponent(txtGPUMemClock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel74))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGPUMemClockU1)
+                    .addComponent(btnGPUMemClockD10)
+                    .addComponent(btnGPUMemClockD1)
+                    .addComponent(btnGPUMemClockU10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGPUOCReset)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -2580,7 +2804,7 @@ public class PCBuilder extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -2590,33 +2814,34 @@ public class PCBuilder extends javax.swing.JFrame {
                             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(2, 2, 2)
                         .addComponent(jPanel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                    .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2626,24 +2851,17 @@ public class PCBuilder extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(66, Short.MAX_VALUE))))
+                                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jPanel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -2847,6 +3065,42 @@ public class PCBuilder extends javax.swing.JFrame {
     private void btnOCCPUResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOCCPUResetActionPerformed
         pc.resetCPUClockFreq();
     }//GEN-LAST:event_btnOCCPUResetActionPerformed
+
+    private void btnGPUBaseClockD10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUBaseClockD10ActionPerformed
+        pc.changeGPUCoreClock(-10);
+    }//GEN-LAST:event_btnGPUBaseClockD10ActionPerformed
+
+    private void btnGPUBaseClockD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUBaseClockD1ActionPerformed
+        pc.changeGPUCoreClock(-1);
+    }//GEN-LAST:event_btnGPUBaseClockD1ActionPerformed
+
+    private void btnGPUBaseClockU1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUBaseClockU1ActionPerformed
+        pc.changeGPUCoreClock(1);
+    }//GEN-LAST:event_btnGPUBaseClockU1ActionPerformed
+
+    private void btnGPUBaseClockU10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUBaseClockU10ActionPerformed
+        pc.changeGPUCoreClock(10);
+    }//GEN-LAST:event_btnGPUBaseClockU10ActionPerformed
+
+    private void btnGPUMemClockU10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUMemClockU10ActionPerformed
+        pc.changeGPUMemClock(10);
+    }//GEN-LAST:event_btnGPUMemClockU10ActionPerformed
+
+    private void btnGPUMemClockU1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUMemClockU1ActionPerformed
+        pc.changeGPUMemClock(1);
+    }//GEN-LAST:event_btnGPUMemClockU1ActionPerformed
+
+    private void btnGPUMemClockD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUMemClockD1ActionPerformed
+        pc.changeGPUMemClock(-1);
+    }//GEN-LAST:event_btnGPUMemClockD1ActionPerformed
+
+    private void btnGPUMemClockD10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUMemClockD10ActionPerformed
+        pc.changeGPUMemClock(-10);
+    }//GEN-LAST:event_btnGPUMemClockD10ActionPerformed
+
+    private void btnGPUOCResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGPUOCResetActionPerformed
+        pc.resetGPUClockFreq();
+    }//GEN-LAST:event_btnGPUOCResetActionPerformed
     
     
     
@@ -2866,7 +3120,16 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnCoolerAdd;
     private javax.swing.JButton btnCoolerRemove;
     private javax.swing.JButton btnGPUAdd;
+    private javax.swing.JButton btnGPUBaseClockD1;
+    private javax.swing.JButton btnGPUBaseClockD10;
+    private javax.swing.JButton btnGPUBaseClockU1;
+    private javax.swing.JButton btnGPUBaseClockU10;
     private javax.swing.JButton btnGPUClearRemove;
+    private javax.swing.JButton btnGPUMemClockD1;
+    private javax.swing.JButton btnGPUMemClockD10;
+    private javax.swing.JButton btnGPUMemClockU1;
+    private javax.swing.JButton btnGPUMemClockU10;
+    private javax.swing.JButton btnGPUOCReset;
     private javax.swing.JButton btnOCCPUReset;
     private javax.swing.JButton btnRAMAdd1More;
     private javax.swing.JButton btnRAMAdd2More;
@@ -2957,6 +3220,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel62;
     private javax.swing.JLabel jLabel63;
     private javax.swing.JLabel jLabel64;
+    private javax.swing.JLabel jLabel65;
     private javax.swing.JLabel jLabel66;
     private javax.swing.JLabel jLabel67;
     private javax.swing.JLabel jLabel68;
@@ -2964,7 +3228,16 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel70;
     private javax.swing.JLabel jLabel71;
+    private javax.swing.JLabel jLabel72;
+    private javax.swing.JLabel jLabel73;
+    private javax.swing.JLabel jLabel74;
+    private javax.swing.JLabel jLabel75;
+    private javax.swing.JLabel jLabel76;
+    private javax.swing.JLabel jLabel77;
+    private javax.swing.JLabel jLabel78;
+    private javax.swing.JLabel jLabel79;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel80;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
@@ -2994,6 +3267,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblBMCPUScore;
+    private javax.swing.JLabel lblBMOverallScore;
     private javax.swing.JLabel lblCPUBasicScore;
     private javax.swing.JLabel lblCPUBasicScoreTitle;
     private javax.swing.JLabel lblCPUCores;
@@ -3075,6 +3349,11 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JTextField txtCase;
     private javax.swing.JTextField txtClockMultiplier;
     private javax.swing.JTextField txtCooler;
+    private javax.swing.JTextField txtGPU1Score;
+    private javax.swing.JTextField txtGPU2Score;
+    private javax.swing.JTextField txtGPUClock;
+    private javax.swing.JTextField txtGPUCombinedScore;
+    private javax.swing.JTextField txtGPUMemClock;
     private javax.swing.JTextField txtMotherboard;
     private javax.swing.JTextField txtPSU;
     // End of variables declaration//GEN-END:variables

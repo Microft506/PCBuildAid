@@ -31,14 +31,16 @@ public class PCBuild {
     private final HashMap<EnumHardwareType, HardwareSet> hardwareSetMap = new HashMap<>();
     private EnumHardwareType lastChangeType;
     
-    // CPU Overclocking values
+    // CPU and GPU Overclocking values
+    private Runnable onCPUGPUClockChange;
     private double oc_currentCPUBaseClock;
     private double oc_currentCPURatio;
-
+    private double oc_currentGPUCoreClock;
+    private double oc_currentGPUMemClock;
+    
     // Multi hardware objects.
     private final ArrayList<Runnable> onHardwareChange = new ArrayList<>();
-    private Runnable onCPUClockChange;
-
+    
     public PCBuild() {
         // Initialize all hardware to null
         for (EnumHardwareType hwType : EnumHardwareType.values()) {
@@ -83,6 +85,7 @@ public class PCBuild {
         lastChangeType = hw.getHardwareType();
         activateHardwareChange();
         if(hw.getHardwareType().equals(EnumHardwareType.CPU) || hw.getHardwareType().equals(EnumHardwareType.MOTHERBOARD)) resetCPUClockFreq();
+        if(hw.getHardwareType().equals(EnumHardwareType.GPU)) this.resetGPUClockFreq();
     }
 
     public void clearHardwareType(EnumHardwareType hwType) {
@@ -94,6 +97,7 @@ public class PCBuild {
         lastChangeType = hwType;
         activateHardwareChange();
         if(hwType.equals(EnumHardwareType.CPU) || hwType.equals(EnumHardwareType.MOTHERBOARD)) resetCPUClockFreq();
+        if(hwType.equals(EnumHardwareType.GPU)) this.resetGPUClockFreq();
     }
 
     private boolean isSetType(EnumHardwareType hwType) {
@@ -104,14 +108,14 @@ public class PCBuild {
         return lastChangeType;
     }
     
-    // *********** CPU Clocking
-    
-    private void fireCPUClockChange(){
-        if(!isNull(this.onCPUClockChange)) this.onCPUClockChange.run();
+    // *********** CPU and GPU Clocking
+       
+    private void fireCPUorGPUClockChange(){
+        if(!isNull(this.onCPUGPUClockChange)) this.onCPUGPUClockChange.run();
     }
     
-    public void onCPUClockChange(Runnable r){
-        this.onCPUClockChange = r;
+    public void onCPUorGPUClockChange(Runnable r){
+        this.onCPUGPUClockChange = r;
     }
     
     public double getCurrentCPUClockFreq(){
@@ -126,18 +130,33 @@ public class PCBuild {
         return this.oc_currentCPURatio;
     }
     
+    public double getCurrentGPUCoreClock(){
+        return this.oc_currentGPUCoreClock;
+    }
+    
+    public double getCurrentGPUMemClock(){
+        return this.oc_currentGPUMemClock;
+    }
+    
     public void resetCPUClockFreq(){
         Hardware cpu = this.hardwareMap.get(EnumHardwareType.CPU);
         Hardware mobo = this.hardwareMap.get(EnumHardwareType.MOTHERBOARD);
         if(isNull(cpu)||isNull(mobo)){
             this.oc_currentCPUBaseClock = 0;
             this.oc_currentCPURatio = 0;
-            return;
+            this.fireCPUorGPUClockChange();
+               return;
         }
         double freq = cpu.readDoubleVal(EnumKeyStrings.FREQUENCY);
         this.oc_currentCPUBaseClock = mobo.readDoubleVal(EnumKeyStrings.START_BASE_CLOCK);
         this.oc_currentCPURatio = freq / this.oc_currentCPUBaseClock;
-        this.fireCPUClockChange();
+        this.fireCPUorGPUClockChange();
+    }
+    
+    public void resetGPUClockFreq(){
+        this.oc_currentGPUCoreClock = (double)(this.getGPUCoreClockRange()[0]);
+        this.oc_currentGPUMemClock =  (double)(this.getGPUMemClockRange()[0]);
+        this.fireCPUorGPUClockChange();
     }
     
     public void changeCPURatio(double inc){
@@ -158,7 +177,7 @@ public class PCBuild {
         
         // Set the new value and fire clock change.
         this.oc_currentCPURatio = newVal;
-        this.fireCPUClockChange();
+        this.fireCPUorGPUClockChange();
     }
     
     public void changeCPUBaseClock(double inc){
@@ -178,7 +197,23 @@ public class PCBuild {
         if(newVal*this.oc_currentCPURatio > cpu.readDoubleVal(EnumKeyStrings.MAX_FREQ)) return;
         
         this.oc_currentCPUBaseClock = newVal;
-        this.fireCPUClockChange();
+        this.fireCPUorGPUClockChange();
+    }
+    
+    public void changeGPUCoreClock(double inc){
+        int[] range = this.getGPUCoreClockRange();
+        this.oc_currentGPUCoreClock += inc;
+        if(this.oc_currentGPUCoreClock < range[0]) this.oc_currentGPUCoreClock = range[0];
+        if(this.oc_currentGPUCoreClock > range[1]) this.oc_currentGPUCoreClock = range[1];
+        this.fireCPUorGPUClockChange();
+    }
+    
+    public void changeGPUMemClock(double inc){
+        int[] range = this.getGPUMemClockRange();
+        this.oc_currentGPUMemClock += inc;
+        if(this.oc_currentGPUMemClock < range[0]) this.oc_currentGPUMemClock = range[0];
+        if(this.oc_currentGPUMemClock > range[1]) this.oc_currentGPUMemClock = range[1];
+        this.fireCPUorGPUClockChange();
     }
     
     public int getMaxPossibleMemFreq(){
@@ -211,6 +246,42 @@ public class PCBuild {
         }
     }
     
+    public int[] getGPUCoreClockRange(){
+        HardwareSet gpuSet = this.hardwareSetMap.get(EnumHardwareType.GPU);
+        if(gpuSet.isEmpty()) return new int[]{0,0};
+        if(gpuSet.getCount()==1) return new int[] {
+            gpuSet.getHardwareList().get(0).readIntVal(EnumKeyStrings.BASE_CORE_CLOCK_FREQ),
+            Math.max(gpuSet.getHardwareList().get(0).readIntVal(EnumKeyStrings.GPU_MAX_CLOCK),
+                    gpuSet.getHardwareList().get(0).readIntVal(EnumKeyStrings.BASE_CORE_CLOCK_FREQ)
+            )
+        };
+        int minCoreClock = gpuSet.getHardwareList().stream().mapToInt(x->x.readIntVal(EnumKeyStrings.BASE_CORE_CLOCK_FREQ)).min().getAsInt();
+        // You're gonna love this next variable name....
+        int minMaxClock = gpuSet.getHardwareList().stream().mapToInt(x->x.readIntVal(EnumKeyStrings.GPU_MAX_CLOCK)).min().getAsInt();
+        
+        if(minMaxClock < minCoreClock) minMaxClock = minCoreClock;
+        
+        return new int[]{minCoreClock, minMaxClock};
+            
+    }
+    
+    public int[] getGPUMemClockRange(){
+        HardwareSet gpuSet = this.hardwareSetMap.get(EnumHardwareType.GPU);
+        int[] rValue = new int[]{0,0};
+        if(gpuSet.isEmpty()) return rValue;
+        List<String> a = gpuSet.readCommonStringVals(EnumKeyStrings.BASE_MEM_CLOCK_FREQ);
+        List<String> b = gpuSet.readCommonStringVals(EnumKeyStrings.GPU_MAX_MEM_CLOCK);
+        if(!(a.size()==1&&b.size()==1)) return rValue;
+        try{
+            rValue[0] = Integer.parseInt(a.get(0));
+            rValue[1] = Integer.parseInt(b.get(0));
+        } catch (NumberFormatException e){
+            return new int[]{0,0};
+        }
+        if(rValue[1]<rValue[0]) rValue[1]=rValue[0];
+        return rValue;
+    }
+    
     public List<Note> checkForNotes(){
         ArrayList<Note> rValue = new ArrayList<>();
         
@@ -221,6 +292,8 @@ public class PCBuild {
         if(maxRAMFreq > 0 && installedRAMFreq > 0 && maxRAMFreq < installedRAMFreq)
             rValue.add(new Note("Installed ram runs at " + installedRAMFreq + " MHz, Motherboard can only provide up to " + maxRAMFreq + " MHz.",EnumNoteType.GENERAL));
         
+        rValue.add(new Note("GPU Memory Frequency: " + this.getCurrentGPUMemClock(), EnumNoteType.GENERAL));
+        rValue.add(new Note("GPU Core Frequency: " + this.getCurrentGPUCoreClock(), EnumNoteType.GENERAL));
         
         return rValue;
     }

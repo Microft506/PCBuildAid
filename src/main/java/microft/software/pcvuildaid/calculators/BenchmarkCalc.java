@@ -85,5 +85,56 @@ public class BenchmarkCalc {
         return 298*mcm*ramFreq;
     }
     
-   
+    public static double getGPUScore(PCBuild pc, int boardNum){
+        HardwareSet gpuSet = pc.getHardwareSet(EnumHardwareType.GPU);
+        if(gpuSet.isEmpty()) return 0;
+        if(boardNum == 2 && gpuSet.getCount() == 1) return 0;
+        if(boardNum == 1 || boardNum == 2){
+            Hardware gpu = gpuSet.getHardwareList().get(boardNum-1);
+            double cc = pc.getCurrentGPUCoreClock();
+            double mc = pc.getCurrentGPUMemClock();
+            double ccm1 = gpu.readDoubleVal(EnumKeyStrings.GT1_SINGLE_CORE_CLOCK_MULT);
+            double mcm1 = gpu.readDoubleVal(EnumKeyStrings.GT1_SINGLE_MEM_CLOCK_MULT);
+            double bma1 = gpu.readDoubleVal(EnumKeyStrings.GT1_SINGLE_BENCHMARK_ADJ);
+            double ccm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_SINGLE_CORE_CLOCK_MULT);
+            double mcm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_SINGLE_MEM_CLOCK_MULT);
+            double bma2 = gpu.readDoubleVal(EnumKeyStrings.GT2_SINGLE_BENCHMARK_ADJ);
+            double x1 = 0.5/((ccm1*cc)+(mcm1*mc)+bma1);
+            double x2 = 0.5/((ccm2*cc)+(mcm2*mc)+bma2);
+            return 164/(x1+x2);
+        } else {
+            if(gpuSet.getCount() != 2) return 0;
+            return Math.min(getGPUDualScore(pc, gpuSet.getHardwareList().get(0)), getGPUDualScore(pc, gpuSet.getHardwareList().get(1)));
+        }
+    }
+    
+    private static double getGPUDualScore(PCBuild pc, Hardware gpu){
+        if(isNull(gpu)) return 0;
+        double cc = pc.getCurrentGPUCoreClock();
+        double mc = pc.getCurrentGPUMemClock();
+        double ccm1 = gpu.readDoubleVal(EnumKeyStrings.GT1_DUAL_CORE_CLOCK_MULT);
+        double mcm1 = gpu.readDoubleVal(EnumKeyStrings.GT1_DUAL_MEM_CLOCK_MULT);
+        double bma1 = gpu.readDoubleVal(EnumKeyStrings.GT1_DUAL_BENCHMARK_ADJ);
+        double ccm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_CORE_CLOCK_MULT);
+        double mcm2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_MEM_CLOCK_MULT);
+        double bma2 = gpu.readDoubleVal(EnumKeyStrings.GT2_DUAL_BENCHMARK_ADJ);
+        double x1 = 0.5/((ccm1*cc)+(mcm1*mc)+bma1);
+        double x2 = 0.5/((ccm2*cc)+(mcm2*mc)+bma2);
+        return 164/(x1+x2);
+    }
+    
+    public static int getSystemScore(PCBuild pc){
+        double cpuScore = Math.floor(calcBasicCPUScore(pc) + calcOverclockCPUScore(pc) + calcMemChanScore(pc) + calcMemClkScore(pc));
+        if(cpuScore == 0) return 0;
+        double gpuScore;
+        double gpu1Score = getGPUScore(pc, 1);
+        double gpu2Score = getGPUScore(pc, 2);
+        if(gpu2Score == 0) gpuScore = gpu1Score;
+        else gpuScore = getGPUScore(pc,0);
+        if(gpuScore == 0) return 0;
+        gpuScore = Math.floor(gpuScore);
+        //System.out.println("CPU Score: " + cpuScore);
+        //System.out.println("GPU Score: " + gpuScore);
+        return (int)Math.floor(1/((0.15/cpuScore)+(0.85/gpuScore)));
+    }
 }
