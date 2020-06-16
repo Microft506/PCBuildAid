@@ -5,6 +5,9 @@
  */
 package microft.software.pcbuildaid.PCBuildData;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static java.util.Objects.isNull;
@@ -23,7 +26,9 @@ public class GameData {
     
     private static final ArrayList<PCBuilderItemCollection> tables = new ArrayList<>();
     private static int level;
+    private static int monitor;
     private static final HashMap<EnumHardwareType, ArrayList<Hardware>> hardwareListMap = new HashMap<>();
+    
 
     public static String getSetting(String key, String defaultString){
         final Preferences userRoot = Preferences.userRoot();
@@ -74,6 +79,25 @@ public class GameData {
     public static void setLevel(int level) {
         GameData.level = level;
     }
+
+    public static int getMonitor() {
+        return monitor;
+    }
+
+    public static void setMonitor(int monitor) {
+        GameData.monitor = monitor;
+        setSetting("Display", Integer.toString(monitor));
+    }
     
+    public static GraphicsConfiguration getGraphicsConfiguration(){
+        int curMonitor = getMonitor();
+        GraphicsDevice[] gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        if(curMonitor < 0) curMonitor = 0;
+        if(curMonitor >= gs.length) curMonitor = gs.length-1;
+        return gs[curMonitor].getDefaultConfiguration();
+    }
     
+    public static int getNumberOfMonitors(){
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
+    }
 }

@@ -42,6 +42,8 @@ public class PCCostTracker {
     private final HashMap<EnumHardwareType, Boolean> include = new HashMap<>();
     private final PCBuild pc;
     private final ArrayList<Runnable> onCostChange = new ArrayList<>();
+    private int finalAdj;
+    private boolean useFinalAdj;
     
     /**
      *
@@ -51,12 +53,16 @@ public class PCCostTracker {
         this.pc = pc;
         pc.addONHardwareChange(()->this.reactToPCHardwareChange());
         
+        
         for(EnumHardwareType hwt:EnumHardwareType.values()){
             newPrices.put(hwt, 0);
             usedPrices.put(hwt, 0);
             used.put(hwt, Boolean.FALSE); // <-- Make sure this lines up with the initial form state.
             include.put(hwt, Boolean.TRUE); // <-- Make sure this lines up with the initial form state.
         }
+        
+        finalAdj = 0; useFinalAdj = true;
+
     }
     
     /**
@@ -145,6 +151,25 @@ public class PCCostTracker {
      * @return
      */
     public int getTotalPrice(){
-        return Arrays.asList(EnumHardwareType.values()).stream().mapToInt(x->getPrice(x)).sum();
+        return Arrays.asList(EnumHardwareType.values()).stream().mapToInt(x->getPrice(x)).sum() + (useFinalAdj ? finalAdj : 0);
     }
+
+    public int getFinalAdj() {
+        return finalAdj;
+    }
+
+    public void setFinalAdj(int finalAdj) {
+        this.finalAdj = finalAdj;
+        fireOnCostChange();
+    }
+
+    public boolean isUseFinalAdj() {
+        return useFinalAdj;
+    }
+
+    public void setUseFinalAdj(boolean useFinalAdj) {
+        this.useFinalAdj = useFinalAdj;
+        fireOnCostChange();
+    }
+   
 }

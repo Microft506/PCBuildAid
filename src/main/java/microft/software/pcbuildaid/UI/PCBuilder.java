@@ -6,6 +6,7 @@
 package microft.software.pcbuildaid.UI;
 
 import java.awt.Color;
+import java.awt.GraphicsConfiguration;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ import microft.software.pcbuildaid.calculators.PCWattageTracker;
  *
  * @author Marc
  */
-public class PCBuilder extends javax.swing.JFrame {
+public final class PCBuilder extends javax.swing.JFrame {
     private final PCBuild pc = new PCBuild();
     private final PCWattageTracker pcWattageTracker = new PCWattageTracker(pc);
     private final PCCostTracker pcCostTracker = new PCCostTracker(pc);
@@ -41,8 +42,11 @@ public class PCBuilder extends javax.swing.JFrame {
     
     /**
      * Creates new form BenchmarkCalculatorUI
+     * @param gc
+     * @param benchNumber
      */
-    public PCBuilder(int benchNumber) {
+    public PCBuilder(GraphicsConfiguration gc, int benchNumber) {
+        super(gc);
         initComponents();    
         
         this.getContentPane().setBackground(Color.GRAY);
@@ -102,8 +106,8 @@ public class PCBuilder extends javax.swing.JFrame {
         pc.onCPUorGPUClockChange(()->this.reactToCPUorGPUOverclockChange());
         this.reactToCPUorGPUOverclockChange();
         
-        pcCostTracker.addOnCostChange(()->updatePrices());
-        updatePrices();
+        pcCostTracker.addOnCostChange(()->reactToCostChange());
+        reactToCostChange();
         
         pcWattageTracker.addOnWattageChange(()->updateWattages());
         updateWattages();
@@ -120,7 +124,7 @@ public class PCBuilder extends javax.swing.JFrame {
         displayCurrentCooler();
         displayCurrentStorage();
         displayCurrentGPUs();
-        updatePrices();
+        reactToCostChange();
         reactToCPUorGPUOverclockChange();
         
     }
@@ -156,7 +160,7 @@ public class PCBuilder extends javax.swing.JFrame {
         this.lblWattageBalance.setText(Integer.toString(this.pcWattageTracker.getPowerBalance()));
     }
     
-    private void updatePrices(){
+    private void reactToCostChange(){
         this.lblCostCPU.setText("$" + pcCostTracker.getPrice(EnumHardwareType.CPU));
         this.lblCostCase.setText("$" + pcCostTracker.getPrice(EnumHardwareType.CASES));
         this.lblCostCooler.setText("$" + pcCostTracker.getPrice(EnumHardwareType.COOLER));
@@ -166,6 +170,7 @@ public class PCBuilder extends javax.swing.JFrame {
         this.lblCostRAM.setText("$" + pcCostTracker.getPrice(EnumHardwareType.RAM));
         this.lblCostStorage.setText("$" + pcCostTracker.getPrice(EnumHardwareType.STORAGE));
         this.lblCostTotal.setText("$" + pcCostTracker.getTotalPrice());
+        this.txtCostSubtract.setText(Integer.toString(pcCostTracker.getFinalAdj()));
     }
     
     
@@ -508,14 +513,14 @@ public class PCBuilder extends javax.swing.JFrame {
         jLabel43 = new javax.swing.JLabel();
         jLabel45 = new javax.swing.JLabel();
         chkIncludeCase = new javax.swing.JCheckBox();
-        chkUseCase = new javax.swing.JCheckBox();
+        chkUsedCase = new javax.swing.JCheckBox();
         lblCostCase = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
         chkIncludeMobo = new javax.swing.JCheckBox();
-        chkUseMobo = new javax.swing.JCheckBox();
+        chkUsedMobo = new javax.swing.JCheckBox();
         chkIncludeCPU = new javax.swing.JCheckBox();
-        chkUseCPU = new javax.swing.JCheckBox();
+        chkUsedCPU = new javax.swing.JCheckBox();
         jLabel50 = new javax.swing.JLabel();
         jLabel51 = new javax.swing.JLabel();
         jLabel52 = new javax.swing.JLabel();
@@ -526,11 +531,11 @@ public class PCBuilder extends javax.swing.JFrame {
         chkIncludeRAM = new javax.swing.JCheckBox();
         chkIncludeStorage = new javax.swing.JCheckBox();
         chkIncludeGPU = new javax.swing.JCheckBox();
-        chkUsePSU = new javax.swing.JCheckBox();
-        chkUseCooler = new javax.swing.JCheckBox();
-        chkUseRAM = new javax.swing.JCheckBox();
-        chkUseStorage = new javax.swing.JCheckBox();
-        chkUseGPU = new javax.swing.JCheckBox();
+        chkUsedPSU = new javax.swing.JCheckBox();
+        chkUsedCooler = new javax.swing.JCheckBox();
+        chkUsedRAM = new javax.swing.JCheckBox();
+        chkUsedStorage = new javax.swing.JCheckBox();
+        chkUsedGPU = new javax.swing.JCheckBox();
         lblCostMobo = new javax.swing.JLabel();
         lblCostCPU = new javax.swing.JLabel();
         lblCostPSU = new javax.swing.JLabel();
@@ -539,6 +544,9 @@ public class PCBuilder extends javax.swing.JFrame {
         lblCostStorage = new javax.swing.JLabel();
         lblCostGPU = new javax.swing.JLabel();
         lblCostTotal = new javax.swing.JLabel();
+        txtCostSubtract = new javax.swing.JTextField();
+        chkIncludeFinalAdj = new javax.swing.JCheckBox();
+        btnSubtract = new javax.swing.JButton();
         jPanel19 = new javax.swing.JPanel();
         lblCostAnalyzer1 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -1923,15 +1931,15 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.gridy = 1;
         jPanel18.add(chkIncludeCase, gridBagConstraints);
 
-        chkUseCase.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedCase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseCaseActionPerformed(evt);
+                chkUsedCaseActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        jPanel18.add(chkUseCase, gridBagConstraints);
+        jPanel18.add(chkUsedCase, gridBagConstraints);
 
         lblCostCase.setText("jLabel47");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1964,15 +1972,15 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.gridy = 2;
         jPanel18.add(chkIncludeMobo, gridBagConstraints);
 
-        chkUseMobo.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedMobo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseMoboActionPerformed(evt);
+                chkUsedMoboActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        jPanel18.add(chkUseMobo, gridBagConstraints);
+        jPanel18.add(chkUsedMobo, gridBagConstraints);
 
         chkIncludeCPU.setSelected(true);
         chkIncludeCPU.addActionListener(new java.awt.event.ActionListener() {
@@ -1985,15 +1993,15 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.gridy = 3;
         jPanel18.add(chkIncludeCPU, gridBagConstraints);
 
-        chkUseCPU.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedCPU.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseCPUActionPerformed(evt);
+                chkUsedCPUActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
-        jPanel18.add(chkUseCPU, gridBagConstraints);
+        jPanel18.add(chkUsedCPU, gridBagConstraints);
 
         jLabel50.setText("PSU:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2085,55 +2093,55 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.gridy = 8;
         jPanel18.add(chkIncludeGPU, gridBagConstraints);
 
-        chkUsePSU.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedPSU.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUsePSUActionPerformed(evt);
+                chkUsedPSUActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
-        jPanel18.add(chkUsePSU, gridBagConstraints);
+        jPanel18.add(chkUsedPSU, gridBagConstraints);
 
-        chkUseCooler.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedCooler.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseCoolerActionPerformed(evt);
+                chkUsedCoolerActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 5;
-        jPanel18.add(chkUseCooler, gridBagConstraints);
+        jPanel18.add(chkUsedCooler, gridBagConstraints);
 
-        chkUseRAM.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedRAM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseRAMActionPerformed(evt);
+                chkUsedRAMActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 6;
-        jPanel18.add(chkUseRAM, gridBagConstraints);
+        jPanel18.add(chkUsedRAM, gridBagConstraints);
 
-        chkUseStorage.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedStorage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseStorageActionPerformed(evt);
+                chkUsedStorageActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 7;
-        jPanel18.add(chkUseStorage, gridBagConstraints);
+        jPanel18.add(chkUsedStorage, gridBagConstraints);
 
-        chkUseGPU.addActionListener(new java.awt.event.ActionListener() {
+        chkUsedGPU.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkUseGPUActionPerformed(evt);
+                chkUsedGPUActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 8;
-        jPanel18.add(chkUseGPU, gridBagConstraints);
+        jPanel18.add(chkUsedGPU, gridBagConstraints);
 
         lblCostMobo.setText("jLabel55");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2184,15 +2192,50 @@ public class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.gridy = 9;
         jPanel18.add(lblCostTotal, gridBagConstraints);
 
+        txtCostSubtract.setText("0");
+        txtCostSubtract.setPreferredSize(new java.awt.Dimension(60, 20));
+        txtCostSubtract.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                txtCostSubtractPropertyChange(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel18.add(txtCostSubtract, gridBagConstraints);
+
+        chkIncludeFinalAdj.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkIncludeFinalAdjActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        jPanel18.add(chkIncludeFinalAdj, gridBagConstraints);
+
+        btnSubtract.setText("Adjust:");
+        btnSubtract.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubtractActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        jPanel18.add(btnSubtract, gridBagConstraints);
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCostAnalyzer)))
+                    .addComponent(lblCostAnalyzer))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2326,11 +2369,11 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCostAnalyzer2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(106, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel20Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnDEBUG)
-                .addGap(82, 82, 82))
+                .addContainerGap())
         );
         jPanel20Layout.setVerticalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2341,7 +2384,7 @@ public class PCBuilder extends javax.swing.JFrame {
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnDEBUG)
-                .addGap(38, 38, 38))
+                .addContainerGap())
         );
 
         jPanel21.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2835,11 +2878,11 @@ public class PCBuilder extends javax.swing.JFrame {
                             .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(2, 2, 2)
+                        .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2983,9 +3026,9 @@ public class PCBuilder extends javax.swing.JFrame {
         this.pcCostTracker.setInclude(EnumHardwareType.MOTHERBOARD, this.chkIncludeMobo.isSelected());
     }//GEN-LAST:event_chkIncludeMoboActionPerformed
 
-    private void chkUseCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCPUActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.CPU, this.chkUseCPU.isSelected());
-    }//GEN-LAST:event_chkUseCPUActionPerformed
+    private void chkUsedCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedCPUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.CPU, this.chkUsedCPU.isSelected());
+    }//GEN-LAST:event_chkUsedCPUActionPerformed
 
     private void chkIncludeCPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeCPUActionPerformed
         this.pcCostTracker.setInclude(EnumHardwareType.CPU, this.chkIncludeCPU.isSelected());
@@ -3015,33 +3058,33 @@ public class PCBuilder extends javax.swing.JFrame {
         this.pcCostTracker.setInclude(EnumHardwareType.GPU, this.chkIncludeGPU.isSelected());
     }//GEN-LAST:event_chkIncludeGPUActionPerformed
 
-    private void chkUseCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCaseActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.CASES, this.chkUseCase.isSelected());
-    }//GEN-LAST:event_chkUseCaseActionPerformed
+    private void chkUsedCaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedCaseActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.CASES, this.chkUsedCase.isSelected());
+    }//GEN-LAST:event_chkUsedCaseActionPerformed
 
-    private void chkUseMoboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseMoboActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.MOTHERBOARD, this.chkUseMobo.isSelected());
-    }//GEN-LAST:event_chkUseMoboActionPerformed
+    private void chkUsedMoboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedMoboActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.MOTHERBOARD, this.chkUsedMobo.isSelected());
+    }//GEN-LAST:event_chkUsedMoboActionPerformed
 
-    private void chkUsePSUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsePSUActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.PSU, this.chkUsePSU.isSelected());
-    }//GEN-LAST:event_chkUsePSUActionPerformed
+    private void chkUsedPSUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedPSUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.PSU, this.chkUsedPSU.isSelected());
+    }//GEN-LAST:event_chkUsedPSUActionPerformed
 
-    private void chkUseCoolerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseCoolerActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.COOLER, this.chkUseCooler.isSelected());
-    }//GEN-LAST:event_chkUseCoolerActionPerformed
+    private void chkUsedCoolerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedCoolerActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.COOLER, this.chkUsedCooler.isSelected());
+    }//GEN-LAST:event_chkUsedCoolerActionPerformed
 
-    private void chkUseRAMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseRAMActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.RAM, this.chkUseRAM.isSelected());
-    }//GEN-LAST:event_chkUseRAMActionPerformed
+    private void chkUsedRAMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedRAMActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.RAM, this.chkUsedRAM.isSelected());
+    }//GEN-LAST:event_chkUsedRAMActionPerformed
 
-    private void chkUseStorageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseStorageActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.STORAGE, this.chkUseStorage.isSelected());
-    }//GEN-LAST:event_chkUseStorageActionPerformed
+    private void chkUsedStorageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedStorageActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.STORAGE, this.chkUsedStorage.isSelected());
+    }//GEN-LAST:event_chkUsedStorageActionPerformed
 
-    private void chkUseGPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUseGPUActionPerformed
-        this.pcCostTracker.setUsed(EnumHardwareType.GPU, this.chkUseGPU.isSelected());
-    }//GEN-LAST:event_chkUseGPUActionPerformed
+    private void chkUsedGPUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkUsedGPUActionPerformed
+        this.pcCostTracker.setUsed(EnumHardwareType.GPU, this.chkUsedGPU.isSelected());
+    }//GEN-LAST:event_chkUsedGPUActionPerformed
 
     private void btnCPUBaseClockU1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCPUBaseClockU1ActionPerformed
         pc.changeCPUBaseClock(1);
@@ -3123,6 +3166,26 @@ public class PCBuilder extends javax.swing.JFrame {
         System.out.println("GPU Core Clock: " + this.pc.getCurrentGPUCoreClock());
         System.out.println("GPU Mem Clock: " + this.pc.getCurrentGPUMemClock());
     }//GEN-LAST:event_btnDEBUGActionPerformed
+
+    private void chkIncludeFinalAdjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeFinalAdjActionPerformed
+        
+    }//GEN-LAST:event_chkIncludeFinalAdjActionPerformed
+
+    private void btnSubtractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubtractActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSubtractActionPerformed
+
+    private void txtCostSubtractPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtCostSubtractPropertyChange
+        if(evt.getPropertyName().equals("text")){
+            try{
+                int newVal = Integer.parseInt(this.txtCostSubtract.getText());
+                if(pcCostTracker.getFinalAdj()!=newVal)
+                    this.pcCostTracker.setFinalAdj(newVal);
+            } catch (NumberFormatException e){
+                this.txtCostSubtract.setText(this.txtCostSubtract.getText() + " ?");
+            }
+        }
+    }//GEN-LAST:event_txtCostSubtractPropertyChange
     
     
     
@@ -3166,22 +3229,24 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnStorageAdd1More;
     private javax.swing.JButton btnStorageAdd2More;
     private javax.swing.JButton btnStorageClearRemove;
+    private javax.swing.JButton btnSubtract;
     private javax.swing.JCheckBox chkIncludeCPU;
     private javax.swing.JCheckBox chkIncludeCase;
     private javax.swing.JCheckBox chkIncludeCooler;
+    private javax.swing.JCheckBox chkIncludeFinalAdj;
     private javax.swing.JCheckBox chkIncludeGPU;
     private javax.swing.JCheckBox chkIncludeMobo;
     private javax.swing.JCheckBox chkIncludePSU;
     private javax.swing.JCheckBox chkIncludeRAM;
     private javax.swing.JCheckBox chkIncludeStorage;
-    private javax.swing.JCheckBox chkUseCPU;
-    private javax.swing.JCheckBox chkUseCase;
-    private javax.swing.JCheckBox chkUseCooler;
-    private javax.swing.JCheckBox chkUseGPU;
-    private javax.swing.JCheckBox chkUseMobo;
-    private javax.swing.JCheckBox chkUsePSU;
-    private javax.swing.JCheckBox chkUseRAM;
-    private javax.swing.JCheckBox chkUseStorage;
+    private javax.swing.JCheckBox chkUsedCPU;
+    private javax.swing.JCheckBox chkUsedCase;
+    private javax.swing.JCheckBox chkUsedCooler;
+    private javax.swing.JCheckBox chkUsedGPU;
+    private javax.swing.JCheckBox chkUsedMobo;
+    private javax.swing.JCheckBox chkUsedPSU;
+    private javax.swing.JCheckBox chkUsedRAM;
+    private javax.swing.JCheckBox chkUsedStorage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -3372,6 +3437,7 @@ public class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JTextField txtCase;
     private javax.swing.JTextField txtClockMultiplier;
     private javax.swing.JTextField txtCooler;
+    private javax.swing.JTextField txtCostSubtract;
     private javax.swing.JTextField txtGPU1Score;
     private javax.swing.JTextField txtGPU2Score;
     private javax.swing.JTextField txtGPUClock;
