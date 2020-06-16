@@ -9,11 +9,11 @@ import java.io.IOException;
 import static java.util.Objects.isNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
+
 
 /**
  *
@@ -22,7 +22,7 @@ import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
 public class MainUI extends javax.swing.JFrame {
 
     private PCBuildSourceData sourceData;
-   
+    private final PCBuilder[] pcBuilders = new PCBuilder[]{new PCBuilder(1), new PCBuilder(2), new PCBuilder(3)};
     
     /**
      * Creates new form Main
@@ -54,9 +54,9 @@ public class MainUI extends javax.swing.JFrame {
         txtGameFile = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        btnLaunchBenchmarkCalculator = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnBench1 = new javax.swing.JButton();
+        btnBench2 = new javax.swing.JButton();
+        btnBench3 = new javax.swing.JButton();
         btnLevelDown = new javax.swing.JButton();
         txtLevel = new javax.swing.JTextField();
         btnLevelUp = new javax.swing.JButton();
@@ -109,20 +109,32 @@ public class MainUI extends javax.swing.JFrame {
         jPanel2.setEnabled(false);
         jPanel2.setLayout(new java.awt.GridLayout(1, 3, 5, 20));
 
-        btnLaunchBenchmarkCalculator.setText("Benchmark Calculator");
-        btnLaunchBenchmarkCalculator.setEnabled(false);
-        btnLaunchBenchmarkCalculator.addActionListener(new java.awt.event.ActionListener() {
+        btnBench1.setText("Bench 1");
+        btnBench1.setEnabled(false);
+        btnBench1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLaunchBenchmarkCalculatorActionPerformed(evt);
+                btnBench1ActionPerformed(evt);
             }
         });
-        jPanel2.add(btnLaunchBenchmarkCalculator);
+        jPanel2.add(btnBench1);
 
-        jButton4.setText("jButton4");
-        jPanel2.add(jButton4);
+        btnBench2.setText("Bench 2");
+        btnBench2.setEnabled(false);
+        btnBench2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBench2ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnBench2);
 
-        jButton5.setText("jButton5");
-        jPanel2.add(jButton5);
+        btnBench3.setText("Bench 3");
+        btnBench3.setEnabled(false);
+        btnBench3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBench3ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnBench3);
 
         btnLevelDown.setText("-");
         btnLevelDown.addActionListener(new java.awt.event.ActionListener() {
@@ -153,6 +165,7 @@ public class MainUI extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(124, 124, 124)
                         .addComponent(btnLevelDown)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -183,9 +196,9 @@ public class MainUI extends javax.swing.JFrame {
         this.chooseNewGameDataFile();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void btnLaunchBenchmarkCalculatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaunchBenchmarkCalculatorActionPerformed
-        (new PCBuilder()).setVisible(true);
-    }//GEN-LAST:event_btnLaunchBenchmarkCalculatorActionPerformed
+    private void btnBench1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench1ActionPerformed
+        this.pcBuilders[0].setVisible(true);
+    }//GEN-LAST:event_btnBench1ActionPerformed
 
     private void btnLevelDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelDownActionPerformed
         moveLevel(-1);
@@ -194,6 +207,14 @@ public class MainUI extends javax.swing.JFrame {
     private void btnLevelUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelUpActionPerformed
         moveLevel(1);
     }//GEN-LAST:event_btnLevelUpActionPerformed
+
+    private void btnBench2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench2ActionPerformed
+        this.pcBuilders[1].setVisible(true);
+    }//GEN-LAST:event_btnBench2ActionPerformed
+
+    private void btnBench3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench3ActionPerformed
+        this.pcBuilders[2].setVisible(true);
+    }//GEN-LAST:event_btnBench3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -284,20 +305,22 @@ public class MainUI extends javax.swing.JFrame {
     
     private void setButtonsEnabled(){
         boolean en = !isNull(this.sourceData);
-        this.btnLaunchBenchmarkCalculator.setEnabled(en);
+        this.btnBench1.setEnabled(en);
+        this.btnBench2.setEnabled(en);
+        this.btnBench3.setEnabled(en);
     }
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnLaunchBenchmarkCalculator;
+    private javax.swing.JButton btnBench1;
+    private javax.swing.JButton btnBench2;
+    private javax.swing.JButton btnBench3;
     private javax.swing.JButton btnLevelDown;
     private javax.swing.JButton btnLevelUp;
     private javax.swing.JFileChooser dirChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

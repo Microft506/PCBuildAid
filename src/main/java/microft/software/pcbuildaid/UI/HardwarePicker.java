@@ -16,8 +16,8 @@ import javax.swing.table.DefaultTableModel;
 import microft.software.pcbuildaid.PCBuildData.GameData;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
-import microft.software.pcvuildaid.calculators.CompatibilityChecker;
-import microft.software.pcvuildaid.calculators.PCBuild;
+import microft.software.pcbuildaid.calculators.CompatibilityChecker;
+import microft.software.pcbuildaid.calculators.PCBuild;
 
 /**
  *

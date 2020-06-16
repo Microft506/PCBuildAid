@@ -17,12 +17,12 @@ import javax.swing.JLabel;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
-import microft.software.pcvuildaid.calculators.BenchmarkCalc;
-import microft.software.pcvuildaid.calculators.CompatibilityChecker;
+import microft.software.pcbuildaid.calculators.BenchmarkCalc;
+import microft.software.pcbuildaid.calculators.CompatibilityChecker;
 import microft.software.pcbuildaid.PCBuildData.Note;
-import microft.software.pcvuildaid.calculators.PCBuild;
-import microft.software.pcvuildaid.calculators.PCCostTracker;
-import microft.software.pcvuildaid.calculators.PCWattageTracker;
+import microft.software.pcbuildaid.calculators.PCBuild;
+import microft.software.pcbuildaid.calculators.PCCostTracker;
+import microft.software.pcbuildaid.calculators.PCWattageTracker;
 
 /**
  *
@@ -42,10 +42,11 @@ public class PCBuilder extends javax.swing.JFrame {
     /**
      * Creates new form BenchmarkCalculatorUI
      */
-    public PCBuilder() {
+    public PCBuilder(int benchNumber) {
         initComponents();    
         
         this.getContentPane().setBackground(Color.GRAY);
+        this.setTitle("PC Build Aid Bench " + benchNumber);
         
         // Add labels to CPU list.
         cpuLabels.add(this.lblCPUBasicScore);
@@ -612,7 +613,6 @@ public class PCBuilder extends javax.swing.JFrame {
 
         jLabel63.setText("jLabel63");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PC Build Aid - Benchmark Calculator");
         setBackground(new java.awt.Color(0, 0, 0));
         setForeground(new java.awt.Color(153, 153, 153));
