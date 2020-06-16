@@ -78,6 +78,7 @@ public class GameData {
 
     public static void setLevel(int level) {
         GameData.level = level;
+        System.out.println("Game level set to: " + level);
     }
 
     public static int getMonitor() {
@@ -87,14 +88,24 @@ public class GameData {
     public static void setMonitor(int monitor) {
         GameData.monitor = monitor;
         setSetting("Display", Integer.toString(monitor));
+        System.out.println("Monitor set to : " + monitor);
+    }
+    
+    public static void changeMonitor(int inc){
+        int nm = monitor + inc;
+        if(nm<0) return;
+        if(nm>=getNumberOfMonitors()) return;
+        setMonitor(nm);
+    }
+    
+    public static GraphicsConfiguration getGraphicsConfiguration(int num){
+         GraphicsDevice[] gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();        
+         if(num<0) num = 0; if(num>=gs.length) num = gs.length-1;
+         return gs[num].getDefaultConfiguration();
     }
     
     public static GraphicsConfiguration getGraphicsConfiguration(){
-        int curMonitor = getMonitor();
-        GraphicsDevice[] gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-        if(curMonitor < 0) curMonitor = 0;
-        if(curMonitor >= gs.length) curMonitor = gs.length-1;
-        return gs[curMonitor].getDefaultConfiguration();
+        return getGraphicsConfiguration(getMonitor());
     }
     
     public static int getNumberOfMonitors(){

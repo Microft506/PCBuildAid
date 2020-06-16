@@ -10,6 +10,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
+import java.util.Arrays;
 import static java.util.Objects.isNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ public final class MainUI extends javax.swing.JFrame {
 
     private PCBuildSourceData sourceData;
     private final PCBuilder[] pcBuilders = new PCBuilder[3];
+    private MonitorDisplay monitorDisplays[];
     
     /**
      * Creates new form Main
@@ -36,29 +38,32 @@ public final class MainUI extends javax.swing.JFrame {
         super(gc);
         initComponents();
         this.getContentPane().setBackground(Color.LIGHT_GRAY);
-    }
-    
-    public MainUI() {
-        initComponents();
-        this.getContentPane().setBackground(Color.LIGHT_GRAY);
-    }
-    
-    private void launchBench(int bench, int screen){
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gd = ge.getScreenDevices();
+        monitorDisplays = new MonitorDisplay[GameData.getNumberOfMonitors()];
+        for(int i=0; i<GameData.getNumberOfMonitors(); i++)
+            monitorDisplays[i] = new MonitorDisplay(GameData.getGraphicsConfiguration(i), i);
+        this.updateCurrentMonitor();
+        loadGameData();
         
-        if(screen<0 || screen >= gd.length) return;
-            
-        if(isNull(this.pcBuilders[bench])) pcBuilders[bench] = new PCBuilder(gd[screen].getDefaultConfiguration(), bench);
+        GameData.setLevel(Integer.parseInt(GameData.getSetting("gameLevel", "1")));
+        
+        moveLevel(0);
+    }
+    
+    
+    private void launchBench(int bench){
+        bench--;
+        if(isNull(this.pcBuilders[bench])) pcBuilders[bench] = new PCBuilder(GameData.getGraphicsConfiguration(), bench+1);
         
         pcBuilders[bench].setVisible(true);
             
     }
     
     public void moveLevel(int inc){
-        this.txtLevel.setText(Integer.toString(Integer.parseInt(this.txtLevel.getText())+inc));
-        GameData.setLevel(Integer.parseInt(this.txtLevel.getText()));
-        GameData.setSetting("gameLevel", Integer.toString(GameData.getLevel()));
+        int newLevel = GameData.getLevel() + inc;
+        if(newLevel<1)newLevel = 1; if(newLevel > 100) newLevel = 100;
+        this.txtLevel.setText(Integer.toString(newLevel));
+        GameData.setLevel(newLevel);
+        GameData.setSetting("gameLevel", Integer.toString(newLevel));
     }
 
     /**
@@ -84,10 +89,10 @@ public final class MainUI extends javax.swing.JFrame {
         btnBench2 = new javax.swing.JButton();
         btnBench3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        btnLevelDown1 = new javax.swing.JButton();
-        txtLevel1 = new javax.swing.JTextField();
-        btnLevelUp1 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        btnMonitorDwn = new javax.swing.JButton();
+        txtMonitor = new javax.swing.JTextField();
+        btnMonitorUp = new javax.swing.JButton();
+        tbMonitor = new javax.swing.JToggleButton();
 
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
@@ -153,7 +158,7 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("D:\\SoftwareDev\\PCBuildAid\\src\\main\\resources\\Logo.png")); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
 
         btnBench1.setText("Bench 1");
         btnBench1.setEnabled(false);
@@ -183,26 +188,31 @@ public final class MainUI extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("My Level");
 
-        btnLevelDown1.setText("-");
-        btnLevelDown1.addActionListener(new java.awt.event.ActionListener() {
+        btnMonitorDwn.setText("-");
+        btnMonitorDwn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLevelDown1ActionPerformed(evt);
+                btnMonitorDwnActionPerformed(evt);
             }
         });
 
-        txtLevel1.setEditable(false);
-        txtLevel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        txtLevel1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtLevel1.setText("0");
+        txtMonitor.setEditable(false);
+        txtMonitor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtMonitor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtMonitor.setText("0");
 
-        btnLevelUp1.setText("+");
-        btnLevelUp1.addActionListener(new java.awt.event.ActionListener() {
+        btnMonitorUp.setText("+");
+        btnMonitorUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLevelUp1ActionPerformed(evt);
+                btnMonitorUpActionPerformed(evt);
             }
         });
 
-        jToggleButton1.setText("Monitor");
+        tbMonitor.setText("Monitor");
+        tbMonitor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbMonitorActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -233,13 +243,13 @@ public final class MainUI extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btnLevelDown1)
+                                                .addComponent(btnMonitorDwn)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtLevel1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtMonitor, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btnLevelUp1)
+                                                .addComponent(btnMonitorUp)
                                                 .addGap(0, 0, Short.MAX_VALUE))
-                                            .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                            .addComponent(tbMonitor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -257,19 +267,19 @@ public final class MainUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
-                            .addComponent(jToggleButton1))
+                            .addComponent(tbMonitor))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnLevelDown, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtLevel)
                             .addComponent(btnLevelUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnLevelDown1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtLevel1)
-                            .addComponent(btnLevelUp1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(btnMonitorDwn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtMonitor)
+                            .addComponent(btnMonitorUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -280,7 +290,7 @@ public final class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnBench1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench1ActionPerformed
-        this.launchBench(1, 2);
+        this.launchBench(1);
     }//GEN-LAST:event_btnBench1ActionPerformed
 
     private void btnLevelDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelDownActionPerformed
@@ -292,72 +302,31 @@ public final class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLevelUpActionPerformed
 
     private void btnBench2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench2ActionPerformed
-        this.pcBuilders[1].setVisible(true);
+        this.launchBench(2);
     }//GEN-LAST:event_btnBench2ActionPerformed
 
     private void btnBench3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench3ActionPerformed
-        this.pcBuilders[2].setVisible(true);
+        this.launchBench(3);
     }//GEN-LAST:event_btnBench3ActionPerformed
 
-    private void btnLevelDown1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelDown1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnLevelDown1ActionPerformed
+    private void btnMonitorDwnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitorDwnActionPerformed
+        GameData.changeMonitor(-1);
+        updateCurrentMonitor();
+    }//GEN-LAST:event_btnMonitorDwnActionPerformed
 
-    private void btnLevelUp1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelUp1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnLevelUp1ActionPerformed
+    private void btnMonitorUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitorUpActionPerformed
+        GameData.changeMonitor(+1);
+        updateCurrentMonitor();
+    }//GEN-LAST:event_btnMonitorUpActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    private void tbMonitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbMonitorActionPerformed
+        Arrays.asList(this.monitorDisplays).stream().forEach(x->x.setVisible(this.tbMonitor.isSelected()));
+    }//GEN-LAST:event_tbMonitorActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
-                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedLookAndFeelException ex) {
-                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            MainUI me = new MainUI();
-            me.txtLevel.setText(GameData.getSetting("gameLevel", "5"));
-            GameData.setLevel(Integer.parseInt(GameData.getSetting("gameLevel", "5")));
-            me.setVisible(true);
-            me.loadGameData();
-        });
-
+    private void updateCurrentMonitor(){
+        this.txtMonitor.setText(Integer.toString(GameData.getMonitor()+1));
     }
-
+    
     private void loadGameData() {
         // Pull the game directory location from the registry or apply default.
         String filename = GameData.getSetting("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
@@ -408,9 +377,9 @@ public final class MainUI extends javax.swing.JFrame {
     private javax.swing.JButton btnBench2;
     private javax.swing.JButton btnBench3;
     private javax.swing.JButton btnLevelDown;
-    private javax.swing.JButton btnLevelDown1;
     private javax.swing.JButton btnLevelUp;
-    private javax.swing.JButton btnLevelUp1;
+    private javax.swing.JButton btnMonitorDwn;
+    private javax.swing.JButton btnMonitorUp;
     private javax.swing.JFileChooser dirChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
@@ -418,9 +387,9 @@ public final class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton tbMonitor;
     private javax.swing.JTextField txtGameFile;
     private javax.swing.JTextField txtLevel;
-    private javax.swing.JTextField txtLevel1;
+    private javax.swing.JTextField txtMonitor;
     // End of variables declaration//GEN-END:variables
 }

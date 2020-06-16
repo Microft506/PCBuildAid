@@ -562,7 +562,6 @@ public final class PCBuilder extends javax.swing.JFrame {
         lblWattageBalance = new javax.swing.JLabel();
         lblWattageGPU = new javax.swing.JLabel();
         jLabel62 = new javax.swing.JLabel();
-        btnDEBUG = new javax.swing.JButton();
         jPanel21 = new javax.swing.JPanel();
         jLabel47 = new javax.swing.JLabel();
         jLabel67 = new javax.swing.JLabel();
@@ -2205,6 +2204,7 @@ public final class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel18.add(txtCostSubtract, gridBagConstraints);
 
+        chkIncludeFinalAdj.setSelected(true);
         chkIncludeFinalAdj.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkIncludeFinalAdjActionPerformed(evt);
@@ -2353,38 +2353,28 @@ public final class PCBuilder extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel22.add(jLabel62, gridBagConstraints);
 
-        btnDEBUG.setText("Debug");
-        btnDEBUG.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDEBUGActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
         jPanel20.setLayout(jPanel20Layout);
         jPanel20Layout.setHorizontalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCostAnalyzer2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(106, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel20Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnDEBUG)
-                .addContainerGap())
+                .addGroup(jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel20Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblCostAnalyzer2))
+                    .addGroup(jPanel20Layout.createSequentialGroup()
+                        .addGap(56, 56, 56)
+                        .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jPanel20Layout.setVerticalGroup(
             jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel20Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblCostAnalyzer2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(26, 26, 26)
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnDEBUG)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel21.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -2885,9 +2875,9 @@ public final class PCBuilder extends javax.swing.JFrame {
                         .addComponent(jPanel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2899,8 +2889,8 @@ public final class PCBuilder extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -3162,17 +3152,12 @@ public final class PCBuilder extends javax.swing.JFrame {
         pc.resetGPUClockFreq();
     }//GEN-LAST:event_btnGPUOCResetActionPerformed
 
-    private void btnDEBUGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDEBUGActionPerformed
-        System.out.println("GPU Core Clock: " + this.pc.getCurrentGPUCoreClock());
-        System.out.println("GPU Mem Clock: " + this.pc.getCurrentGPUMemClock());
-    }//GEN-LAST:event_btnDEBUGActionPerformed
-
     private void chkIncludeFinalAdjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkIncludeFinalAdjActionPerformed
-        
+        this.pcCostTracker.setUseFinalAdj(this.chkIncludeFinalAdj.isSelected());
     }//GEN-LAST:event_chkIncludeFinalAdjActionPerformed
 
     private void btnSubtractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubtractActionPerformed
-        // TODO add your handling code here:
+        this.pcCostTracker.zeroPrice();
     }//GEN-LAST:event_btnSubtractActionPerformed
 
     private void txtCostSubtractPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtCostSubtractPropertyChange
@@ -3204,7 +3189,6 @@ public final class PCBuilder extends javax.swing.JFrame {
     private javax.swing.JButton btnChoosePSU;
     private javax.swing.JButton btnCoolerAdd;
     private javax.swing.JButton btnCoolerRemove;
-    private javax.swing.JButton btnDEBUG;
     private javax.swing.JButton btnGPUAdd;
     private javax.swing.JButton btnGPUBaseClockD1;
     private javax.swing.JButton btnGPUBaseClockD10;

@@ -65,14 +65,14 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
-                                              <Component id="btnLevelDown1" min="-2" max="-2" attributes="0"/>
+                                              <Component id="btnMonitorDwn" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="txtLevel1" min="-2" pref="43" max="-2" attributes="0"/>
+                                              <Component id="txtMonitor" min="-2" pref="43" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="btnLevelUp1" min="-2" max="-2" attributes="0"/>
+                                              <Component id="btnMonitorUp" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                           </Group>
-                                          <Component id="jToggleButton1" max="32767" attributes="0"/>
+                                          <Component id="tbMonitor" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -99,23 +99,23 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
+                          <Component id="tbMonitor" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnLevelDown" alignment="3" max="32767" attributes="0"/>
                           <Component id="txtLevel" alignment="3" max="32767" attributes="0"/>
                           <Component id="btnLevelUp" alignment="3" max="32767" attributes="0"/>
-                          <Component id="btnLevelDown1" alignment="3" max="32767" attributes="0"/>
-                          <Component id="txtLevel1" alignment="3" max="32767" attributes="0"/>
-                          <Component id="btnLevelUp1" alignment="3" max="32767" attributes="0"/>
+                          <Component id="btnMonitorDwn" alignment="3" max="32767" attributes="0"/>
+                          <Component id="txtMonitor" alignment="3" max="32767" attributes="0"/>
+                          <Component id="btnMonitorUp" alignment="3" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="jLabel2" min="-2" pref="184" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="62" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -209,7 +209,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="D:\SoftwareDev\PCBuildAid\src\main\resources\Logo.png"/>
+          <Image iconType="3" name="/logo.png"/>
         </Property>
       </Properties>
     </Component>
@@ -249,15 +249,15 @@
         <Property name="text" type="java.lang.String" value="My Level"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnLevelDown1">
+    <Component class="javax.swing.JButton" name="btnMonitorDwn">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLevelDown1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMonitorDwnActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtLevel1">
+    <Component class="javax.swing.JTextField" name="txtMonitor">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -267,18 +267,21 @@
         <Property name="text" type="java.lang.String" value="0"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnLevelUp1">
+    <Component class="javax.swing.JButton" name="btnMonitorUp">
       <Properties>
         <Property name="text" type="java.lang.String" value="+"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLevelUp1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMonitorUpActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JToggleButton" name="jToggleButton1">
+    <Component class="javax.swing.JToggleButton" name="tbMonitor">
       <Properties>
         <Property name="text" type="java.lang.String" value="Monitor"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tbMonitorActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

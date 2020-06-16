@@ -22,7 +22,8 @@ import microft.software.pcbuildaid.resources.EnumKeyStrings;
  *
  * @author Marc
  */
-
+// Notes:
+// - Note detecting socket incompatibility between socket and cpu.
 
 public class CompatibilityChecker {
     
@@ -107,6 +108,8 @@ public class CompatibilityChecker {
             rValue.addAll(checkMotherboardCPU(hwp));
         if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.RAM))
             rValue.addAll(checkMotherboardRAM(hwp));
+        if(hwp.isOfTypes(EnumHardwareType.MOTHERBOARD, EnumHardwareType.COOLER))
+            rValue.addAll(checkMotherboardCooler(hwp));
         return  rValue;
     }
     
@@ -225,6 +228,12 @@ public class CompatibilityChecker {
             rValue.add(new Note("RAM contains sticks of varying frequencies: " + rams.readUniqueStringVals(EnumKeyStrings.FREQUENCY).stream().collect(Collectors.joining(", ")) + " MHz", EnumNoteType.INCOMPATIBILITY));
         if(rams.readCommonStringVals(EnumKeyStrings.SIZE_EACH_GB).isEmpty())
             rValue.add(new Note("RAM contains multiple capacities: " + rams.readUniqueStringVals(EnumKeyStrings.SIZE_EACH_GB).stream().collect(Collectors.joining(", ")) + " GB" , EnumNoteType.INCOMPATIBILITY));
+        return rValue;
+    }
+    
+    private static List<Note> checkMotherboardCooler(HardwarePair hwp){
+        HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
+        ArrayList<Note> rValue = new ArrayList<>();
         return rValue;
     }
 }

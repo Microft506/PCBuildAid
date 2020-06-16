@@ -32,12 +32,17 @@ import microft.software.pcbuildaid.PCBuildData.GameData;
 public final class Launcher {
     
     public static void main(String[] args){
+        // We need to launch from out here so that we get the first window
+        // on the proper display.  
         int monitor;
         try{
             monitor = Integer.parseInt(GameData.getSetting("Display", "0"));
         } catch (Exception e){
             monitor = 0;
+            System.out.println("Key not found, reverting to monitor 1");
         }
+        System.out.println("monitor set to: " + monitor);
+        GameData.setMonitor(monitor);
         (new MainUI(GameData.getGraphicsConfiguration())).setVisible(true);
     }
     

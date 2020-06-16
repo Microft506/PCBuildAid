@@ -171,5 +171,10 @@ public class PCCostTracker {
         this.useFinalAdj = useFinalAdj;
         fireOnCostChange();
     }
+    
+    public void zeroPrice(){
+        this.finalAdj=(getTotalPrice()+this.finalAdj)*-1;
+        fireOnCostChange();
+    }
    
 }

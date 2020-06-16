@@ -5,6 +5,7 @@
  */
 package microft.software.pcbuildaid.UI;
 
+import java.awt.GraphicsConfiguration;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class HardwarePicker extends javax.swing.JFrame {
      * @param hwType
      */
     public HardwarePicker(JFrame parent, PCBuild pc, EnumHardwareType hwType) {
+        super(GameData.getGraphicsConfiguration());
         this.parent = parent;
         parent.setEnabled(false);
         initComponents();
@@ -171,6 +173,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.PART_NAME,
                     EnumKeyStrings.LEVEL,
                     EnumKeyStrings.PRICE,
+                    EnumKeyStrings.FREQUENCY,
                     EnumKeyStrings.CORES,
                     EnumKeyStrings.CAN_OVERCLOCK,
                     EnumKeyStrings.WATTAGE,
@@ -212,6 +215,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.CHIPSET,
                     EnumKeyStrings.LEVEL,
                     EnumKeyStrings.PRICE,
+                    EnumKeyStrings.BASE_CORE_CLOCK_FREQ,
                     EnumKeyStrings.VRAM_GB,
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.LENGTH,
