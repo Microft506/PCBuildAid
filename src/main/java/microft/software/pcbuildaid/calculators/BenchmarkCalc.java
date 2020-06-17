@@ -23,7 +23,6 @@
  */
 package microft.software.pcbuildaid.calculators;
 
-import java.util.List;
 import static java.util.Objects.isNull;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;

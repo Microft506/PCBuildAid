@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 marcc.
+ * Copyright 2020 Marc Cabot.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ import microft.software.pcbuildaid.resources.EnumNoteType;
 
 /**
  *
- * @author marcc
+ * @author Marc Cabot
  */
 public class Note {
     private final String note;

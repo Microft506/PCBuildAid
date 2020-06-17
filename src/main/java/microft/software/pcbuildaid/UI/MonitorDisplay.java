@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 marcc.
+ * Copyright 2020 Marc Cabot.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,10 @@
 package microft.software.pcbuildaid.UI;
 
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import static microft.software.pcbuildaid.PCBuildData.PCBuildData.getMonitor;
 
 /**
  *
- * @author marcc
+ * @author Marc Cabot
  */
 public class MonitorDisplay extends javax.swing.JFrame {
 
