@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import microft.software.pcbuildaid.PCBuildData.GameData;
+import microft.software.pcbuildaid.PCBuildData.PCBuildData;
 import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
 
 
@@ -38,13 +38,13 @@ public final class MainUI extends javax.swing.JFrame {
         super(gc);
         initComponents();
         this.getContentPane().setBackground(Color.LIGHT_GRAY);
-        monitorDisplays = new MonitorDisplay[GameData.getNumberOfMonitors()];
-        for(int i=0; i<GameData.getNumberOfMonitors(); i++)
-            monitorDisplays[i] = new MonitorDisplay(GameData.getGraphicsConfiguration(i), i);
+        monitorDisplays = new MonitorDisplay[PCBuildData.getNumberOfMonitors()];
+        for(int i=0; i<PCBuildData.getNumberOfMonitors(); i++)
+            monitorDisplays[i] = new MonitorDisplay(PCBuildData.getGraphicsConfiguration(i), i);
         this.updateCurrentMonitor();
         loadGameData();
         
-        GameData.setLevel(Integer.parseInt(GameData.getSetting("gameLevel", "1")));
+        PCBuildData.setLevel(Integer.parseInt(PCBuildData.getSetting("gameLevel", "1")));
         
         moveLevel(0);
     }
@@ -52,18 +52,18 @@ public final class MainUI extends javax.swing.JFrame {
     
     private void launchBench(int bench){
         bench--;
-        if(isNull(this.pcBuilders[bench])) pcBuilders[bench] = new PCBuilder(GameData.getGraphicsConfiguration(), bench+1);
+        if(isNull(this.pcBuilders[bench])) pcBuilders[bench] = new PCBuilder(PCBuildData.getGraphicsConfiguration(), bench+1);
         
         pcBuilders[bench].setVisible(true);
             
     }
     
     public void moveLevel(int inc){
-        int newLevel = GameData.getLevel() + inc;
+        int newLevel = PCBuildData.getLevel() + inc;
         if(newLevel<1)newLevel = 1; if(newLevel > 100) newLevel = 100;
         this.txtLevel.setText(Integer.toString(newLevel));
-        GameData.setLevel(newLevel);
-        GameData.setSetting("gameLevel", Integer.toString(newLevel));
+        PCBuildData.setLevel(newLevel);
+        PCBuildData.setSetting("gameLevel", Integer.toString(newLevel));
     }
 
     /**
@@ -310,12 +310,12 @@ public final class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBench3ActionPerformed
 
     private void btnMonitorDwnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitorDwnActionPerformed
-        GameData.changeMonitor(-1);
+        PCBuildData.changeMonitor(-1);
         updateCurrentMonitor();
     }//GEN-LAST:event_btnMonitorDwnActionPerformed
 
     private void btnMonitorUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitorUpActionPerformed
-        GameData.changeMonitor(+1);
+        PCBuildData.changeMonitor(+1);
         updateCurrentMonitor();
     }//GEN-LAST:event_btnMonitorUpActionPerformed
 
@@ -324,18 +324,18 @@ public final class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_tbMonitorActionPerformed
 
     private void updateCurrentMonitor(){
-        this.txtMonitor.setText(Integer.toString(GameData.getMonitor()+1));
+        this.txtMonitor.setText(Integer.toString(PCBuildData.getMonitor()+1));
     }
     
     private void loadGameData() {
         // Pull the game directory location from the registry or apply default.
-        String filename = GameData.getSetting("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
+        String filename = PCBuildData.getSetting("DefaultDir", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\PC Building Simulator");
         this.txtGameFile.setText(filename);
                 
         try {
             // Load in the data
             sourceData = new PCBuildSourceData(filename+ "\\PCBS_Data\\sharedassets1.assets");
-            GameData.populateHardware(sourceData);
+            PCBuildData.populateHardware(sourceData);
         } catch (IOException ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             UIToolBox.popUp(this, "There was a problem reading the game file.  Choose your game location and try again.");
@@ -359,7 +359,7 @@ public final class MainUI extends javax.swing.JFrame {
         }
         
         // If you've made it this far, it must be ok.  Save the new file location.
-        GameData.setSetting("DefaultDir", this.txtGameFile.getText());
+        PCBuildData.setSetting("DefaultDir", this.txtGameFile.getText());
         setButtonsEnabled();
     }
     

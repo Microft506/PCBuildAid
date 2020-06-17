@@ -26,7 +26,7 @@ package microft.software.pcbuildaid.UI;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import static microft.software.pcbuildaid.PCBuildData.GameData.getMonitor;
+import static microft.software.pcbuildaid.PCBuildData.PCBuildData.getMonitor;
 
 /**
  *

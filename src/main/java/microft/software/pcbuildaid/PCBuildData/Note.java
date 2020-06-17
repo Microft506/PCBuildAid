@@ -23,6 +23,8 @@
  */
 package microft.software.pcbuildaid.PCBuildData;
 
+import microft.software.pcbuildaid.resources.EnumNoteType;
+
 /**
  *
  * @author marcc

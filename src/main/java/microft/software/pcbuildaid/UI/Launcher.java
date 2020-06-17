@@ -23,7 +23,7 @@
  */
 package microft.software.pcbuildaid.UI;
 
-import microft.software.pcbuildaid.PCBuildData.GameData;
+import microft.software.pcbuildaid.PCBuildData.PCBuildData;
 
 /**
  *
@@ -36,14 +36,14 @@ public final class Launcher {
         // on the proper display.  
         int monitor;
         try{
-            monitor = Integer.parseInt(GameData.getSetting("Display", "0"));
+            monitor = Integer.parseInt(PCBuildData.getSetting("Display", "0"));
         } catch (Exception e){
             monitor = 0;
             System.out.println("Key not found, reverting to monitor 1");
         }
         System.out.println("monitor set to: " + monitor);
-        GameData.setMonitor(monitor);
-        (new MainUI(GameData.getGraphicsConfiguration())).setVisible(true);
+        PCBuildData.setMonitor(monitor);
+        (new MainUI(PCBuildData.getGraphicsConfiguration())).setVisible(true);
     }
     
 }

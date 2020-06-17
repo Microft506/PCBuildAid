@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import static java.util.Objects.isNull;
-import microft.software.pcbuildaid.PCBuildData.EnumNoteType;
-import microft.software.pcbuildaid.PCBuildData.GameData;
+import microft.software.pcbuildaid.resources.EnumNoteType;
+import microft.software.pcbuildaid.PCBuildData.PCBuildData;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
@@ -192,7 +192,7 @@ public class PCBuild {
         
         // Prospect the new value.
         double newVal = oc_currentCPURatio+(inc * cpu.readDoubleVal(EnumKeyStrings.MULTIPLIER_STEP));
-        if(newVal < GameData.CPU_FREQ_RATIO_ENF[0] || newVal > GameData.CPU_FREQ_RATIO_ENF[1]) return;
+        if(newVal < PCBuildData.CPU_FREQ_RATIO_ENF[0] || newVal > PCBuildData.CPU_FREQ_RATIO_ENF[1]) return;
         if((newVal * this.oc_currentCPUBaseClock)>cpu.readDoubleVal(EnumKeyStrings.MAX_FREQ)) return;
         
         // Set the new value and fire clock change.
@@ -212,7 +212,7 @@ public class PCBuild {
         if(!mobo.readBoolVal(EnumKeyStrings.CAN_OVERCLOCK)) return;
         
         double newVal = this.oc_currentCPUBaseClock + inc;
-        if(newVal < GameData.CPU_FREQ_BASE_ENV[0] || newVal > GameData.CPU_FREQ_BASE_ENV[1]) return;
+        if(newVal < PCBuildData.CPU_FREQ_BASE_ENV[0] || newVal > PCBuildData.CPU_FREQ_BASE_ENV[1]) return;
         
         if(newVal*this.oc_currentCPURatio > cpu.readDoubleVal(EnumKeyStrings.MAX_FREQ)) return;
         

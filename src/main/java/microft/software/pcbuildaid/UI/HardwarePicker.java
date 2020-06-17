@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import microft.software.pcbuildaid.PCBuildData.GameData;
+import microft.software.pcbuildaid.PCBuildData.PCBuildData;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
 import microft.software.pcbuildaid.PCBuildData.Hardware;
 import microft.software.pcbuildaid.calculators.CompatibilityChecker;
@@ -37,7 +37,7 @@ public class HardwarePicker extends javax.swing.JFrame {
      * @param hwType
      */
     public HardwarePicker(JFrame parent, PCBuild pc, EnumHardwareType hwType) {
-        super(GameData.getGraphicsConfiguration());
+        super(PCBuildData.getGraphicsConfiguration());
         this.parent = parent;
         parent.setEnabled(false);
         initComponents();
@@ -55,7 +55,7 @@ public class HardwarePicker extends javax.swing.JFrame {
             this.btnOKx4.setEnabled((this.tblMain.getSelectedRowCount() * 4) <= hwType.getMaxNumberInBuild());
         });
         
-        this.chkLevelFilter.setText("Filter to level " + GameData.getLevel());
+        this.chkLevelFilter.setText("Filter to level " + PCBuildData.getLevel());
         
         populateTable();
     }
@@ -111,11 +111,11 @@ public class HardwarePicker extends javax.swing.JFrame {
         
         final EnumKeyStrings[] colKeys;
         
-        ArrayList<Hardware> hwOG = GameData.getHardwareArray(hwType);
+        List<Hardware> hwOG = PCBuildData.getHardwareArray(hwType);
 
         // First filter also copies to a local list.
         List<Hardware> hw = hwOG.stream().filter(x->
-            x.getLevel()<=GameData.getLevel() || !this.chkLevelFilter.isSelected()
+            x.getLevel()<=PCBuildData.getLevel() || !this.chkLevelFilter.isSelected()
         ).collect(Collectors.toList());
         
         // Now we can just remove from that list.

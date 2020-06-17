@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import static java.util.Objects.isNull;
 import java.util.stream.Collectors;
-import microft.software.pcbuildaid.PCBuildData.EnumNoteType;
+import microft.software.pcbuildaid.resources.EnumNoteType;
 import microft.software.pcbuildaid.PCBuildData.HardwareSet;
 import microft.software.pcbuildaid.resources.EnumHardwareType;
 import microft.software.pcbuildaid.resources.EnumKeyStrings;
