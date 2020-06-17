@@ -207,6 +207,11 @@
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/microft/software/pcbuildaid/graphics/logo.png"/>
+        </Property>
+      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnBench1">
       <Properties>

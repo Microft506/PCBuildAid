@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package microft.software.pcbuildaid.UI;
+package microft.software.pcbuildaid.ui;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;

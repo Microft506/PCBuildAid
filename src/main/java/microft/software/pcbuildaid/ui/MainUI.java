@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package microft.software.pcbuildaid.UI;
+package microft.software.pcbuildaid.ui;
 
 import java.awt.Color;
 import java.awt.GraphicsConfiguration;
@@ -172,7 +172,7 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/microft/software/pcbuildaid/graphics/logo.png"))); // NOI18N
 
         btnBench1.setText("Bench 1");
         btnBench1.setEnabled(false);
