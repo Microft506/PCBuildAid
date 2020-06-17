@@ -98,7 +98,6 @@ public final class MainUI extends javax.swing.JFrame {
         btnLevelDown = new javax.swing.JButton();
         txtLevel = new javax.swing.JTextField();
         btnLevelUp = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
         btnBench1 = new javax.swing.JButton();
         btnBench2 = new javax.swing.JButton();
         btnBench3 = new javax.swing.JButton();
@@ -172,7 +171,7 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/microft/software/pcbuildaid/graphics/logo.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo_med.png"))); // NOI18N
 
         btnBench1.setText("Bench 1");
         btnBench1.setEnabled(false);
@@ -398,7 +397,7 @@ public final class MainUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private final javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToggleButton tbMonitor;

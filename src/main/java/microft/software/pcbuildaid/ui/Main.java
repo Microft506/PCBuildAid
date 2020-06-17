@@ -29,7 +29,7 @@ import microft.software.pcbuildaid.PCBuildData.PCBuildData;
  *
  * @author Marc Cabot
  */
-public final class Launcher {
+public final class Main {
     
     public static void main(String[] args){
         // We need to launch from out here so that we get the first window
