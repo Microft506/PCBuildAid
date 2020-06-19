@@ -66,6 +66,7 @@ public class CompatibilityChecker {
         
         Hardware cooler = xpc.getHardware(EnumHardwareType.COOLER);
         rValue.addAll(isCompatible(theCase, cooler));
+        rValue.addAll(isCompatible(cooler, motherboard));
         
         HardwareSet gpus = xpc.getHardwareSet(EnumHardwareType.GPU);
         rValue.addAll(isCompatible(theCase, gpus));
@@ -79,11 +80,8 @@ public class CompatibilityChecker {
         rValue.addAll(isCompatible(motherboard, rams));
         rValue.addAll(isCompatible(rams));
         
-        
-        
         return rValue;
     }
-    
     
     public static List<Note> isCompatible(HardwareSet units){
         ArrayList<Note> rValue = new ArrayList<>();
@@ -249,9 +247,13 @@ public class CompatibilityChecker {
         return rValue;
     }
     
-    private static List<Note> checkMotherboardCooler(HardwarePair hwp){
-        HardwareSet rams = hwp.getHardwareSet(EnumHardwareType.RAM);
+    private static List<Note> checkMotherboardCooler(HardwarePair hwp){       
+        Hardware mobo = hwp.getHardware(EnumHardwareType.MOTHERBOARD);
+        Hardware cool = hwp.getHardware(EnumHardwareType.COOLER);
+        System.out.println("Checking motherboard against cooler");
         ArrayList<Note> rValue = new ArrayList<>();
+        if(!cool.readValList(EnumKeyStrings.CPU_SOCKET_LIST).contains(mobo.readVal(EnumKeyStrings.CPU_SOCKET)))
+            rValue.add(new Note("Motherboard has a socket type: " + mobo.readVal(EnumKeyStrings.CPU_SOCKET) + ", but the cooler will only fit " + cool.readValList(EnumKeyStrings.CPU_SOCKET_LIST).stream().collect(Collectors.joining(", ")), EnumNoteType.INCOMPATIBILITY));
         return rValue;
     }
 }

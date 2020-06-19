@@ -196,7 +196,7 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.CAN_OVERCLOCK,
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.MAX_MEM_CHAN,
-                    EnumKeyStrings.CPU_SOCKET,
+                    EnumKeyStrings.CPU_SOCKET
                 };      
                 break;
             case STORAGE:
@@ -237,7 +237,9 @@ public class HardwarePicker extends javax.swing.JFrame {
                     EnumKeyStrings.VRAM_GB,
                     EnumKeyStrings.WATTAGE,
                     EnumKeyStrings.LENGTH,
-                    EnumKeyStrings._MULTI_GPU_SUPPORT
+                    EnumKeyStrings._MULTI_GPU_SUPPORT,
+                    EnumKeyStrings.PERCENT_THROUGH,
+                    EnumKeyStrings.GPU_MAX_CLOCK
                 };
                 this.tblMain.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 break;

@@ -123,9 +123,18 @@ public class Hardware {
     
     private List<String>getDualGPUCompatList(){
         ArrayList<String> rValue = new ArrayList<>();
-        if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SLI) || this.readBoolVal(EnumKeyStrings.SUPPORT_SLI)) rValue.add("SLI");
-        if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SUPPORTED) || this.readBoolVal(EnumKeyStrings.SUPPORT_CROSSFIRE)) rValue.add("Crossfire");
+        if(this.hardwareType.equals(EnumHardwareType.GPU)){
+            if(!this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SUPPORTED)) return rValue;
+            if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SLI)) rValue.add("SLI");
+            else rValue.add("Crossfire");
+        } else {
+            if(this.readBoolVal(EnumKeyStrings.SUPPORT_SLI)) rValue.add("SLI");
+            if(this.readBoolVal(EnumKeyStrings.SUPPORT_CROSSFIRE)) rValue.add("Crossfire");
+        }
+        //if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SLI) || ) rValue.add("SLI");
+        //if(this.readBoolVal(EnumKeyStrings.DOUBLE_GPU_SUPPORTED) || this.readBoolVal(EnumKeyStrings.SUPPORT_CROSSFIRE)) rValue.add("Crossfire");
         return rValue;
+        
     }
     
     public boolean isValid(){

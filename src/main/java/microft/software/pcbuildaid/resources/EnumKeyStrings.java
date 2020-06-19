@@ -82,6 +82,7 @@ public enum EnumKeyStrings {
     MULTIPLIER_STEP(            "Multiplier Step", "0", Double.class),
     PART_NAME(                  "Part Name", "Unknown", String.class),
     PART_TYPE(                  "Part Type", "Unknown", String.class),
+    PERCENT_THROUGH(            "Percent Through", "0", Integer.class),
     PRICE(                      "Price", "0", Integer.class),
     PSU_SIZE(                   "PSU size", "Unknown", String.class),
     RAM_TYPE(                   "Ram Type", "Unknown", String.class),
