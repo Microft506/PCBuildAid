@@ -57,18 +57,20 @@ public final class PCBuilder extends javax.swing.JFrame {
     private final ArrayList<JLabel> psuLabels = new ArrayList<>();
     private final ArrayList<JLabel> coolerLabels = new ArrayList<>();
     private final ArrayList<JLabel> gpuLabels = new ArrayList<>(); 
+    private final String benchName;
     
     /**
      * Creates new form BenchmarkCalculatorUI
      * @param gc
      * @param benchNumber
      */
-    public PCBuilder(GraphicsConfiguration gc, int benchNumber) {
+    public PCBuilder(GraphicsConfiguration gc, String benchName) {
         super(gc);
         initComponents();    
         
+        this.benchName = benchName;
         this.getContentPane().setBackground(Color.GRAY);
-        this.setTitle("PC Build Aid Bench " + benchNumber);
+        this.setTitle("PC Build Aid Bench: " + benchName);
         
         // Add labels to CPU list.
         cpuLabels.add(this.lblCPUBasicScore);
@@ -129,6 +131,10 @@ public final class PCBuilder extends javax.swing.JFrame {
         
         pcWattageTracker.addOnWattageChange(()->updateWattages());
         updateWattages();
+    }
+
+    public String getBenchName() {
+        return benchName;
     }
     
     private void reactToHardwareChange(){

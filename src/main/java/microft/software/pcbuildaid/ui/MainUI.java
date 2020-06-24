@@ -26,10 +26,14 @@ package microft.software.pcbuildaid.ui;
 import java.awt.Color;
 import java.awt.GraphicsConfiguration;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import static java.util.Objects.isNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import microft.software.pcbuildaid.PCBuildData.PCBuildData;
 import microft.software.pcbuildaid.PCBuildData.PCBuildSourceData;
 
@@ -43,6 +47,7 @@ public final class MainUI extends javax.swing.JFrame {
     private PCBuildSourceData sourceData;
     private final PCBuilder[] pcBuilders = new PCBuilder[3];
     private MonitorDisplay monitorDisplays[];
+    private final ArrayList<PCBuilder> benches = new ArrayList<>();
     
     /**
      * Creates new form Main
@@ -61,15 +66,6 @@ public final class MainUI extends javax.swing.JFrame {
         PCBuildData.setLevel(Integer.parseInt(PCBuildData.getSetting("gameLevel", "1")));
         
         moveLevel(0);
-    }
-    
-    
-    private void launchBench(int bench){
-        bench--;
-        if(isNull(this.pcBuilders[bench])) pcBuilders[bench] = new PCBuilder(PCBuildData.getGraphicsConfiguration(), bench+1);
-        
-        pcBuilders[bench].setVisible(true);
-            
     }
     
     public void moveLevel(int inc){
@@ -95,17 +91,23 @@ public final class MainUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtGameFile = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
         btnLevelDown = new javax.swing.JButton();
         txtLevel = new javax.swing.JTextField();
         btnLevelUp = new javax.swing.JButton();
-        btnBench1 = new javax.swing.JButton();
-        btnBench2 = new javax.swing.JButton();
-        btnBench3 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        btnMonitorDwn = new javax.swing.JButton();
-        txtMonitor = new javax.swing.JTextField();
-        btnMonitorUp = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         tbMonitor = new javax.swing.JToggleButton();
+        btnMonitorDwn = new javax.swing.JButton();
+        btnMonitorUp = new javax.swing.JButton();
+        txtMonitor = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        btnQuickBench = new javax.swing.JButton();
+        btnCreate = new javax.swing.JButton();
+        btnShowBench = new javax.swing.JButton();
+        btnDeleteBench = new javax.swing.JButton();
+        txtNewBenchName = new javax.swing.JTextField();
+        lstBenches = new javax.swing.JComboBox<>();
 
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
@@ -152,6 +154,14 @@ public final class MainUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo_med.png"))); // NOI18N
+
+        jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("My Level");
+
         btnLevelDown.setText("-");
         btnLevelDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -171,35 +181,43 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo_med.png"))); // NOI18N
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnLevelDown)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtLevel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLevelUp)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLevelDown, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtLevel)
+                    .addComponent(btnLevelUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
-        btnBench1.setText("Bench 1");
-        btnBench1.setEnabled(false);
-        btnBench1.addActionListener(new java.awt.event.ActionListener() {
+        jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        tbMonitor.setText("Monitor");
+        tbMonitor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBench1ActionPerformed(evt);
+                tbMonitorActionPerformed(evt);
             }
         });
-
-        btnBench2.setText("Bench 2");
-        btnBench2.setEnabled(false);
-        btnBench2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBench2ActionPerformed(evt);
-            }
-        });
-
-        btnBench3.setText("Bench 3");
-        btnBench3.setEnabled(false);
-        btnBench3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBench3ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("My Level");
 
         btnMonitorDwn.setText("-");
         btnMonitorDwn.addActionListener(new java.awt.event.ActionListener() {
@@ -208,11 +226,6 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        txtMonitor.setEditable(false);
-        txtMonitor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        txtMonitor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtMonitor.setText("0");
-
         btnMonitorUp.setText("+");
         btnMonitorUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -220,12 +233,113 @@ public final class MainUI extends javax.swing.JFrame {
             }
         });
 
-        tbMonitor.setText("Monitor");
-        tbMonitor.addActionListener(new java.awt.event.ActionListener() {
+        txtMonitor.setEditable(false);
+        txtMonitor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtMonitor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtMonitor.setText("0");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tbMonitor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnMonitorDwn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtMonitor, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMonitorUp)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tbMonitor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMonitorDwn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMonitorUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtMonitor))
+                .addContainerGap())
+        );
+
+        jPanel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        btnQuickBench.setText("Quick Bench");
+        btnQuickBench.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tbMonitorActionPerformed(evt);
+                btnQuickBenchActionPerformed(evt);
             }
         });
+
+        btnCreate.setText("Create");
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateActionPerformed(evt);
+            }
+        });
+
+        btnShowBench.setText("Show");
+        btnShowBench.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowBenchActionPerformed(evt);
+            }
+        });
+
+        btnDeleteBench.setText("Delete");
+        btnDeleteBench.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteBenchActionPerformed(evt);
+            }
+        });
+
+        txtNewBenchName.setText("New Bench Name");
+
+        lstBenches.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lstBenchesActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(btnQuickBench)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShowBench, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDeleteBench, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtNewBenchName)
+                    .addComponent(lstBenches, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnQuickBench)
+                    .addComponent(btnCreate)
+                    .addComponent(btnShowBench)
+                    .addComponent(btnDeleteBench))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtNewBenchName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lstBenches, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -238,32 +352,12 @@ public final class MainUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnBench3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnBench2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btnBench1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(btnLevelDown)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btnLevelUp)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btnMonitorDwn)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtMonitor, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btnMonitorUp)
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                            .addComponent(tbMonitor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -272,23 +366,11 @@ public final class MainUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnBench1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBench2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBench3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(tbMonitor))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnLevelDown, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtLevel)
-                            .addComponent(btnLevelUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnMonitorDwn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtMonitor)
-                            .addComponent(btnMonitorUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -302,10 +384,6 @@ public final class MainUI extends javax.swing.JFrame {
         this.chooseNewGameDataFile();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void btnBench1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench1ActionPerformed
-        this.launchBench(1);
-    }//GEN-LAST:event_btnBench1ActionPerformed
-
     private void btnLevelDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelDownActionPerformed
         moveLevel(-1);
     }//GEN-LAST:event_btnLevelDownActionPerformed
@@ -313,14 +391,6 @@ public final class MainUI extends javax.swing.JFrame {
     private void btnLevelUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLevelUpActionPerformed
         moveLevel(1);
     }//GEN-LAST:event_btnLevelUpActionPerformed
-
-    private void btnBench2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench2ActionPerformed
-        this.launchBench(2);
-    }//GEN-LAST:event_btnBench2ActionPerformed
-
-    private void btnBench3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBench3ActionPerformed
-        this.launchBench(3);
-    }//GEN-LAST:event_btnBench3ActionPerformed
 
     private void btnMonitorDwnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonitorDwnActionPerformed
         PCBuildData.changeMonitor(-1);
@@ -336,9 +406,68 @@ public final class MainUI extends javax.swing.JFrame {
         Arrays.asList(this.monitorDisplays).stream().forEach(x->x.setVisible(this.tbMonitor.isSelected()));
     }//GEN-LAST:event_tbMonitorActionPerformed
 
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+        if(this.benches.stream().map(x->x.getBenchName()).collect(Collectors.toList()).contains(this.txtNewBenchName.getText())){
+            UIToolBox.popUp(this, this.txtNewBenchName.getText() + " already exists.");
+            return;
+        }
+        
+        PCBuilder pc = new PCBuilder(PCBuildData.getGraphicsConfiguration(), this.txtNewBenchName.getText());
+        this.benches.add(pc);
+        pc.setVisible(true);
+        this.updateBenchList();
+    }//GEN-LAST:event_btnCreateActionPerformed
+
+    private void lstBenchesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lstBenchesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lstBenchesActionPerformed
+
+    private void btnShowBenchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowBenchActionPerformed
+        int selIndex = this.lstBenches.getSelectedIndex();
+        if(selIndex == -1) return;
+        String selVal = this.lstBenches.getItemAt(selIndex);
+        
+        this.benches.stream().filter(x->x.getBenchName().equals(selVal)).forEach(y->y.setVisible(true));        // TODO add your handling code here:
+    }//GEN-LAST:event_btnShowBenchActionPerformed
+
+    private void btnQuickBenchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuickBenchActionPerformed
+        String bn;
+        int count = 1;
+        do{
+            bn = "Bench " + count++; 
+        } while (this.benches.stream().map(x->x.getBenchName()).collect(Collectors.toList()).contains(bn));
+        System.out.println("Bench:  " + bn);
+        PCBuilder pcb = new PCBuilder(PCBuildData.getGraphicsConfiguration(), bn);
+        this.benches.add(pcb);
+        pcb.setVisible(true);
+        this.updateBenchList();
+    }//GEN-LAST:event_btnQuickBenchActionPerformed
+
+    private void btnDeleteBenchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteBenchActionPerformed
+        if(this.lstBenches.getSelectedIndex() == -1) return;
+        PCBuilder pcb = this.benches.get(this.lstBenches.getSelectedIndex());
+        this.benches.remove(this.lstBenches.getSelectedIndex());
+        pcb.setVisible(false);
+        pcb.dispose();
+        this.updateBenchList();
+        
+    }//GEN-LAST:event_btnDeleteBenchActionPerformed
+
     private void updateCurrentMonitor(){
         this.txtMonitor.setText(Integer.toString(PCBuildData.getMonitor()+1));
     }
+    
+    private void updateBenchList(){
+        String selVal = this.lstBenches.getSelectedIndex() == -1 ? "" : this.lstBenches.getItemAt(this.lstBenches.getSelectedIndex());
+        
+        
+        this.lstBenches.removeAllItems();
+        
+        this.benches.stream().map(x->x.getBenchName()).forEach(y->this.lstBenches.addItem(y));
+        
+        System.out.println("Bench items; " + this.benches.size());
+    }
+    
     
     private void loadGameData() {
         // Pull the game directory location from the registry or apply default.
@@ -378,21 +507,21 @@ public final class MainUI extends javax.swing.JFrame {
     
     private void setButtonsEnabled(){
         boolean en = !isNull(this.sourceData);
-        this.btnBench1.setEnabled(en);
-        this.btnBench2.setEnabled(en);
-        this.btnBench3.setEnabled(en);
+        this.btnCreate.setEnabled(en);
+
     }
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBench1;
-    private javax.swing.JButton btnBench2;
-    private javax.swing.JButton btnBench3;
+    private javax.swing.JButton btnCreate;
+    private javax.swing.JButton btnDeleteBench;
     private javax.swing.JButton btnLevelDown;
     private javax.swing.JButton btnLevelUp;
     private javax.swing.JButton btnMonitorDwn;
     private javax.swing.JButton btnMonitorUp;
+    private javax.swing.JButton btnQuickBench;
+    private javax.swing.JButton btnShowBench;
     private javax.swing.JFileChooser dirChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
@@ -400,9 +529,14 @@ public final class MainUI extends javax.swing.JFrame {
     private final javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JComboBox<String> lstBenches;
     private javax.swing.JToggleButton tbMonitor;
     private javax.swing.JTextField txtGameFile;
     private javax.swing.JTextField txtLevel;
     private javax.swing.JTextField txtMonitor;
+    private javax.swing.JTextField txtNewBenchName;
     // End of variables declaration//GEN-END:variables
 }
